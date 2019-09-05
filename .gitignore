@@ -1,0 +1,6 @@
+*.tmp
+*.lnk
+~*.*
+DELETE-*.*
+archive/
+node_modules/

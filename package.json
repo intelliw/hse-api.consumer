@@ -1,5 +1,5 @@
 {
-  "name": "190823-hse-bigquery",
+  "name": "190905-hse-api-consumer",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -7,18 +7,13 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/intelliw/hse-bigquery.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/bigquery": "^4.1.8"
-  },
-  "bugs": {
-    "url": "https://github.com/intelliw/hse-bigquery/issues"
-  },
-  "homepage": "https://github.com/intelliw/hse-bigquery#readme"
+    "@google-cloud/bigquery": "^4.1.8",
+    "kafkajs": "^1.10.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0"
+  }
 }
