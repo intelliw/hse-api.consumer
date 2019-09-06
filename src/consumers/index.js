@@ -5,4 +5,4 @@
  * producers 
  */
 module.exports = require('./Consumer');
-module.exports.PmsBqConsumer = require('./BqPmsConsumer');
+module.exports.PmsBqConsumer = require('./PmsBqConsumer');

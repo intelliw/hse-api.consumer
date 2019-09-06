@@ -1,5 +1,5 @@
-const consts = require('../host/constants');
-const enums = require('../host/enums');
+const consts = require('../src/host/constants');
+const enums = require('../src/host/enums');
 
 // const kafkaBrokerHost = '10.140.0.6';             // 10.140.0.6 / 35.201.177.2     192.168.1.106 
 const kafkaConsumerGroup = 'bq.monitoring.pms';                 // group name convention = <target system>.<target dataset>.<target table>
@@ -23,8 +23,7 @@ const retrieve = async () => {
   await consumer.subscribe({ topic: topicName, fromBeginning: KAFKA_CONSUME_FROM_BEGINNING })
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      console.log(`${topic} | P:${partition} | O:${message.offset} | TS:${message.timestamp} | Key:${message.key} | Value: ...`);
-      console.log(`>>>> ${message.value} <<<<<`);
+      console.log(`${topic} | P:${partition} | O:${message.offset} | TS:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
     },
 
   })
