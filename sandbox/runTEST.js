@@ -1,9 +1,9 @@
 'use strict';
 
-const sandbox = require('./sandbox'); 
+const TEST = require('./TEST'); 
 
 const projectId = 'sundaya'
-const keyFilename = 'credentials/sundaya-d75625d5dda7.json'
+const keyFilename = 'C:/_frg/credentials/sundaya-66cfebae1bff.json'
 
 // Create a client
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -11,6 +11,5 @@ const bqClient = new BigQuery();                  // $env:GOOGLE_APPLICATION_CRE
 // const bqClient = new BigQuery({projectId, keyFilename});         // use this if not setting an env variable
 
 // carry out write and read operations on the dataset table
-sandbox.TEST.insert(bqClient);
-sandbox.TEST.query(bqClient);
-
+TEST.insert(bqClient);
+TEST.query(bqClient);

@@ -7,7 +7,9 @@
 module.exports.messageBroker = {                    // kafka message broker. topics are based on enums.datasets. 
     consumers: {                                    // consumer group ids
         groupId: {
-            pms: 'bq.monitoring.pms'                // group id convention = <target system>.<target dataset>.<target table>
+            pms: 'bq.monitoring.pms',                // group id convention = <target system>.<target dataset>.<target table>
+            mppt: 'bq.monitoring.mppt',                
+            inverter: 'bq.monitoring.inverter'
         }
     },
     topics: {                                       //  topic names 

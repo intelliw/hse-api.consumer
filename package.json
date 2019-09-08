@@ -2,9 +2,8 @@
   "name": "190905-hse-api-consumer",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node pms-bq-consumer",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -7,8 +7,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "nodemon",
+            "runtimeExecutable": "nodemon",
+            "program": "${workspaceFolder}/app.js",
+            "restart": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\src\\consumers\\consumer.js"
+            "program": "${workspaceFolder}\\sandbox\\consumer.js"
         }
     ]
 }
