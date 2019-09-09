@@ -1,3 +1,6 @@
+//@ts-check
+"use strict";
+
 const consts = require('../src/host/constants');
 const enums = require('../src/host/enums');
 const { Kafka } = require('kafkajs');

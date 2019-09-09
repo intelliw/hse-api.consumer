@@ -9,4 +9,4 @@ ADD . /app
 WORKDIR /app
 
 RUN npm install
-ENTRYPOINT ["node", "mppt-bq-consumer"]
+ENTRYPOINT ["node", "bq-pms"]

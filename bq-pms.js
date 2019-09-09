@@ -6,10 +6,15 @@
 const enums = require('./src/host/enums');
 const Consumer = require('./src/consumers'); 
 
+// kafka
 const topicName = enums.messageBroker.topics.monitoring.pms;
 const groupId = enums.messageBroker.consumers.groupId.pms;      // group name convention = <target system>.<target dataset>.<target table>
 const clientId = `${groupId}.001`;      // 
 
+// bigquery
+const dataset = enums.dataWarehouse.datasets.monitoring;
+const table = enums.dataWarehouse.tables.pms;
+
 // carry out write and read operations on the dataset table
-let consumer = new Consumer(clientId, groupId, topicName); 
-consumer.retrieveMessages();
+let consumer = new Consumer(clientId, groupId, topicName, dataset, table); 
+consumer.processMessages();
