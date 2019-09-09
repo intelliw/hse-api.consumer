@@ -1,20 +1,17 @@
 'use strict';
 /**
- * a consumer to retrieve and write: pms monitoring data to bigquery  
+ * consumers and bq clients to retrieve and write: monitoring data into bigquery  
  */
 
-const enums = require('./src/host/enums');
 const Consumer = require('./src/consumers'); 
 
-// kafka
-const topicName = enums.messageBroker.topics.monitoring.pms;
-const groupId = enums.messageBroker.consumers.groupId.pms;      // group name convention = <target system>.<target dataset>.<target table>
-const clientId = `${groupId}.001`;      // 
+// enums
+const enums = require('./src/host/enums');
+const topics = enums.messageBroker.topics.monitoring;
+const groupIds = enums.messageBroker.consumers.groupId;
+const datasets = enums.dataWarehouse.datasets;
+const tables = enums.dataWarehouse.tables;
 
-// bigquery
-const dataset = enums.dataWarehouse.datasets.monitoring;
-const table = enums.dataWarehouse.tables.pms;
-
-// carry out write and read operations on the dataset table
-let consumer = new Consumer(clientId, groupId, topicName, dataset, table); 
-consumer.processMessages();
+// pms
+const pmsBq = new Consumer.Bq(datasets.monitoring, tables.pms);         // bigquery client
+const pmsMonitor = new Consumer(groupIds.pms, topics.pms, pmsBq);       // kafka - start consumer

@@ -4,16 +4,16 @@
  * global enumerations
  */
 
-module.exports.messageBroker = {                    // kafka message broker. topics are based on enums.datasets. 
-    consumers: {                                    // consumer group ids
+module.exports.messageBroker = {                        // kafka message broker. topics are based on enums.datasets. 
+    consumers: {                                        // consumer group ids
         groupId: {
-            pms: 'bq.monitoring.pms',                // group id convention = <target system>.<target dataset>.<target table>
+            pms: 'bq.monitoring.pms',                   // group id convention = <target system>.<target dataset>.<target table>
             mppt: 'bq.monitoring.mppt',
             inverter: 'bq.monitoring.inverter'
         }
     },
-    topics: {                                       //  topic names 
-        monitoring: {                               //  topics for monitoring datasets
+    topics: {                                           //  topic names 
+        monitoring: {                                   //  topics for monitoring datasets
             pms: 'monitoring.pms',
             mppt: 'monitoring.mppt',
             inverter: 'monitoring.inverter'
@@ -21,7 +21,7 @@ module.exports.messageBroker = {                    // kafka message broker. top
     }
 }
 
-module.exports.dataWarehouse = {                    // bigquery
+module.exports.dataWarehouse = {                        // bigquery
     datasets: {
         monitoring: 'monitoring'
     },

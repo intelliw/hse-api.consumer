@@ -8,19 +8,32 @@ const enums = require('./enums');
 
 // kafkajs client configuration options
 module.exports.kafkajs = {
-    consumeFromBeginning: true                                            //    
+    consumeFromBeginning: true,
+    consumer: {
+        sessionTimeout: 30000,
+        heartbeatInterval: 3000,
+        rebalanceTimeout: 60000,
+        metadataMaxAge: 300000,
+        allowAutoTopicCreation: true,
+        maxBytesPerPartition: 1048576,
+        minBytes: 1,
+        maxBytes: 10485760,
+        maxWaitTimeInMs: 5000,
+        retry: 10,
+        readUncommitted: false        
+    }             
 }
 
 // system constants for the environment
 module.exports.environments = {
     local: {
         kafka: {
-            brokers: ['192.168.1.106:9092']                                     // localhost   | 192.168.1.106        
+            brokers: ['192.168.1.106:9092']                                 // localhost   | 192.168.1.106        
         }
     },
-    devcloudtest: {                                                             // single node kafka, or Kafka Std - 1 master, N workers
+    devcloudtest: {                                                         // single node kafka, or Kafka Std - 1 master, N workers
         kafka: {
-            brokers: ['kafka-1-vm:9092']                                   // array of kafka message brokers         // kafka-1-vm  | 10.140.0.11
+            brokers: ['kafka-1-vm:9092']                                    // array of kafka message brokers         // kafka-1-vm  | 10.140.0.11
         }
     },
     devcloud: {                                                             // single node kafka, or Kafka Std - 1 master, N workers

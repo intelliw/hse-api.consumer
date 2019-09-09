@@ -2,7 +2,7 @@
 
 const bq = {
     dataset: 'monitoring',
-    location: 'asia-east1',                             // Location must match that of the dataset(s) referenced in the query.
+    location: 'asia-east1',                                             // Location must match that of the dataset(s) referenced in the query.
     TEST: {
         table: 'TEST',
         rows: [{ id: 'PMS-55-002', time_local: '2019-09-09 02:00:17.0200' }],
@@ -31,8 +31,8 @@ const projectId = 'sundaya'
 const keyFilename = 'C:/_frg/credentials/sundaya-66cfebae1bff.json'
 
 const { BigQuery } = require('@google-cloud/bigquery');
-const bqClient = new BigQuery();                  // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
-// const bqClient = new BigQuery({projectId, keyFilename});         // use this if not setting an env variable
+const bqClient = new BigQuery();                                        // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
+// const bqClient = new BigQuery({projectId, keyFilename});             // use this if not setting an env variable
 
 
 // inserts rows. 

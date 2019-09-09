@@ -8,7 +8,7 @@ const consts = require('../host/constants');
 const enums = require('../host/enums');
 
 const { Kafka } = require('kafkajs');
-const { BigQuery } = require('@google-cloud/bigquery');
+const CLIENT_ID_SUFFIX = '.000'                            // this suffix is appended to the group id and used as the client id  
 
 // exits for errors and terminal keyboard inputs  
 const errorTypes = ['unhandledRejection', 'uncaughtException']
@@ -17,37 +17,69 @@ const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 class Consumer {
     /**
      * superclass - 
-     * clients of subtypes must call retrieve()
      * 
     instance attributes:  
-     "consumerObj": kafka.consumer()
-     "clientId":  'devices.datasets'
-     topicName
-     dataset
-     table
+        this.kafkaConsumer
+        this.clientId = clientId;                           // consts.messaging.clientid   - e.g. devices.datasets            
+        this.topicName = topicName;
+        this.bqClient = new BigQuery();                     // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
 
      constructor arguments 
-    * @param {*} clientId               //  consts.messaging.clientid   - e.g. devices.datasets
-    * @param {*} groupId                //  enums.messageBroker.consumers.groupId
-    * @param {*} topicName              //  enums.messageBroker.topics.monitoring
+    * @param {*} clientId                                   //  consts.messaging.clientid   - e.g. devices.datasets
+    * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
+    * @param {*} topicName                                  //  enums.messageBroker.topics.monitoring
+    * @param {*} bqClient              
     */
-    constructor(clientId, groupId, topicName, dataset, table) {
+    constructor(groupId, topicName, bqClient) {
 
+        // store params
+        this.clientId = `${groupId}${CLIENT_ID_SUFFIX}`;    // this suffix is appended to the group id and used as the client id 
+        this.topicName = topicName;
+        this.bqClient = bqClient;                           // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
+        
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: consts.environments[consts.env].kafka.brokers,
-            clientId: clientId,
+            clientId: this.clientId,
         })
-        this.kafkaConsumer = kafka.consumer({ groupId: groupId });
-        this.clientId = clientId;
-        this.topicName = topicName;
+        this.kafkaConsumer = kafka.consumer({
+            groupId: groupId,
+            sessionTimeout: consts.kafkajs.consumer.sessionTimeout,
+            heartbeatInterval: consts.kafkajs.consumer.heartbeatInterval,
+            rebalanceTimeout: consts.kafkajs.consumer.rebalanceTimeout,
+            metadataMaxAge: consts.kafkajs.consumer.metadataMaxAge,
+            allowAutoTopicCreation: consts.kafkajs.consumer.allowAutoTopicCreation,
+            maxBytesPerPartition: consts.kafkajs.consumer.maxBytesPerPartition,
+            minBytes: consts.kafkajs.consumer.minBytes,
+            maxBytes: consts.kafkajs.consumer.maxBytes,
+            maxWaitTimeInMs: consts.kafkajs.consumer.maxWaitTimeInMs,
+            retry: consts.kafkajs.consumer.retry,
+            readUncommitted: consts.kafkajs.consumer.readUncommitted
+        });
 
-        // bigquery parameters
-        this.bqClient = new BigQuery();                  // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
-        this.dataset = dataset;
-        this.table = table;
 
-        // error and signal traps    
+        // start the consumer    
+        this.initialiseTraps();
+        this.retrieve().catch(e => console.error(`[${this.clientId}] ${e.message}`, e))
+
+    }
+
+    // connect and listen for messages
+    async retrieve() {
+
+        await this.kafkaConsumer.connect()
+        await this.kafkaConsumer.subscribe({ topic: this.topicName, fromBeginning: consts.kafkajs.consumeFromBeginning })
+        await this.kafkaConsumer.run({
+            eachMessage: async ({ topic, partition, message }) => {
+                this.bqClient.insertRows(message)
+                // console.log(`${topic} | P:${partition} | O:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
+            }
+        })
+    }
+
+    // initialise error and signal traps
+    async initialiseTraps() {
+
         errorTypes.map(type => {
             process.on(type, async e => {
                 try {
@@ -60,6 +92,8 @@ class Consumer {
                 }
             })
         })
+
+        // keyboard signal traps for terminal interrupts
         signalTraps.map(type => {
             process.once(type, async () => {
                 try {
@@ -71,61 +105,6 @@ class Consumer {
             })
         })
     }
-
-    // called by subtype / client
-    processMessages() {
-        // get message from the broker
-        retrieveMessages(this.kafkaConsumer, this.topicName, this.bqClient, this.dataset, this.table).catch(e => console.error(`[${this.clientId}] ${e.message}`, e));
-
-    }
-
-}
-
-const retrieveMessages = async (kafkaConsumer, topicName, bqClient, dataset, table) => {
-    await kafkaConsumer.connect();
-    await kafkaConsumer.subscribe({ topic: topicName, fromBeginning: consts.kafkajs.consumeFromBeginning });
-    await kafkaConsumer.run({
-        eachBatch: async ({ batch, resolveOffset, heartbeat, isRunning, isStale }) => {
-            for (let message of batch.messages) {
-                if (!isRunning() || isStale()) break
-                await processMessage(message)
-                await resolveOffset(message.offset)
-                await heartbeat()
-            }
-        },
-    });
-}
-
-const processMessage = async (bqClient, dataset, table, message) => {
-    await bqClient
-        .dataset(dataset)
-        .table(table)
-        .insert([message]);
-}
-
-
-const XretrieveMessages = async (kafkaConsumer, topicName, bqClient, dataset, table) => {
-    let messages = [];
-
-    await kafkaConsumer.connect();
-    await kafkaConsumer.subscribe({ topic: topicName, fromBeginning: consts.kafkajs.consumeFromBeginning });
-    await kafkaConsumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-            //console.log(`${topic} | P:${partition} | O:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
-            // messages.push(message.value);
-            // console.log('Retrieving');
-            // console.log(`THIS: ${JSON.stringify(messages)}`);
-            // const rows = [{ "pms_id": "PMS-01-002", "pack": { "id": "0248", "dock": 4, "volts": 51.262, "amps": -0.625, "watts": -32.039, "temp": [35, 33, 34] }, "cell": { "open": [1, 6], "volts": [3.661, 3.666, 3.654, 3.676, 3.658, 3.662, 3.66, 3.659, 3.658, 3.657, 3.656, 3.665, 3.669, 3.661], "vcl": 3.654, "vch": 3.676, "dvcl": [7, 12, 0, 22, 4, 8, 6, 5, 4, 3, 2, 11, 15, 7] }, "fet": { "open": [1, 2], "temp": [34.1, 32.2, 33.5] }, "sys": { "source": "S000" }, "time_utc": "2019-02-09 08:00:17.0200", "time_local": "2019-02-09 15:00:17.0200", "time_processing": "2019-09-08 05:19:26.1940" }]
-            /*
-            await bqClient
-                .dataset(dataset)
-                .table(table)
-                .insert([message]);
-            console.log(`Inserted ${message.length} rows`);
-            */
-        }
-    });
-
 }
 
 
