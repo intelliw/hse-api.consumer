@@ -7,6 +7,7 @@
 const consts = require('../host/constants');
 const enums = require('../host/enums');
 
+const moment = require('moment');
 const { BigQuery } = require('@google-cloud/bigquery');
 
 class Bq {
@@ -40,7 +41,7 @@ class Bq {
             .dataset(this.dataset)
             .table(this.table)
             .insert(rows);
-        console.log(`Inserted ${rows.length} rows`);
+        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}, Inserted ${rows.length} rows`);
     }
 
 }

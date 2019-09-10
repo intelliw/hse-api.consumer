@@ -60,12 +60,12 @@ class Consumer {
 
         // start the consumer    
         this.initialiseTraps();
-        this.retrieve().catch(e => console.error(`[${this.clientId}] ${e.message}`, e))
+        this.retrieveMessages().catch(e => console.error(`[${this.clientId}] ${e.message}`, e))
 
     }
 
     // connect and listen for messages
-    async retrieve() {
+    async retrieveMessages() {
 
         await this.kafkaConsumer.connect()
         await this.kafkaConsumer.subscribe({ topic: this.topicName, fromBeginning: consts.kafkajs.consumeFromBeginning })

@@ -15,3 +15,4 @@ const tables = enums.dataWarehouse.tables;
 // pms
 const pmsBq = new Consumer.Bq(datasets.monitoring, tables.pms);         // bigquery client
 const pmsMonitor = new Consumer(groupIds.pms, topics.pms, pmsBq);       // kafka - start consumer
+
