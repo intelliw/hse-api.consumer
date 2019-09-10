@@ -72,7 +72,7 @@ class Consumer {
         await this.kafkaConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 this.bqClient.insertRows(message)
-                // console.log(`${topic} | P:${partition} | O:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
+                // console.log(`${topic} | P:${partition} | Off:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
             }
         })
     }
