@@ -1,6 +1,6 @@
 'use strict';
 /**
- * consumers and bq clients to retrieve and write: monitoring data into bigquery  
+ * monitor all topics and write to bq
  */
 
 const Consumer = require('./src/consumers'); 
