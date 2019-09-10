@@ -15,7 +15,7 @@ const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
 class Consumer {
-    /**
+    /**9
      * superclass - 
      * 
     instance attributes:  

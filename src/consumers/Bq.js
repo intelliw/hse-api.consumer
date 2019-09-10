@@ -41,7 +41,8 @@ class Bq {
             .dataset(this.dataset)
             .table(this.table)
             .insert(rows);
-        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}, Inserted ${rows.length} rows`);
+        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}, Inserted ${rows.length} rows [${this.dataset}.${this.table}]`);
+            // 2019-09-10 05:10:31.7310, Inserted 2 rows [monitoring.inverter]
     }
 
 }
