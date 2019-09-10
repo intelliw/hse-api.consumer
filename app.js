@@ -1,6 +1,6 @@
 'use strict';
 /**
- * monitor all topics and write to bq
+ * monitor ALL topics and write to bq
  */
 
 const Consumer = require('./src/consumers'); 
