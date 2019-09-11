@@ -6,5 +6,5 @@
 const Consumer = require('./src/consumers'); 
 
 // pms
-const pms = new Consumer.PmsBq();       
+const pms = new Consumer.BqPms();       
 

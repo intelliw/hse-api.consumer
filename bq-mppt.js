@@ -6,5 +6,5 @@
 const Consumer = require('./src/consumers'); 
 
 // pms
-const mppt = new Consumer.MpptBq();       
+const mppt = new Consumer.BqMppt();       
 

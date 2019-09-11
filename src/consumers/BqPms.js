@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/PmsBq.js
+ * ./consumers/BqPms.js
  *  
  */
 
@@ -17,7 +17,7 @@ const BQ_TABLE = enums.dataWarehouse.tables.pms;
 
 /**
  */
-class PmsBq extends Consumer {
+class BqPms extends Consumer {
     /**
     instance attributes, constructor arguments  - see super
     */
@@ -33,4 +33,4 @@ class PmsBq extends Consumer {
     }
 }
 
-module.exports = PmsBq;
+module.exports = BqPms;

@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/PmsBq.js
+ * ./consumers/BqPms.js
  *  
  */
 
@@ -10,14 +10,14 @@ const enums = require('../host/enums');
 const Consumer = require('./Consumer');
 
 // instance parameters
-const KAFKA_TOPIC = enums.messageBroker.topics.monitoring.inverter;
-const KAFKA_GROUPID = enums.messageBroker.consumers.groupId.inverter;
+const KAFKA_TOPIC = enums.messageBroker.topics.monitoring.mppt;
+const KAFKA_GROUPID = enums.messageBroker.consumers.groupId.mppt;
 const BQ_DATASET = enums.dataWarehouse.datasets.monitoring;
-const BQ_TABLE = enums.dataWarehouse.tables.inverter;
+const BQ_TABLE = enums.dataWarehouse.tables.mppt;
 
 /**
  */
-class PmsBq extends Consumer {
+class BqMppt extends Consumer {
     /**
     instance attributes, constructor arguments  - see super
     */
@@ -33,4 +33,4 @@ class PmsBq extends Consumer {
     }
 }
 
-module.exports = PmsBq;
+module.exports = BqMppt;

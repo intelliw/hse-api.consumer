@@ -6,7 +6,7 @@
 const Consumer = require('./src/consumers'); 
 
 // pms
-const pms = new Consumer.PmsBq();       
-const mppt = new Consumer.MpptBq();      
-const inverter = new Consumer.InverterBq();      
+const pms = new Consumer.BqPms();       
+const mppt = new Consumer.BqMppt();      
+const inverter = new Consumer.BqInverter();      
 
