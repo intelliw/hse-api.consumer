@@ -29,17 +29,16 @@ class Consumer {
     * @param {*} topicName                                  //  enums.messageBroker.topics.monitoring
     * @param {*} bqClient              
     */
-    constructor(groupId, clientId, topicName, bqClient) {
+    constructor(groupId, topicName, bqClient) {
 
         // store params
-        this.clientId = clientId;
         this.topicName = topicName;
         this.bqClient = bqClient;                           // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
         
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: consts.environments[consts.env].kafka.brokers,
-            clientId: this.clientId,
+            clientId: consts.kafkajs.consumer.clientId,
         })
         this.kafkaConsumer = kafka.consumer({
             groupId: groupId,

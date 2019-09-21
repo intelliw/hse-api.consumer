@@ -1,4 +1,5 @@
 //@ts-check
+'use strict';
 /**
  * ./host/enum.js
  * global enumerations
@@ -10,9 +11,6 @@ module.exports.messageBroker = {                            // kafka message bro
             pms: 'group.monitoring.pms',                    // group id convention = <target system>.<target dataset>.<target table>
             mppt: 'group.monitoring.mppt',
             inverter: 'group.monitoring.inverter'
-        },
-        clientId: {                                 
-            default: 'consumer'                    // producer client id - preferred convention = <api path>.<api path>
         }
     },
     topics: {                                               //  topic names 

@@ -1,4 +1,5 @@
 //@ts-check
+'use strict';
 /**
  * PACKAGE: ./host/index.js
  * common services, tools, schemas and constants

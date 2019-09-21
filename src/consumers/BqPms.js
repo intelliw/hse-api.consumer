@@ -1,5 +1,5 @@
 //@ts-check
-"use strict";
+'use strict';
 /**
  * ./consumers/BqPms.js
  *  
@@ -17,18 +17,16 @@ const BQ_TABLE = enums.dataWarehouse.tables.pms;
 
 /**
  constructor arguments 
- * @param {*} clientId                                   //  unique client id for this container instance
  */
 class BqPms extends Consumer {
     /**
     instance attributes, constructor arguments  - see super
     */
-    constructor(clientId) {
+    constructor() {
 
         // start kafka consumer with a bq client
         super(
             KAFKA_GROUPID,
-            clientId,
             KAFKA_TOPIC,
             new Consumer.Bq(BQ_DATASET, BQ_TABLE)
         );
