@@ -16,16 +16,19 @@ const BQ_DATASET = enums.dataWarehouse.datasets.monitoring;
 const BQ_TABLE = enums.dataWarehouse.tables.pms;
 
 /**
+ constructor arguments 
+ * @param {*} clientId                                   //  unique client id for this container instance
  */
 class BqPms extends Consumer {
     /**
     instance attributes, constructor arguments  - see super
     */
-    constructor() {
+    constructor(clientId) {
 
         // start kafka consumer with a bq client
         super(
             KAFKA_GROUPID,
+            clientId,
             KAFKA_TOPIC,
             new Consumer.Bq(BQ_DATASET, BQ_TABLE)
         );

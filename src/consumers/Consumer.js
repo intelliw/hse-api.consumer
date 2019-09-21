@@ -8,7 +8,6 @@ const consts = require('../host/constants');
 const enums = require('../host/enums');
 
 const { Kafka } = require('kafkajs');
-const CLIENT_ID_SUFFIX = '.000'                            // this suffix is appended to the group id and used as the client id  
 
 // exits for errors and terminal keyboard inputs  
 const errorTypes = ['unhandledRejection', 'uncaughtException']
@@ -25,15 +24,15 @@ class Consumer {
         this.bqClient = new BigQuery();                     // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
 
      constructor arguments 
-    * @param {*} clientId                                   //  consts.messaging.clientid   - e.g. devices.datasets
+    * @param {*} clientId                                   //  unique client id for this instance
     * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
     * @param {*} topicName                                  //  enums.messageBroker.topics.monitoring
     * @param {*} bqClient              
     */
-    constructor(groupId, topicName, bqClient) {
+    constructor(groupId, clientId, topicName, bqClient) {
 
         // store params
-        this.clientId = `${groupId}${CLIENT_ID_SUFFIX}`;    // this suffix is appended to the group id and used as the client id 
+        this.clientId = clientId;
         this.topicName = topicName;
         this.bqClient = bqClient;                           // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
         

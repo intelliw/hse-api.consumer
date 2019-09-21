@@ -1,10 +1,14 @@
 //@ts-check
+'use strict';
 /**
  * ./svc/constant.js
  * global constants
  */
 const enums = require('./enums');
+const utils = require('./utils');
 
+// generate a unique client id for this container instance - if this consumer is clustered each instance will have a unique id
+const CONSUMER_CLIENTID = `consumer.${utils.randomIntegerString(1,9999)}`
 
 // kafkajs client configuration options
 module.exports.kafkajs = {
@@ -20,7 +24,8 @@ module.exports.kafkajs = {
         maxBytes: 10485760,
         maxWaitTimeInMs: 5000,
         retry: 10,
-        readUncommitted: false        
+        readUncommitted: false,
+        clientId: CONSUMER_CLIENTID                                          // producer client id prefix - preferred convention = <api path>.<api path>
     }             
 }
 
@@ -37,7 +42,7 @@ module.exports.environments = {
             brokers: ['192.168.1.106:9092']                                 // localhost   | 192.168.1.106        
         }
     },
-    devcloudtest: {                                                         // single node kafka, or Kafka Std - 1 master, N workers
+    devcloudtest: {                                                         // single node kafka- 1 master, N workers
         kafka: {
             brokers: ['kafka-1-vm:9092']                                    // array of kafka message brokers         // kafka-1-vm  | 10.140.0.11
         }
