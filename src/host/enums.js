@@ -14,10 +14,15 @@ module.exports.messageBroker = {                            // kafka message bro
         }
     },
     topics: {                                               //  topic names 
-        monitoring: {                                       //  topics for monitoring datasets
+        monitoring: {                                       //  topics for monitoring data received from api host
             pms: 'monitoring.pms',
             mppt: 'monitoring.mppt',
             inverter: 'monitoring.inverter'
+        },
+        dataset: {                                          //  topics for monitoring datasets for bq update, created by consumer at 1st stage of monitoring
+            pms: 'monitoring.pms.dataset',
+            mppt: 'monitoring.mppt.dataset',
+            inverter: 'monitoring.inverter.dataset'
         }
     }
 }

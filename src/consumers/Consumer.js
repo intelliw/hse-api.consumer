@@ -20,19 +20,19 @@ class Consumer {
     instance attributes:  
         this.kafkaConsumer
         this.clientId = clientId;                           // consts.messaging.clientid   - e.g. devices.datasets            
-        this.topicName = topicName;
+        this.readTopic = readTopic;
         this.bqClient = new BigQuery();                     // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
 
      constructor arguments 
     * @param {*} clientId                                   //  unique client id for this instance
     * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
-    * @param {*} topicName                                  //  enums.messageBroker.topics.monitoring
+    * @param {*} readTopic                                  //  the topic to read from enums.messageBroker.topics.monitoring
     * @param {*} bqClient              
     */
-    constructor(groupId, topicName, bqClient) {
+    constructor(groupId, readTopic, bqClient) {
 
         // store params
-        this.topicName = topicName;
+        this.readTopic = readTopic;
         this.bqClient = bqClient;                           // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
         
         // create the kafka consumer
@@ -66,11 +66,11 @@ class Consumer {
     async retrieveMessages() {
 
         await this.kafkaConsumer.connect()
-        await this.kafkaConsumer.subscribe({ topic: this.topicName, fromBeginning: consts.kafkajs.consumeFromBeginning })
+        await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: consts.kafkajs.consumeFromBeginning })
         await this.kafkaConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                this.bqClient.insertRows(message)
-                // console.log(`${topic} | P:${partition} | Off:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
+                // this.bqClient.insertRows(message)
+                console.log(`${topic} | P:${partition} | Off:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
             }
         })
     }

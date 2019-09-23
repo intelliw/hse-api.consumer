@@ -9,6 +9,7 @@ const utils = require('./utils');
 
 // generate a unique client id for this container instance - if this consumer is clustered each instance will have a unique id
 const CONSUMER_CLIENTID = `consumer.${utils.randomIntegerString(1,9999)}`
+const PRODUCER_CLIENTID = `producer.${utils.randomIntegerString(1,9999)}`
 
 // kafkajs client configuration options
 module.exports.kafkajs = {
@@ -26,7 +27,10 @@ module.exports.kafkajs = {
         retry: 10,
         readUncommitted: false,
         clientId: CONSUMER_CLIENTID                                          // producer client id prefix - preferred convention = <api path>.<api path>
-    }             
+    },
+    producer: {                                                             // producer client Ids
+        clientId: PRODUCER_CLIENTID                                         // producer client id prefix - preferred convention = <api path>.<api path>
+    }    
 }
 
 // constants for dates and timestamps
