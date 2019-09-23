@@ -10,6 +10,8 @@ const utils = require('../host/utils');
 
 const Producer = require('../producers');
 
+const KAFKA_WRITE_TOPIC = enums.messageBroker.topics.dataset.pms;
+const API_DATASET_NAME = enums.api.datasets.pms;
 
 /**
  */
@@ -19,15 +21,15 @@ class DatasetPms extends Producer {
 
      constructor arguments  
     */
-    constructor(datasetName, datasets) {
+    constructor() {
 
         // construct super
-        super(datasetName, datasets);                        // only waits for the leader to acknowledge 
+        super(KAFKA_WRITE_TOPIC);
 
     }
 
-    // adds calculated elements specific to this dataset, into the dataitem e.g. 'pack.volts' and 'pack.watts'
-    addDatasetAttributes(key, dataItem) {
+    // transforms and returns a data item specific to this dataset
+    transform(key, dataItem) {
 
         let watts;
         let volts;
@@ -53,7 +55,6 @@ class DatasetPms extends Producer {
         let dataObj = {
             pms_id: key,                                                                            // { "pms_id": "PMS-01-002",
             pack_id: p.id,                                                                          //   "pack_id": "0248",
-            time_local: dataItem.time_local                                                         // this gets replaced and deleted in addGenericAttributes()
         }
 
         // pack    
@@ -84,6 +85,13 @@ class DatasetPms extends Producer {
             open: utils.valueExistsInArray(p.fet.open, FET_OUT_INDEX) ? 1 : 0,                      //      "open": 1, 
             temp: p.fet.temp[FET_OUT_INDEX - 1]                                                     //      "temp": 32.2 },        
         }
+
+        // add generic attributes
+        dataObj.sys = { source: dataItem.sys.source }
+        dataObj.time_utc = dataItem.time_utc
+        dataObj.time_local = dataItem.time_local
+        dataObj.time_processing = dataItem.time_processing
+
 
         return dataObj;
     }

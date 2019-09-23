@@ -28,13 +28,15 @@ class Consumer {
     * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
     * @param {*} readTopic                                  //  the topic to read from enums.messageBroker.topics.monitoring
     * @param {*} bqClient              
+    * @param {*} producer                                   //  e.g. DatasetPms - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
     */
-    constructor(groupId, readTopic, bqClient) {
+    constructor(groupId, readTopic, bqClient, producer) {
 
         // store params
         this.readTopic = readTopic;
         this.bqClient = bqClient;                           // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
-        
+        this.producer = producer; 
+
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: consts.environments[consts.env].kafka.brokers,
@@ -66,11 +68,21 @@ class Consumer {
     async retrieveMessages() {
 
         await this.kafkaConsumer.connect()
-        await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: consts.kafkajs.consumeFromBeginning })
+        await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: consts.kafkajs.consumer.consumeFromBeginning })
         await this.kafkaConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                // this.bqClient.insertRows(message)
-                console.log(`${topic} | P:${partition} | Off:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
+                
+                // extract data
+                let newMessage = this.producer.extractData(message);
+                // console.log(JSON.stringify(data));
+
+                // write to bq
+                this.bqClient.insertRows(newMessage.value)
+
+                // capture the changed data in the producer's topic
+                this.producer.sendToTopic(newMessage);
+
+                // console.log(`${topic} | P:${partition} | Off:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
             }
         })
     }

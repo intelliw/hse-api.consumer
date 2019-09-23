@@ -32,7 +32,7 @@ class BqPms extends Consumer {
             KAFKA_CONSUMER_GROUPID,
             KAFKA_READ_TOPIC,
             new Bq(BQ_DATASET, BQ_TABLE),
-            new Producer.DatasetPms
+            new Producer.DatasetPms()
         );
 
     }

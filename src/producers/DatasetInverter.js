@@ -10,6 +10,9 @@ const utils = require('../host/utils');
 
 const Producer = require('../producers');
 
+const KAFKA_WRITE_TOPIC = enums.messageBroker.topics.dataset.inverter;
+const API_DATASET_NAME = enums.api.datasets.inverter;
+
 /**
  */
 class DatasetInverter extends Producer {
@@ -17,25 +20,24 @@ class DatasetInverter extends Producer {
     instance attributes:  
 
      constructor arguments  
-    * @param {*} sender                                                         //  identifies the source of the data. this value is added to sys.source attribute in addMessage()
     */
-    constructor(datasetName, datasets, sender) {
+    constructor() {
 
         // construct super
-        super(datasetName, datasets, sender);                        // only waits for the leader to acknowledge 
+        super(KAFKA_WRITE_TOPIC);
 
     }
 
 
-    // adds calculated elements specific to this dataset, into the dataitem e.g. 'pack.volts' and 'pack.watts'
-    addDatasetAttributes(key, dataItem) {
+    // transforms and returns a data item specific to this dataset
+    transform(key, dataItem) {
 
         let volts, amps, watts, pf;
         let attrArray;
 
         const PRECISION = consts.system.MONITORING_PRECISION;
         const ITEMNUMBER_LENGTH = 2;                                                                // how many digits int he cell number e.g 02
-        const SQ_ROOT_OF_THREE = Math.sqrt(3);   
+        const SQ_ROOT_OF_THREE = Math.sqrt(3);
 
         //  reconstruct dataitem - add new attributes and flatten arrays 
         let dataObj = {
@@ -81,12 +83,18 @@ class DatasetInverter extends Producer {
             amps = dataItem.grid.amps[i - 1];
             pf = dataItem.grid.pf[i - 1];
             watts = (volts * amps * pf * SQ_ROOT_OF_THREE).toFixed(PRECISION);                      // grid.watts == V x I x pf x √3  
-            
+
             let gridId = 'grid_' + utils.padZero(i, ITEMNUMBER_LENGTH);
             dataObj[gridId] = {                                                                     //   "grid_01": {
                 volts: volts, amps: amps, pf: pf, watts: parseFloat(watts)                          //      "volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 },
             }
         }
+
+        // add generic attributes
+        dataObj.sys = { source: dataItem.sys.source }
+        dataObj.time_utc = dataItem.time_utc
+        dataObj.time_local = dataItem.time_local
+        dataObj.time_processing = dataItem.time_processing
 
         return dataObj;
     }

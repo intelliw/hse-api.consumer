@@ -31,7 +31,8 @@ class BqMppt extends Consumer {
         super(
             KAFKA_CONSUMER_GROUPID,
             KAFKA_READ_TOPIC,
-            new Bq(BQ_DATASET, BQ_TABLE)
+            new Bq(BQ_DATASET, BQ_TABLE),
+            new Producer.DatasetMppt()
         );
 
     }

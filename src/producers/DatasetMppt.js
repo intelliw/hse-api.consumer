@@ -10,6 +10,9 @@ const utils = require('../host/utils');
 
 const Producer = require('../producers');
 
+const KAFKA_WRITE_TOPIC = enums.messageBroker.topics.dataset.mppt;
+const API_DATASET_NAME = enums.api.datasets.mppt;
+
 /**
  */
 class DatasetMppt extends Producer {
@@ -17,17 +20,16 @@ class DatasetMppt extends Producer {
     instance attributes:  
 
      constructor arguments  
-    * @param {*} sender                                                         //  identifies the source of the data. this value is added to sys.source attribute in addMessage()
     */
-    constructor(datasetName, datasets, sender) {
+    constructor() {
 
         // construct super
-        super(datasetName, datasets, sender);                        // only waits for the leader to acknowledge 
+        super(KAFKA_WRITE_TOPIC);
 
     }
 
-    // adds calculated elements specific to this dataset, into the dataitem e.g. 'pack.volts' and 'pack.watts'
-    addDatasetAttributes(key, dataItem) {
+    // transforms and returns a data item specific to this dataset
+    transform(key, dataItem) {
 
         let volts, amps, watts;
         let attrArray;
@@ -71,6 +73,14 @@ class DatasetMppt extends Producer {
             attrArray.push({ volts: volts, amps: amps, watts: parseFloat(watts) });
         };
         dataObj.load = attrArray;                                                                     // "load": [ {"volts": 48, "amps": 6, "watts": 288 },
+
+        
+        // add generic attributes
+        dataObj.sys = { source: dataItem.sys.source }
+        dataObj.time_utc = dataItem.time_utc
+        dataObj.time_local = dataItem.time_local
+        dataObj.time_processing = dataItem.time_processing
+
 
         return dataObj;
     }
