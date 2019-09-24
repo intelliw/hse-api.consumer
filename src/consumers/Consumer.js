@@ -18,34 +18,29 @@ const { Kafka } = require('kafkajs');
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
+const CLIENT_ID = consts.kafkajs.consumer.clientId;         // unique client id for this instance, created at startup 
+
 class Consumer {
     /**9
      * superclass - 
      * 
     instance attributes:  
         this.kafkaConsumer
-        this.clientId = clientId;                           // consts.messaging.clientid   - e.g. devices.datasets            
         this.readTopic = readTopic;
-        this.bqClient = new BigQuery();                     // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
 
      constructor arguments 
-    * @param {*} clientId                                   //  unique client id for this instance
     * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
     * @param {*} readTopic                                  //  the topic to read from enums.messageBroker.topics.monitoring
-    * @param {*} bqClient              
-    * @param {*} producer                                   //  e.g. DatasetPms - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
     */
-    constructor(groupId, readTopic, bqClient, producer) {
+    constructor(groupId, readTopic) {
 
         // store params
         this.readTopic = readTopic;
-        this.bqClient = bqClient;                           // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
-        this.producer = producer; 
 
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: consts.environments[consts.env].kafka.brokers,
-            clientId: consts.kafkajs.consumer.clientId,
+            clientId: CLIENT_ID,
         })
         this.kafkaConsumer = kafka.consumer({
             groupId: groupId,
@@ -62,10 +57,9 @@ class Consumer {
             readUncommitted: consts.kafkajs.consumer.readUncommitted
         });
 
-
         // start the consumer    
         this.initialiseTraps();
-        this.retrieveMessages().catch(e => console.error(`[${this.clientId}] ${e.message}`, e))
+        this.retrieveMessages().catch(e => console.error(`[${CLIENT_ID}] ${e.message}`, e))
 
     }
 
@@ -76,21 +70,50 @@ class Consumer {
         await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: consts.kafkajs.consumer.consumeFromBeginning })
         await this.kafkaConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                
+
                 // extract data
-                let newMessage = this.producer.extractData(message);
-                // console.log(JSON.stringify(data));
+                let newMessage = this.transformMonitoringDataset(message);
 
-                // write to bq
-                this.bqClient.insertRows(newMessage.value)
+                // write to bq and kafka topic
+                this.produce(newMessage);
 
-                // capture the changed data in the producer's topic
-                // this.producer.sendToTopic(newMessage);
-
-                // console.log(`${topic} | P:${partition} | Off:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
             }
         })
     }
+
+    /**
+     * transforms and returns a kafka message for this dataset 
+     * the returned message contains an array of modified data items which can be:
+     *      written to bq with bqClient insertRows(data), 
+     *      and sent to this producers writeTopic - sendToTopic(data)
+     * this function requires the datasets in the message to:
+     *      contain an object array of items in the 'data' attribute.  e.g. { "pms": { "id": "PMS-01-001" },  "data": [ .. ]
+     * @param {*} consumedMessage                                                   a kafka message
+     * @param {*} dataItemTransformer                                               callback function to transform a dataitem in the message
+    */
+    transformMonitoringDataset(consumedMessage, dataItemTransformer) {
+        let newMessage = [];
+        let key, dataset, newDataItem;
+        let dataItems = [];
+
+        // get kafka message attributes
+        dataset = JSON.parse(consumedMessage.value);
+        key = consumedMessage.key.toString();
+
+        // add each data item in the dataset has an individual message
+        dataset.data.forEach(dataItem => {                                          // e.g. "data": [ { "time_local": "2
+
+            // transform and add data to the dataitems array
+            newDataItem = this.transformDataItem(key, dataItem);                       // make a new dataitem with dataset-specific attributes
+            dataItems.push(newDataItem);
+
+        });
+
+        // create a kafka message containing the transformed dataitems as its value
+        newMessage.push(this.producer.createMessage(key, dataItems));
+        return newMessage;
+    }
+
 
     // initialise error and signal traps
     async initialiseTraps() {
@@ -120,6 +143,8 @@ class Consumer {
             })
         })
     }
+
+
 }
 
 
