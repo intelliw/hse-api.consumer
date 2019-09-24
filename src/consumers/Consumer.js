@@ -3,6 +3,11 @@
 /**
  * ./consumers/Consumer.js
  *  base type for Kafka message consumers  
+ *  the Consumer supertype calls its subtype to transform messages (retrieveMessages() eachMessage:
+ *      the subtype contains a Producer object and implements methods to transform and produce output 
+ *      - the Consumer supertype calls the subtype's transform method, which returns a transformed kafka message
+ *      - the Consumer supertype then performs generic transforms to the message, if any 
+ *      - it then calls the subtype's produce method with the transformed message
  */
 const consts = require('../host/constants');
 const enums = require('../host/enums');
@@ -80,7 +85,7 @@ class Consumer {
                 this.bqClient.insertRows(newMessage.value)
 
                 // capture the changed data in the producer's topic
-                this.producer.sendToTopic(newMessage);
+                // this.producer.sendToTopic(newMessage);
 
                 // console.log(`${topic} | P:${partition} | Off:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
             }

@@ -11,7 +11,6 @@ const utils = require('../host/utils');
 const Producer = require('../producers');
 
 const KAFKA_WRITE_TOPIC = enums.messageBroker.topics.dataset.inverter;
-const API_DATASET_NAME = enums.api.datasets.inverter;
 
 /**
  */
