@@ -55,7 +55,7 @@ class Producer {
         })
             .catch(e => console.error(`[${consts.kafkajs.producer.clientId}] ${e.message}`, e));
 
-        // log output               e.g. 2019-09-10 05:04:44.6630, 2 messages, 4 items [monitoring.mppt:2-3]
+        // log output               e.g. 2019-09-10 05:04:44.6630 [monitoring.mppt:2-3] 2 messages, 4 items 
         console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)} [${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}] ${transformResults.messages.length} messages, ${transformResults.itemCount} items`)
 
         // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 

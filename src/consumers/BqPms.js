@@ -60,7 +60,7 @@ class BqPms extends Consumer {
         });
 
         // write to kafka 
-        // this.producer.sendToTopic(transformResults); // remove comment if this is needed
+        this.producer.sendToTopic(transformResults); // remove comment if this is needed
 
    
     }

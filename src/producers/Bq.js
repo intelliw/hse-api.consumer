@@ -44,8 +44,8 @@ class Bq {
 
         
         // log output 
-        // e.g. 2019-09-10 05:10:31.7310, 2 rows [monitoring.inverter]
-        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}, ${rows.length} rows [${this.dataset}.${this.table}]`);
+        // e.g. 2019-09-10 05:10:31.7310 [monitoring.inverter] 2 rows 
+        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)} [${this.dataset}.${this.table}] ${rows.length} rows`);
 
     }
 
