@@ -44,16 +44,26 @@ class BqInverter extends Consumer {
         return super.transformMonitoringDataset(consumedMessage);
     }
 
-    // writes to bq and to the datasets kafka topic 
-    produce(newMessage) {
+    /* writes to bq and to the datasets kafka topic 
+     * the transformResults object contains an array of kafka messages with modified data items
+     *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
+    */
+    produce(transformResults) {
 
-        // bq
-        this.producer.bqClient.insertRows(newMessage[0].value);
+        // produce 
+        transformResults.messages.forEach(message => {
 
-        // write to kafka
-        // this.producer.sendToTopic(newMessage); // remove comment if needed
+            // bq
+            this.producer.bqClient.insertRows(message.value);
+
+        });
+
+        // write to kafka 
+        // this.producer.sendToTopic(transformResults); // remove comment if this is needed
+
 
     }
+
 
     // transforms and returns a data item specific to this dataset
     transformDataItem(key, dataItem) {

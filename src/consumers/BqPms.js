@@ -45,14 +45,23 @@ class BqPms extends Consumer {
         return super.transformMonitoringDataset(consumedMessage);
     }
 
-    // writes to bq and to the datasets kafka topic 
-    produce(newMessage) {
+    /* writes to bq and to the datasets kafka topic 
+     * the transformResults object contains an array of kafka messages with modified data items
+     *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
+    */
+    produce(transformResults) {
+        
+        // produce 
+        transformResults.messages.forEach(message => {
 
-        // bq
-        this.producer.bqClient.insertRows(newMessage[0].value);
+            // bq
+            this.producer.bqClient.insertRows(message.value);
 
-        // write to kafka
-        // this.producer.sendToTopic(newMessage); // remove comment if needed 
+        });
+
+        // write to kafka 
+        // this.producer.sendToTopic(transformResults); // remove comment if this is needed
+
    
     }
 

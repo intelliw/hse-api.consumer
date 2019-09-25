@@ -38,25 +38,28 @@ class Producer {
         this.writeTopic = writeTopic;
     }
 
-    // creates messages for each item in the data array and sends the message array to the broker
-    async sendToTopic(message) {
+    /* creates messages for each item in the data array and sends the message array to the broker
+     * the transformResults object contains an array of kafka messages with modified data items
+     *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
+     */
+    async sendToTopic(transformResults) {
 
         // send the message to the topic
         await this.producerObj.connect();
-
+        
         let result = await this.producerObj.send({
             topic: this.writeTopic,
-            messages: message,
+            messages: transformResults.messages,
             acks: enums.messageBroker.ack.default,                                  // default is 'leader'
             timeout: consts.kafkajs.producer.timeout
         })
             .catch(e => console.error(`[${consts.kafkajs.producer.clientId}] ${e.message}`, e));
 
-        // log output               e.g. 2019-09-10 05:04:44.6630, 2 messages [monitoring.mppt.dataset:2-3]                                                  
-        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}, ${message.length} messages [${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (message.length - 1)}]`)
+        // log output               e.g. 2019-09-10 05:04:44.6630, 2 messages, 4 items [monitoring.mppt:2-3]
+        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}, ${transformResults.messages.length} messages, ${transformResults.itemCount} items [${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}]`)
 
         // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 
-        if (consts.environments[consts.env].log.verbose) console.log(message);
+        if (consts.environments[consts.env].log.verbose) console.log(transformResults.messages);
 
         // disconnect
         await this.producerObj.disconnect();

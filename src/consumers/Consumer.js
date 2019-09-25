@@ -72,29 +72,35 @@ class Consumer {
             eachMessage: async ({ topic, partition, message }) => {
 
                 // extract data
-                let newMessage = this.transformMonitoringDataset(message);
-
+                let results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
+                
                 // write to bq and kafka topic
-                this.produce(newMessage);
+                this.produce(results);
 
             }
         })
     }
 
     /**
-     * transforms and returns a kafka message for this dataset 
-     * the returned message contains an array of modified data items which can be:
+     * transforms the dataset inside the kafka consumedMessage 
+     * and returns a results object containing an array of kafka messages with modified data items 
+     *  consumedMessage - a kafka message whose message.value contains a monitoring api dataset  
+     *  dataItemTransformer - a transform callback function implemented by the consumer subclass
+     * the returned results object contains these properties
+     *  itemCount  - a count of the total number of dataitems in all datasets / message
+     *  messages[] - array of kafka messages, each message.value contains a dataset with modified data items
+     *      e.g. { itemCount: 9, messages: [. . .] }
+     * the returned results.messages[] array can be:
      *      written to bq with bqClient insertRows(data), 
-     *      and sent to this producers writeTopic - sendToTopic(data)
-     * this function requires the datasets in the message to:
-     *      contain an object array of items in the 'data' attribute.  e.g. { "pms": { "id": "PMS-01-001" },  "data": [ .. ]
+     *      converted to kafka messages and sent to this producer's writeTopic - sendToTopic(data)
      * @param {*} consumedMessage                                                   a kafka message
      * @param {*} dataItemTransformer                                               callback function to transform a dataitem in the message
     */
     transformMonitoringDataset(consumedMessage, dataItemTransformer) {
-        let newMessage = [];
+
         let key, dataset, newDataItem;
         let dataItems = [];
+        let results = { itemCount: 0, messages: [] };
 
         // get kafka message attributes
         dataset = JSON.parse(consumedMessage.value);
@@ -110,8 +116,11 @@ class Consumer {
         });
 
         // create a kafka message containing the transformed dataitems as its value
-        newMessage.push(this.producer.createMessage(key, dataItems));
-        return newMessage;
+        results.itemCount = dataset.data.length;
+        results.messages.push(this.producer.createMessage(key, dataItems));
+
+        return results;
+        
     }
 
 
