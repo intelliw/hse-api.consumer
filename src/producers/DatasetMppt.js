@@ -11,9 +11,9 @@ const utils = require('../host/utils');
 const Bq = require('./Bq');
 const Producer = require('../producers');
 
-const KAFKA_WRITE_TOPIC = enums.messageBroker.topics.dataset.mppt;
-const BQ_DATASET = enums.dataWarehouse.datasets.monitoring;
-const BQ_TABLE = enums.dataWarehouse.tables.mppt;
+const KAFKA_WRITE_TOPIC = consts.environments[consts.env].topics.dataset.mppt;
+const BQ_DATASET = consts.environments[consts.env].datawarehouse.datasets.monitoring;
+const BQ_TABLE = consts.environments[consts.env].datawarehouse.tables.mppt;
 
 
 /**

@@ -13,7 +13,7 @@ const Producer = require('../producers');
 const Consumer = require('../consumers');
 
 // instance parameters
-const KAFKA_READ_TOPIC = enums.messageBroker.topics.monitoring.pms;
+const KAFKA_READ_TOPIC = consts.environments[consts.env].topics.monitoring.pms;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.pms;
 
 /**
@@ -59,8 +59,8 @@ class BqPms extends Consumer {
 
         });
 
-        // write to kafka 
-        // this.producer.sendToTopic(transformResults); // remove comment if this is needed
+        // write to kafka                                               // remove comment if this is needed
+        // this.producer.sendToTopic(transformResults); 
 
    
     }
@@ -68,21 +68,20 @@ class BqPms extends Consumer {
     // transforms and returns a data item specific to this dataset
     transformDataItem(key, dataItem) {
 
-        let watts;
-        let volts;
+        let volts, watts;
+        let attrArray;
 
         const PRECISION = consts.system.MONITORING_PRECISION;
         const TO_MILLIVOLTS = 1000;
         const TEMP_TOP_INDEX = 1, TEMP_MID_INDEX = 2, TEMP_BOTTOM_INDEX = 3;
         const FET_IN_INDEX = 1, FET_OUT_INDEX = 2;
-        const NUM_CELLS = 14;
-        const ITEMNUMBER_LENGTH = 2;                                                               // how many digits in the cell number e.g 02
+
 
         let p = dataItem.pack;                                                                      // all data objects in the sent message are inside pack
 
         let vcl = Math.min(...p.cell.volts);
         let vch = Math.max(...p.cell.volts);
-        let dvcl = p.cell.volts.map(element => (parseFloat(((element - vcl) * TO_MILLIVOLTS).toFixed())));
+        let dvcl = p.cell.volts.map(element => (parseFloat(((element - vcl) * TO_MILLIVOLTS).toFixed())));  // make an array of dvcl
 
         // pack.volts,  pack.watts
         volts = dataItem.pack.cell.volts.reduce((sum, x) => sum + x).toFixed(PRECISION);            // sum all the cell volts to get pack volts
@@ -103,32 +102,37 @@ class BqPms extends Consumer {
             temp_bottom: p.temp[TEMP_BOTTOM_INDEX - 1]
         }
 
-        // cells    
-        for (let i = 1; i <= NUM_CELLS; i++) {
-            let cellid = 'cell_' + utils.padZero(i, ITEMNUMBER_LENGTH);
-            dataObj[cellid] = {                                                                    //   "cell_01": {
-                volts: p.cell.volts[i - 1],                                                         //      "volts": 3.661, 
-                dvcl: dvcl[i - 1],                                                                  //      "dvcl": 7, 
-                open: utils.valueExistsInArray(p.cell.open, i) ? 1 : 0                              //      "open": 0 },            
-            }
-        }
+        // cells   
+        attrArray = [];
+        for (let i = 1; i <= p.cell.volts.length; i++) {
+            attrArray.push({ 
+                volts: p.cell.volts[i - 1],                                                         //      { "volts": 3.661,         
+                dvcl: dvcl[i - 1],                                                                  //      "dvcl": 7,  
+                open: utils.valueExistsInArray(p.cell.open, i) ? true : false                      //      "open": false },             
+            });
+        };
+        dataObj.cell = attrArray;                                                                   // "cell": [ { "volts": 3.661, "dvcl": 7, "open": false },
 
         // fets
-        dataObj.fet_in = {                                                                         // "fet_in": {
-            open: utils.valueExistsInArray(p.fet.open, FET_IN_INDEX) ? 1 : 0,                       //      "open": 1, 
+        dataObj.fet_in = {                                                                          // "fet_in": {
+            open: utils.valueExistsInArray(p.fet.open, FET_IN_INDEX) ? true : false,                //      "open": false, 
             temp: p.fet.temp[FET_IN_INDEX - 1]                                                      //      "temp": 34.1 },        
         }
-        dataObj.fet_out = {                                                                        // "fet_out": {
-            open: utils.valueExistsInArray(p.fet.open, FET_OUT_INDEX) ? 1 : 0,                      //      "open": 1, 
+        dataObj.fet_out = {                                                                         // "fet_out": {
+            open: utils.valueExistsInArray(p.fet.open, FET_OUT_INDEX) ? true : false,               //      "open": false, 
             temp: p.fet.temp[FET_OUT_INDEX - 1]                                                     //      "temp": 32.2 },        
+        }
+
+        // status
+        dataObj.status = {
+            bus_connect: (parseInt(p.status) == 1) ? true : false                                   // "status": { "bus_connect": true }, 
         }
 
         // add generic attributes
         dataObj.sys = { source: dataItem.sys.source }
-        dataObj.time_utc = dataItem.time_utc
-        dataObj.time_local = dataItem.time_local
+        dataObj.time_event = dataItem.time_event
+        dataObj.time_zone = dataItem.time_zone
         dataObj.time_processing = dataItem.time_processing
-
 
         return dataObj;
     }

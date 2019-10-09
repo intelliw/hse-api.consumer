@@ -13,7 +13,7 @@ const Producer = require('../producers');
 const Consumer = require('../consumers');
 
 // instance parameters
-const KAFKA_READ_TOPIC = enums.messageBroker.topics.monitoring.inverter;
+const KAFKA_READ_TOPIC = consts.environments[consts.env].topics.monitoring.inverter;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.inverter;
 
 /**
@@ -98,8 +98,8 @@ class BqInverter extends Consumer {
         amps = dataItem.battery.amps;
         watts = (volts * amps).toFixed(PRECISION);
 
-        dataObj.battery = {                                                                        //   "battery": {
-            volts: volts, amps: amps, watts: parseFloat(watts)                                     //      "volts": 55.1, "amps": 0.0, "watts": 0 },
+        dataObj.battery = {                                                                         //   "battery": {
+            volts: volts, amps: amps, watts: parseFloat(watts)                                      //      "volts": 55.1, "amps": 0.0, "watts": 0 },
         }
 
         // load
@@ -111,26 +111,30 @@ class BqInverter extends Consumer {
 
             attrArray.push({ volts: volts, amps: amps, watts: parseFloat(watts) });
         };
-        dataObj.load = attrArray;                                                                     // "load": [ {"volts": 48, "amps": 6, "watts": 288 },
+        dataObj.load = attrArray;                                                                   // "load": [ {"volts": 48, "amps": 6, "watts": 288 },
 
 
         // grid
+        attrArray = [];
         for (let i = 1; i <= dataItem.grid.volts.length; i++) {
-            volts = dataItem.grid.volts[i - 1];
-            amps = dataItem.grid.amps[i - 1];
-            pf = dataItem.grid.pf[i - 1];
-            watts = (volts * amps * pf * SQ_ROOT_OF_THREE).toFixed(PRECISION);                      // grid.watts == V x I x pf x √3  
+            attrArray.push({ 
+                volts: dataItem.grid.volts[i - 1],
+                amps: dataItem.grid.amps[i - 1],
+                pf: dataItem.grid.pf[i - 1],
+                watts: (volts * amps * pf * SQ_ROOT_OF_THREE).toFixed(PRECISION)                    // grid.watts == V x I x pf x √3  
+            });
+        };
+        dataObj.grid = attrArray;           
 
-            let gridId = 'grid_' + utils.padZero(i, ITEMNUMBER_LENGTH);
-            dataObj[gridId] = {                                                                     //   "grid_01": {
-                volts: volts, amps: amps, pf: pf, watts: parseFloat(watts)                          //      "volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 },
-            }
+        // status
+        dataObj.status = {
+            bus_connect: (parseInt(dataItem.status) == 1) ? true : false                            // "status": { "bus_connect": true }, 
         }
 
         // add generic attributes
         dataObj.sys = { source: dataItem.sys.source }
-        dataObj.time_utc = dataItem.time_utc
-        dataObj.time_local = dataItem.time_local
+        dataObj.time_event = dataItem.time_event
+        dataObj.time_zone = dataItem.time_zone
         dataObj.time_processing = dataItem.time_processing
 
         return dataObj;

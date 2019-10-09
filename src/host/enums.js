@@ -14,6 +14,30 @@ module.exports.api = {                                      // api enums
     }
 }
 
+// equipment status - for non-binary statuses based on a tuple of multiple bits e.g if the 2 'mppt.input' bits have a value tuple of '00' the statis is 'normal'
+module.exports.equipmentStatus = {
+    mppt: {
+        input: {                                            // bit 1,2              "input": "normal"
+            tuple_00: 'normal',
+            tuple_01: 'no-power',
+            tuple_10: 'high-volt-input',
+            tuple_11: 'input-volt-error'
+        },
+        load: {                                             // bit 7,8              "load": "ok",     
+            tuple_00: 'ok',
+            tuple_01: 'overcurrent',
+            tuple_10: 'short',
+            tuple_11: 'not-applicable'
+        },
+        charging: {                                         // bit 10,11            "charging": "not-charging",         
+            tuple_00: 'not-charging',
+            tuple_01: 'float',
+            tuple_10: 'boost',
+            tuple_11: 'equalisation'
+        }
+    }
+}
+
 
 module.exports.messageBroker = {                            // kafka message broker. topics are based on enums.datasets. 
     consumers: {                                            // consumer group ids
@@ -27,29 +51,5 @@ module.exports.messageBroker = {                            // kafka message bro
         all: -1,                                    // -1 = all replicas must acknowledge (default) 
         none: 0,                                    //  0 = no acknowledgments 
         leader: 1                                   //  1 = only waits for the leader to acknowledge 
-    },
-    topics: {                                               //  topic names 
-        monitoring: {                                       //  topics for monitoring data received from api host
-            pms: 'monitoring.pms',
-            mppt: 'monitoring.mppt',
-            inverter: 'monitoring.inverter'
-        },
-        dataset: {                                          //  topics for monitoring datasets for bq update, created by consumer at 1st stage of monitoring
-            pms: 'monitoring.pms.dataset',
-            mppt: 'monitoring.mppt.dataset',
-            inverter: 'monitoring.inverter.dataset'
-        }
-    }
-}
-
-module.exports.dataWarehouse = {                            // bigquery
-    datasets: {
-        monitoring: 'monitoring'
-    },
-    tables: {
-        pms: 'pms',
-        mppt: 'mppt',
-        inverter: 'inverter',
-        TEST: 'TEST'
     }
 }

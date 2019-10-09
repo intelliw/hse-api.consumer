@@ -30,13 +30,13 @@ class Consumer {
 
      constructor arguments 
     * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
-    * @param {*} readTopic                                  //  the topic to read from enums.messageBroker.topics.monitoring
+    * @param {*} readTopic                                  //  the topic to read from consts.environments[consts.env].topics.monitoring
     */
     constructor(groupId, readTopic) {
 
         // store params
         this.readTopic = readTopic;
-
+        
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: consts.environments[consts.env].kafka.brokers,
@@ -65,20 +65,25 @@ class Consumer {
 
     // connect and listen for messages
     async retrieveMessages() {
+        try {
+            await this.kafkaConsumer.connect();
+            await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: consts.kafkajs.consumer.consumeFromBeginning });
+            await this.kafkaConsumer.run({
+                eachMessage: async ({ topic, partition, message }) => {
+                                                
+                    // extract dataItems                                            // transformMonitoringDataset implemented by supertype which calls transformDataItem in subtype
+                    let results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
+                    
+                    // write to bq and kafka topic
+                    this.produce(results);
 
-        await this.kafkaConsumer.connect()
-        await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: consts.kafkajs.consumer.consumeFromBeginning })
-        await this.kafkaConsumer.run({
-            eachMessage: async ({ topic, partition, message }) => {
+                }
+            });
 
-                // extract data
-                let results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
-                
-                // write to bq and kafka topic
-                this.produce(results);
+        } catch (e) {
+            console.error(`>>>>>> RETRIEVE ERROR: [${consts.kafkajs.consumer.clientId}] ${e.message}`, e)
+        }
 
-            }
-        })
     }
 
     /**
@@ -106,9 +111,9 @@ class Consumer {
         dataset = JSON.parse(consumedMessage.value);
         key = consumedMessage.key.toString();
 
-        // add each data item in the dataset has an individual message
+        // add each data item in the dataset as an individual message
         dataset.data.forEach(dataItem => {                                          // e.g. "data": [ { "time_local": "2
-
+        
             // transform and add data to the dataitems array
             newDataItem = this.transformDataItem(key, dataItem);                       // make a new dataitem with dataset-specific attributes
             dataItems.push(newDataItem);

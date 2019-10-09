@@ -20,7 +20,7 @@ class Producer {
      * 
     instance attributes:  
      producerObj": kafka.producer()
-     writeTopic:  enums.messageBroker.topics.dataset                              // this is the topic to which the subclassed producer writes, in sendTopic()  
+     writeTopic:  consts.environments[consts.env].topics.dataset                              // this is the topic to which the subclassed producer writes, in sendTopic()  
     */
     constructor(writeTopic) {
         
@@ -43,30 +43,34 @@ class Producer {
      *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
      */
     async sendToTopic(transformResults) {
+        // send the message to the topics
+        try {
 
-        // send the message to the topic
-        await this.producerObj.connect();
-        
-        let result = await this.producerObj.send({
-            topic: this.writeTopic,
-            messages: transformResults.messages,
-            acks: enums.messageBroker.ack.default,                                  // default is 'leader'
-            timeout: consts.kafkajs.producer.timeout
-        })
-            .catch(e => console.error(`[${consts.kafkajs.producer.clientId}] ${e.message}`, e));
+            // send the message to the topic
+            await this.producerObj.connect();
+            
+            let result = await this.producerObj.send({
+                topic: this.writeTopic,
+                messages: transformResults.messages,
+                acks: enums.messageBroker.ack.default,                                  // default is 'leader'
+                timeout: consts.kafkajs.producer.timeout
+            })
+                .catch(e => console.error(`[${consts.kafkajs.producer.clientId}] ${e.message}`, e));
 
-        // log output               e.g. 2019-09-10 05:04:44.6630 [monitoring.mppt:2-3] 2 messages, 4 items 
-        console.log(`${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)} [${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}] ${transformResults.messages.length} messages, ${transformResults.itemCount} items`)
+            // log output               e.g. 2019-09-10 05:04:44.6630 [monitoring.mppt:2-3] 2 messages, 4 items 
+            console.log(`[${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}] ${transformResults.messages.length} messages, ${transformResults.itemCount} items`)
+            if (consts.environments[consts.env].log.verbose) console.log(transformResults.messages);        // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 
 
-        // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 
-        if (consts.environments[consts.env].log.verbose) console.log(transformResults.messages);
+            // disconnect
+            await this.producerObj.disconnect();
 
-        // disconnect
-        await this.producerObj.disconnect();
+        } catch (e) {
+            console.error(`>>>>>> CONNECT ERROR: [${consts.kafkajs.producer.clientId}] ${e.message}`, e)
+        }
 
     }
 
-    /* creates and returns a message
+    /* creates and returns a kafka message
     * key - is a string
     * data - contains the message value 
     * headers - a json object (note: kafkajs produces a byte array for headers unlike messages which are a string buffer
