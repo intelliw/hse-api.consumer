@@ -127,9 +127,7 @@ class BqMppt extends Consumer {
             system: (statusBits[12] == 1) ? true : false,                                                           // bit 12               "system": true,  
             standby: (statusBits[13] == 1) ? true : false                                                           // bit 13               "standby": true } 
         }
-        
-        // @DEBUG do move this up where statusBits array is used as this will mess up the array 
-                console.log(`equ status: ${statusBits.reverse().join('')}`);                                          // put bits back in order as documented for display in the portal 
+        // @DEBUG do move up ! log after use as this messes up the statusBits array          console.log(`equ status: ${statusBits.reverse().join('')}`);                                          // put bits back in order as documented for display in the portal 
 
         // add generic attributes
         dataObj.sys = { source: dataItem.sys.source }
