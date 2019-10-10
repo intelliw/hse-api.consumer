@@ -15,7 +15,7 @@ module.exports.api = {                                      // api enums
 }
 
 // equipment status - for non-binary statuses based on a tuple of multiple bits e.g if the 2 'mppt.input' bits have a value tuple of '00' the statis is 'normal'
-module.exports.equipmentStatus = {
+module.exports.equStatus = {
     mppt: {
         input: {                                            // bit 1,2              "input": "normal"
             tuple_00: 'normal',

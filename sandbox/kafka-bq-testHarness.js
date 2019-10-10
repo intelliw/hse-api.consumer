@@ -3,6 +3,7 @@
 
 const consts = require('../src/host/constants');
 const enums = require('../src/host/enums');
+const configc = require('../src/host/configCommon');
 
 const { Kafka } = require('kafkajs');
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -10,29 +11,29 @@ const { BigQuery } = require('@google-cloud/bigquery');
 // const kafkaBrokerHost = '10.140.0.6';             // 10.140.0.6 / 35.201.177.2     192.168.1.106 
 const KAFKA_CONSUME_FROM_BEGINNING = true;
 
-const topicName = consts.environments[consts.env].topics.monitoring.pms;
+const topicName = configc.env[configc.env.active].topics.monitoring.pms;
 const consumerGroupId = enums.messageBroker.consumers.groupId.pms;      // group name convention = <target system>.<target dataset>.<target table>
 
 const consumerClientId = `${consumerGroupId}.001`;      // 
 
 const kafka = new Kafka({
-  brokers: consts.environments[consts.env].kafka.brokers,
+  brokers: configc.env[configc.env.active].kafka.brokers,
   clientId: consumerClientId,
 })
 
 const consumer = kafka.consumer({
   groupId: consumerGroupId,
-  sessionTimeout: consts.kafkajs.consumer.sessionTimeout,
-  heartbeatInterval: consts.kafkajs.consumer.heartbeatInterval,
-  rebalanceTimeout: consts.kafkajs.consumer.rebalanceTimeout,
-  metadataMaxAge: consts.kafkajs.consumer.metadataMaxAge,
-  allowAutoTopicCreation:consts.kafkajs.consumer.allowAutoTopicCreation,
-  maxBytesPerPartition: consts.kafkajs.consumer.maxBytesPerPartition,
-  minBytes: consts.kafkajs.consumer.minBytes,
-  maxBytes: consts.kafkajs.consumer.maxBytes,
-  maxWaitTimeInMs: consts.kafkajs.consumer.maxWaitTimeInMs,
-  retry: consts.kafkajs.consumer.retry,
-  readUncommitted: consts.kafkajs.consumer.readUncommitted
+  sessionTimeout: configc.kafkajs.consumer.sessionTimeout,
+  heartbeatInterval: configc.kafkajs.consumer.heartbeatInterval,
+  rebalanceTimeout: configc.kafkajs.consumer.rebalanceTimeout,
+  metadataMaxAge: configc.kafkajs.consumer.metadataMaxAge,
+  allowAutoTopicCreation:configc.kafkajs.consumer.allowAutoTopicCreation,
+  maxBytesPerPartition: configc.kafkajs.consumer.maxBytesPerPartition,
+  minBytes: configc.kafkajs.consumer.minBytes,
+  maxBytes: configc.kafkajs.consumer.maxBytes,
+  maxWaitTimeInMs: configc.kafkajs.consumer.maxWaitTimeInMs,
+  retry: configc.kafkajs.consumer.retry,
+  readUncommitted: configc.kafkajs.consumer.readUncommitted
 })
 const bqClient = new BigQuery();                  // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
 

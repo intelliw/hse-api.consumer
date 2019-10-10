@@ -7,13 +7,15 @@
 
 const enums = require('../host/enums');
 const consts = require('../host/constants');
-const utils = require('../host/utils');
+
+const utilsc = require('../host/utilsCommon');
+const configc = require('../host/configCommon');
 
 const Producer = require('../producers');
 const Consumer = require('../consumers');
 
 // instance parameters
-const KAFKA_READ_TOPIC = consts.environments[consts.env].topics.monitoring.pms;
+const KAFKA_READ_TOPIC = configc.env[configc.env.active].topics.monitoring.pms;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.pms;
 
 /**
@@ -108,24 +110,25 @@ class BqPms extends Consumer {
             attrArray.push({ 
                 volts: p.cell.volts[i - 1],                                                         //      { "volts": 3.661,         
                 dvcl: dvcl[i - 1],                                                                  //      "dvcl": 7,  
-                open: utils.valueExistsInArray(p.cell.open, i) ? true : false                      //      "open": false },             
+                open: utilsc.valueExistsInArray(p.cell.open, i) ? true : false                      //      "open": false },             
             });
         };
         dataObj.cell = attrArray;                                                                   // "cell": [ { "volts": 3.661, "dvcl": 7, "open": false },
 
         // fets
         dataObj.fet_in = {                                                                          // "fet_in": {
-            open: utils.valueExistsInArray(p.fet.open, FET_IN_INDEX) ? true : false,                //      "open": false, 
+            open: utilsc.valueExistsInArray(p.fet.open, FET_IN_INDEX) ? true : false,               //      "open": false, 
             temp: p.fet.temp[FET_IN_INDEX - 1]                                                      //      "temp": 34.1 },        
         }
         dataObj.fet_out = {                                                                         // "fet_out": {
-            open: utils.valueExistsInArray(p.fet.open, FET_OUT_INDEX) ? true : false,               //      "open": false, 
+            open: utilsc.valueExistsInArray(p.fet.open, FET_OUT_INDEX) ? true : false,              //      "open": false, 
             temp: p.fet.temp[FET_OUT_INDEX - 1]                                                     //      "temp": 32.2 },        
         }
 
         // status
+        let statusBits = utilsc.hex2bitArray(p.status, consts.equStatus.BIT_LENGTH);                // get a reversed array of bits (bit 0 is least significant bit)
         dataObj.status = {
-            bus_connect: (parseInt(p.status) == 1) ? true : false                                   // "status": { "bus_connect": true }, 
+            bus_connect: utilsc.tristateBoolean(statusBits[0])                                      // bit 0    "status": { "bus_connect": true }, 
         }
 
         // add generic attributes

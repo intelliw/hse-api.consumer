@@ -3,18 +3,20 @@
 
 const consts = require('../src/host/constants');
 const enums = require('../src/host/enums');
+const configc = require('../src/host/configCommon');
+
 const { Kafka } = require('kafkajs');
 
 // const kafkaBrokerHost = '10.140.0.6';             // 10.140.0.6 / 35.201.177.2     192.168.1.106 
 const KAFKA_CONSUME_FROM_BEGINNING = true;
 
-const topicName = consts.environments[consts.env].topics.monitoring.pms;
+const topicName = configc.env[configc.env.active].topics.monitoring.pms;
 const consumerGroupId = enums.messageBroker.consumers.groupId.pms;      // group name convention = <target system>.<target dataset>.<target table>
 
 const consumerClientId = `${consumerGroupId}.001`;      // 
 
 const kafka = new Kafka({
-  brokers: consts.environments[consts.env].kafka.brokers,
+  brokers: configc.env[configc.env.active].kafka.brokers,
   clientId: consumerClientId,
 })
 

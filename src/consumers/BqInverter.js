@@ -7,13 +7,15 @@
 
 const enums = require('../host/enums');
 const consts = require('../host/constants');
-const utils = require('../host/utils');
+
+const utilsc = require('../host/utilsCommon');
+const configc = require('../host/configCommon');
 
 const Producer = require('../producers');
 const Consumer = require('../consumers');
 
 // instance parameters
-const KAFKA_READ_TOPIC = consts.environments[consts.env].topics.monitoring.inverter;
+const KAFKA_READ_TOPIC = configc.env[configc.env.active].topics.monitoring.inverter;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.inverter;
 
 /**
@@ -127,8 +129,9 @@ class BqInverter extends Consumer {
         dataObj.grid = attrArray;           
 
         // status
+        let statusBits = utilsc.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);         // get a reversed array of bits (bit 0 is least significant bit)
         dataObj.status = {
-            bus_connect: (parseInt(dataItem.status) == 1) ? true : false                            // "status": { "bus_connect": true }, 
+            bus_connect: utilsc.tristateBoolean(statusBits[0])                                      // bit 0    "status": { "bus_connect": true }, 
         }
 
         // add generic attributes

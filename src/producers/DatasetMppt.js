@@ -6,14 +6,15 @@
  */
 const consts = require('../host/constants');
 const enums = require('../host/enums');
-const utils = require('../host/utils');
+
+const configc = require('../host/configCommon');
 
 const Bq = require('./Bq');
 const Producer = require('../producers');
 
-const KAFKA_WRITE_TOPIC = consts.environments[consts.env].topics.dataset.mppt;
-const BQ_DATASET = consts.environments[consts.env].datawarehouse.datasets.monitoring;
-const BQ_TABLE = consts.environments[consts.env].datawarehouse.tables.mppt;
+const KAFKA_WRITE_TOPIC = configc.env[configc.env.active].topics.dataset.mppt;
+const BQ_DATASET = configc.env[configc.env.active].datawarehouse.datasets.monitoring;
+const BQ_TABLE = configc.env[configc.env.active].datawarehouse.tables.mppt;
 
 
 /**

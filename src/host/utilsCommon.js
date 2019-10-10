@@ -1,15 +1,14 @@
 //@ts-check
 'use strict';
 /**
- * PACKAGE: ./host/index.js
- * schemas and constants
- * utils.js is from api host - any changes should be mastered in api host utils.js -----------------------------------------
+ * PACKAGE: ./host/utilsCommon.js
+ * shared utilities
+ * these utilities are shared between host anmd consumer 
+ * 
+ * utilsCommon.js is from api host - any changes should be mastered in api host utilsCommon.js -----------------------------------------
  */
-const enums = require('./enums');
-const consts = require('../host/constants');
 
-const moment = require('moment');
-
+const consts = require('./constants');
 
 //returns whether the findValue exists at least once in the findInArray
 module.exports.valueExistsInArray = (findInArray, findValue) => {
@@ -59,20 +58,49 @@ module.exports.randomIntegerString = (min, max) => {
 }
 
 
-// converts a hex value to an array of reversed bits, the least-significant-bit (rightmost bit) is in element zero       
+/* converts a hex value to an array of reversed bits, the least-significant-bit (rightmost bit) is in element zero       
+    if hexValue is undefined an array of null values is returned
+*/
 module.exports.hex2bitArray = (hexValue, minLength) => {
     const hexBase = 16;
     const binaryBase = 2;
     
-    // convert hex to binary - e.g. 1A79 --> 0001 1010 0111 1001
-    let binaryValue = parseInt(hexValue, hexBase).toString(binaryBase).padStart(minLength, '0');
-    
-    // make a reversed array - e.g  bitArray[0] = 1, bitArray[1] = 0
-    let bitArray = binaryValue.split('').reverse();  
+    let bitArray = [];
+
+    // process  if hexValue is valid
+    if (hexValue != consts.NONE) {
+
+        // convert hex to binary - e.g. 1A79 --> 0001 1010 0111 1001
+        let binaryValue = parseInt(hexValue, hexBase).toString(binaryBase).padStart(minLength, '0');
+        
+        // reverse the array - e.g  bitArray[0] = 1, bitArray[1] = 0          
+        bitArray = binaryValue.split('').reverse();             
+
+    // if hexValue is invalid return null array
+    } else {    
+        bitArray = new Array(minLength).fill(null);
+    }
+
     return bitArray;
 }
 
 
+/* returns true, false, or null 
+   depending on whether bitValue is 1, 0, or null/invalid
+*/
+module.exports.tristateBoolean = (bitValue) => {
+
+    let tristate = null;
+
+    // return true/false if bitValue is 1,0
+    if (bitValue == 1) {
+        tristate = true;
+    } else if (bitValue == 0) {
+        tristate = false;
+    }
+
+    return tristate;
+}
 
 // test... node src/host/utils
 // console.log(this.randomIntegerString(1,999));

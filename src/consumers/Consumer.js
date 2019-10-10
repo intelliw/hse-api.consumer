@@ -11,6 +11,7 @@
  */
 const consts = require('../host/constants');
 const enums = require('../host/enums');
+const configc = require('../host/configCommon');
 
 const { Kafka } = require('kafkajs');
 
@@ -18,7 +19,7 @@ const { Kafka } = require('kafkajs');
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-const CLIENT_ID = consts.kafkajs.consumer.clientId;         // unique client id for this instance, created at startup 
+const CLIENT_ID = configc.kafkajs.consumer.clientId;         // unique client id for this instance, created at startup 
 
 class Consumer {
     /**9
@@ -30,7 +31,7 @@ class Consumer {
 
      constructor arguments 
     * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
-    * @param {*} readTopic                                  //  the topic to read from consts.environments[consts.env].topics.monitoring
+    * @param {*} readTopic                                  //  the topic to read from configc.env[configc.env.active].topics.monitoring
     */
     constructor(groupId, readTopic) {
 
@@ -39,22 +40,22 @@ class Consumer {
         
         // create the kafka consumer
         const kafka = new Kafka({
-            brokers: consts.environments[consts.env].kafka.brokers,
+            brokers: configc.env[configc.env.active].kafka.brokers,
             clientId: CLIENT_ID,
         })
         this.kafkaConsumer = kafka.consumer({
             groupId: groupId,
-            sessionTimeout: consts.kafkajs.consumer.sessionTimeout,
-            heartbeatInterval: consts.kafkajs.consumer.heartbeatInterval,
-            rebalanceTimeout: consts.kafkajs.consumer.rebalanceTimeout,
-            metadataMaxAge: consts.kafkajs.consumer.metadataMaxAge,
-            allowAutoTopicCreation: consts.kafkajs.consumer.allowAutoTopicCreation,
-            maxBytesPerPartition: consts.kafkajs.consumer.maxBytesPerPartition,
-            minBytes: consts.kafkajs.consumer.minBytes,
-            maxBytes: consts.kafkajs.consumer.maxBytes,
-            maxWaitTimeInMs: consts.kafkajs.consumer.maxWaitTimeInMs,
-            retry: consts.kafkajs.consumer.retry,
-            readUncommitted: consts.kafkajs.consumer.readUncommitted
+            sessionTimeout: configc.kafkajs.consumer.sessionTimeout,
+            heartbeatInterval: configc.kafkajs.consumer.heartbeatInterval,
+            rebalanceTimeout: configc.kafkajs.consumer.rebalanceTimeout,
+            metadataMaxAge: configc.kafkajs.consumer.metadataMaxAge,
+            allowAutoTopicCreation: configc.kafkajs.consumer.allowAutoTopicCreation,
+            maxBytesPerPartition: configc.kafkajs.consumer.maxBytesPerPartition,
+            minBytes: configc.kafkajs.consumer.minBytes,
+            maxBytes: configc.kafkajs.consumer.maxBytes,
+            maxWaitTimeInMs: configc.kafkajs.consumer.maxWaitTimeInMs,
+            retry: configc.kafkajs.consumer.retry,
+            readUncommitted: configc.kafkajs.consumer.readUncommitted
         });
 
         // start the consumer    
@@ -67,7 +68,7 @@ class Consumer {
     async retrieveMessages() {
         try {
             await this.kafkaConsumer.connect();
-            await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: consts.kafkajs.consumer.consumeFromBeginning });
+            await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: configc.kafkajs.consumer.consumeFromBeginning });
             await this.kafkaConsumer.run({
                 eachMessage: async ({ topic, partition, message }) => {
                                                 
@@ -81,7 +82,7 @@ class Consumer {
             });
 
         } catch (e) {
-            console.error(`>>>>>> RETRIEVE ERROR: [${consts.kafkajs.consumer.clientId}] ${e.message}`, e)
+            console.error(`>>>>>> RETRIEVE ERROR: [${configc.kafkajs.consumer.clientId}] ${e.message}`, e)
         }
 
     }
