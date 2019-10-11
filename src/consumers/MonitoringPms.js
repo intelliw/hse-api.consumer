@@ -12,7 +12,7 @@ const utilsc = require('../host/utilsCommon');
 const configc = require('../host/configCommon');
 
 const Producer = require('../producers');
-const Consumer = require('../consumers');
+const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
 const KAFKA_READ_TOPIC = configc.env[configc.env.active].topics.monitoring.pms;
@@ -20,10 +20,10 @@ const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.pms;
 
 /**
  * instance attributes
- * producer                                   //  e.g. DatasetPms - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                                             //  e.g. DatasetPms - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class BqPms extends Consumer {
+class MonitoringPms extends KafkaConsumer {
 
     /**
     instance attributes, constructor arguments  - see super
@@ -67,8 +67,11 @@ class BqPms extends Consumer {
    
     }
 
-    // transforms and returns a data item specific to this dataset
-    transformDataItem(key, dataItem) {
+    /* transforms and returns a data item specific to this dataset
+     dataSet        - e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
+     dataItem       - e.g. "data": [ { "time_local": "2
+    */
+   transformDataItem(key, dataSet, dataItem) {
 
         let volts, watts;
         let attrArray;
@@ -93,6 +96,11 @@ class BqPms extends Consumer {
         let dataObj = {
             pms_id: key,                                                                            // { "pms_id": "PMS-01-002",
             pack_id: p.id,                                                                          //   "pack_id": "0248",
+        }
+
+        // pms
+        dataObj.pms = {                                                                             //   "pms": {   
+            temp: dataSet.pms.temp                                                                  //   get temp from dataset  e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
         }
 
         // pack    
@@ -144,4 +152,4 @@ class BqPms extends Consumer {
 
 
 
-module.exports = BqPms;
+module.exports = MonitoringPms;

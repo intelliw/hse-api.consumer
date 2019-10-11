@@ -11,7 +11,7 @@ const configc = require('../host/configCommon');
 const moment = require('moment');
 const { BigQuery } = require('@google-cloud/bigquery');
 
-class Bq {
+class BqProducer {
     /**
      * superclass - 
      * 
@@ -58,4 +58,4 @@ class Bq {
 
 }
 
-module.exports = Bq;
+module.exports = BqProducer;

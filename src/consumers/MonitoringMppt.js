@@ -12,18 +12,19 @@ const utilsc = require('../host/utilsCommon');
 const configc = require('../host/configCommon');
 
 const Producer = require('../producers');
-const Consumer = require('../consumers');
+const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
 const KAFKA_READ_TOPIC = configc.env[configc.env.active].topics.monitoring.mppt;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.mppt;
 
+
 /**
  * instance attributes
- * producer                                   //  e.g. DatasetPms - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                                             //  e.g. DatasetMppt - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class BqMppt extends Consumer {
+class MonitoringMppt extends KafkaConsumer {
     /**
     instance attributes, constructor arguments  - see super
     */
@@ -66,8 +67,11 @@ class BqMppt extends Consumer {
     }
 
 
-    // transforms and returns a data item specific to this dataset
-    transformDataItem(key, dataItem) {
+    /* transforms and returns a data item specific to this dataset
+     dataSet        - e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
+     dataItem       - e.g. "data": [ { "time_local": "2
+    */
+    transformDataItem(key, dataSet, dataItem) {
 
         let volts, amps, watts;
         let attrArray;
@@ -141,4 +145,4 @@ class BqMppt extends Consumer {
 }
 
 
-module.exports = BqMppt;
+module.exports = MonitoringMppt;

@@ -14,7 +14,7 @@ const configc = require('../host/configCommon');
 
 const moment = require('moment');
 
-class Producer {
+class KafkaProducer {
     /**
      * superclass - 
      * clients of subtypes must first call extractData(), then sendToTopic()
@@ -96,4 +96,4 @@ class Producer {
 
 }
 
-module.exports = Producer;
+module.exports = KafkaProducer;

@@ -12,18 +12,19 @@ const utilsc = require('../host/utilsCommon');
 const configc = require('../host/configCommon');
 
 const Producer = require('../producers');
-const Consumer = require('../consumers');
+const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
 const KAFKA_READ_TOPIC = configc.env[configc.env.active].topics.monitoring.inverter;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.inverter;
 
+
 /**
  * instance attributes
- * producer                                   //  e.g. DatasetPms - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                                             //  e.g. DatasetInverter - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class BqInverter extends Consumer {
+class MonitoringInverter extends KafkaConsumer {
 
     /**
     instance attributes, constructor arguments  - see super
@@ -67,8 +68,11 @@ class BqInverter extends Consumer {
     }
 
 
-    // transforms and returns a data item specific to this dataset
-    transformDataItem(key, dataItem) {
+    /* transforms and returns a data item specific to this dataset
+     dataSet        - e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
+     dataItem       - e.g. "data": [ { "time_local": "2
+    */
+   transformDataItem(key, dataSet, dataItem) {
 
 
         let volts, amps, watts, pf;
@@ -148,4 +152,4 @@ class BqInverter extends Consumer {
 }
 
 
-module.exports = BqInverter;
+module.exports = MonitoringInverter;

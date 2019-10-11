@@ -6,7 +6,7 @@
 const Consumer = require('./src/consumers'); 
 
 // create consuemrs for each topic, they all share the same client id
-const pms = new Consumer.BqPms();       
-const mppt = new Consumer.BqMppt();      
-const inverter = new Consumer.BqInverter();      
+const pms = new Consumer.MonitoringPms();       
+const mppt = new Consumer.MonitoringMppt();      
+const inverter = new Consumer.MonitoringInverter();      
 

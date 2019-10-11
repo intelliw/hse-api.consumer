@@ -6,5 +6,5 @@
 const Consumer = require('./src/consumers'); 
 
 // create consuemrs for each topic, they all share the same client id
-const mppt = new Consumer.BqMppt();      
+const mppt = new Consumer.MonitoringMppt();      
 

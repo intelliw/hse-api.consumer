@@ -4,7 +4,7 @@
  * ./consumers/Consumer.js
  *  base type for Kafka message consumers  
  *  the Consumer supertype calls its subtype to transform messages (retrieveMessages() eachMessage:
- *      the subtype contains a Producer object and implements methods to transform and produce output 
+ *      the subtype contains a Consumer object and implements methods to transform and produce output 
  *      - the Consumer supertype calls the subtype's transform method, which returns a transformed kafka message
  *      - the Consumer supertype then performs generic transforms to the message, if any 
  *      - it then calls the subtype's produce method with the transformed message
@@ -21,7 +21,7 @@ const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
 const CLIENT_ID = configc.kafkajs.consumer.clientId;         // unique client id for this instance, created at startup 
 
-class Consumer {
+class KafkaConsumer {
     /**9
      * superclass - 
      * 
@@ -104,25 +104,25 @@ class Consumer {
     */
     transformMonitoringDataset(consumedMessage, dataItemTransformer) {
 
-        let key, dataset, newDataItem;
+        let key, dataSet, newDataItem;
         let dataItems = [];
         let results = { itemCount: 0, messages: [] };
 
         // get kafka message attributes
-        dataset = JSON.parse(consumedMessage.value);
+        dataSet = JSON.parse(consumedMessage.value);                                    // e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
         key = consumedMessage.key.toString();
 
         // add each data item in the dataset as an individual message
-        dataset.data.forEach(dataItem => {                                          // e.g. "data": [ { "time_local": "2
+        dataSet.data.forEach(dataItem => {                                              // e.g. "data": [ { "time_local": "2
         
             // transform and add data to the dataitems array
-            newDataItem = this.transformDataItem(key, dataItem);                       // make a new dataitem with dataset-specific attributes
+            newDataItem = this.transformDataItem(key, dataSet, dataItem);               // subtyupe implements this. makes a new dataitem with dataset-specific attributes
             dataItems.push(newDataItem);
 
         });
 
         // create a kafka message containing the transformed dataitems as its value
-        results.itemCount = dataset.data.length;
+        results.itemCount = dataSet.data.length;
         results.messages.push(this.producer.createMessage(key, dataItems));
 
         return results;
@@ -163,4 +163,4 @@ class Consumer {
 }
 
 
-module.exports = Consumer;
+module.exports = KafkaConsumer;
