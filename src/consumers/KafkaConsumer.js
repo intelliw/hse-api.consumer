@@ -72,11 +72,11 @@ class KafkaConsumer {
             await this.kafkaConsumer.run({
                 eachMessage: async ({ topic, partition, message }) => {
                                                 
-                    // extract dataItems                                            // transformMonitoringDataset implemented by supertype which calls transformDataItem in subtype
+                    // extract dataItems                                            // transformMonitoringDataset implemented by this supertype which calls transformDataItem in subtype
                     let results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
                     
                     // write to bq and kafka topic
-                    this.produce(results);
+                    this.produce(results);                                          // produce is implemented by subtype        
 
                 }
             });
