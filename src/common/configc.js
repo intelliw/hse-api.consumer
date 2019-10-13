@@ -1,12 +1,12 @@
 //@ts-check
 'use strict';
 /**
- * ./host/configCommon.js
+ * ./common/configc.js
  * shared constants for environment configuration 
  * these configs are shared between host anmd consumer 
  */
 
-const utilsc = require('./utilsCommon');
+const utilsc = require('../common/utilsc');
 
 // generate a unique client id for this container instance - if this consumer is clustered each instance will have a unique id
 const CONSUMER_CLIENTID = `consumer.${utilsc.randomIntegerString(1, 9999)}`
@@ -58,7 +58,7 @@ module.exports.env = {
             dataset: { pms: 'monitoring.dev_pms.dataset', mppt: 'monitoring.dev_mppt.dataset', inverter: 'monitoring.dev_inverter.dataset' } },     //  topics for monitoring datasets for bq update, created by consumer at 1st stage of monitoring
         datawarehouse: { datasets: { monitoring: 'monitoring' }, 
             tables: { pms: 'dev_pms', mppt: 'dev_mppt', inverter: 'dev_inverter', TEST: 'TEST' } },
-        log: { verbose: false }
+        log: { verbose: true }
     },
     testcloud: {                                                                // single node kafka, or Kafka Std - 1 master, N workers
         api: { host: 'test.api.sundaya.monitored.equipment', scheme: 'https' },

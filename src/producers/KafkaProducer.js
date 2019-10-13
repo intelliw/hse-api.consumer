@@ -10,7 +10,7 @@ const { Kafka } = require('kafkajs');
 const enums = require('../host/enums');
 const consts = require('../host/constants');
 
-const configc = require('../host/configCommon');
+const configc = require('../common/configc');
 
 const moment = require('moment');
 
@@ -44,7 +44,7 @@ class KafkaProducer {
      * the transformResults object contains an array of kafka messages with modified data items
      *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
      */
-    async sendToTopic(transformResults) {
+    async sendToTopic(sharedId, transformResults) {
         // send the message to the topics
         try {
 
@@ -60,7 +60,7 @@ class KafkaProducer {
                 .catch(e => console.error(`[${configc.kafkajs.producer.clientId}] ${e.message}`, e));
 
             // log output               e.g. 2019-09-10 05:04:44.6630 [monitoring.mppt:2-3] 2 messages, 4 items 
-            console.log(`[${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}] ${transformResults.messages.length} messages, ${transformResults.itemCount} items`)
+            console.log(`[${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}] id: ${sharedId}, ${transformResults.messages.length} msgs, ${transformResults.itemCount} items`)
             if (configc.env[configc.env.active].log.verbose) console.log(transformResults.messages);        // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 
 
             // disconnect

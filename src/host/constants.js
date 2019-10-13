@@ -5,7 +5,7 @@
  * global constants
  */
 const enums = require('./enums');
-const utilsc = require('./utilsCommon');
+const utilsc = require('../common/utilsc');
 
 // constants for dates and timestamps
 module.exports.dateTime = {

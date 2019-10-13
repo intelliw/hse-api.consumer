@@ -7,7 +7,7 @@
 const consts = require('../host/constants');
 const enums = require('../host/enums');
 
-const configc = require('../host/configCommon');
+const configc = require('../common/configc');
 
 const BqProducer = require('./BqProducer');
 const KafkaProducer = require('../producers/KafkaProducer');

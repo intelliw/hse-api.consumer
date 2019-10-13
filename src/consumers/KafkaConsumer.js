@@ -11,7 +11,7 @@
  */
 const consts = require('../host/constants');
 const enums = require('../host/enums');
-const configc = require('../host/configCommon');
+const configc = require('../common/configc');
 
 const { Kafka } = require('kafkajs');
 
@@ -98,7 +98,7 @@ class KafkaConsumer {
      *      e.g. { itemCount: 9, messages: [. . .] }
      * the returned results.messages[] array can be:
      *      written to bq with bqClient insertRows(data), 
-     *      converted to kafka messages and sent to this producer's writeTopic - sendToTopic(data)
+     *      converted to kafka messages and sent to this producer's writeTopic - producer.sendToTopic(data)
      * @param {*} consumedMessage                                                   a kafka message
      * @param {*} dataItemTransformer                                               callback function to transform a dataitem in the message
     */
@@ -121,7 +121,7 @@ class KafkaConsumer {
 
         });
 
-        // create a kafka message containing the transformed dataitems as its value
+        // create and return a kafka message containing the transformed dataitems as its value
         results.itemCount = dataSet.data.length;
         results.messages.push(this.producer.createMessage(key, dataItems));
 

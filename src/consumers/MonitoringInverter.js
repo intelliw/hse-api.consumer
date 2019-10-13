@@ -8,8 +8,8 @@
 const enums = require('../host/enums');
 const consts = require('../host/constants');
 
-const utilsc = require('../host/utilsCommon');
-const configc = require('../host/configCommon');
+const utilsc = require('../common/utilsc');
+const configc = require('../common/configc');
 
 const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');
@@ -67,8 +67,8 @@ class MonitoringInverter extends KafkaConsumer {
 
         });
 
-        // write to kafka 
-        // this.producer.sendToTopic(transformResults); // remove comment if this is needed
+        // write to kafka                                               // remove comment if this is needed
+        // this.producer.sendToTopic(sharedId, transformResults); 
 
 
     }

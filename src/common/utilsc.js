@@ -1,14 +1,14 @@
 //@ts-check
 'use strict';
 /**
- * PACKAGE: ./host/utilsCommon.js
+ * PACKAGE: ./common/utilsc.js
  * shared utilities
  * these utilities are shared between host anmd consumer 
  * 
- * utilsCommon.js is from api host - any changes should be mastered in api host utilsCommon.js -----------------------------------------
+ * utilsc.js is from api host - any changes should be mastered in api host src/commom/utilsc.js -----------------------------------------
  */
 
-const consts = require('./constants');
+const consts = require('../host/constants');
 
 //returns whether the findValue exists at least once in the findInArray
 module.exports.valueExistsInArray = (findInArray, findValue) => {
@@ -102,5 +102,3 @@ module.exports.tristateBoolean = (bitValue) => {
     return tristate;
 }
 
-// test... node src/host/utils
-// console.log(this.randomIntegerString(1,999));

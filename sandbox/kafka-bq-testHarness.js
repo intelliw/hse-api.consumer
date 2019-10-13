@@ -3,7 +3,7 @@
 
 const consts = require('../src/host/constants');
 const enums = require('../src/host/enums');
-const configc = require('../src/host/configCommon');
+const configc = require('../src/common/configc');
 
 const { Kafka } = require('kafkajs');
 const { BigQuery } = require('@google-cloud/bigquery');
