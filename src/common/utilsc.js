@@ -10,22 +10,6 @@
 
 const consts = require('../host/constants');
 
-//returns whether the findValue exists at least once in the findInArray
-module.exports.valueExistsInArray = (findInArray, findValue) => {
-
-    const EXITFOR = findInArray.length;
-
-    let n;
-    let exists = false;
-    for (n = 0; n < findInArray.length; n++) {
-        if (findInArray[n] === findValue) {
-            exists = true;
-            n = EXITFOR;
-        }
-    }
-
-    return exists;
-}
 
 // returns a random number between min and max with decimal places based on precision 
 module.exports.randomFloat = (min, max, decimalPlaces) => {

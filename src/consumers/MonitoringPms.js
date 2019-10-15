@@ -124,18 +124,18 @@ class MonitoringPms extends KafkaConsumer {
             attrArray.push({ 
                 volts: p.cell.volts[i - 1],                                                         //      { "volts": 3.661,         
                 dvcl: dvcl[i - 1],                                                                  //      "dvcl": 7,  
-                open: utilsc.valueExistsInArray(p.cell.open, i) ? true : false                      //      "open": false },             
+                open: p.cell.open.includes(i) ? true : false                      //      "open": false },             
             });
         };
         dataObj.cell = attrArray;                                                                   // "cell": [ { "volts": 3.661, "dvcl": 7, "open": false },
 
         // fets
         dataObj.fet_in = {                                                                          // "fet_in": {
-            open: utilsc.valueExistsInArray(p.fet.open, FET_IN_INDEX) ? true : false,               //      "open": false, 
+            open: p.fet.open.includes(FET_IN_INDEX) ? true : false,               //      "open": false, 
             temp: p.fet.temp[FET_IN_INDEX - 1]                                                      //      "temp": 34.1 },        
         }
         dataObj.fet_out = {                                                                         // "fet_out": {
-            open: utilsc.valueExistsInArray(p.fet.open, FET_OUT_INDEX) ? true : false,              //      "open": false, 
+            open: p.fet.open.includes(FET_OUT_INDEX) ? true : false,              //      "open": false, 
             temp: p.fet.temp[FET_OUT_INDEX - 1]                                                     //      "temp": 32.2 },        
         }
 
