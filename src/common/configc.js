@@ -108,4 +108,4 @@ module.exports.env = {
 }
 
 // env sets the active environment - change this to one of the environments in consts.environments -0 eg. change to 'devcloud' before release
-module.exports.env.active = 'prodcloud';                                               // local or devcloud or prodcloud
+module.exports.env.active = 'local';                                               // local or devcloud or prodcloud
