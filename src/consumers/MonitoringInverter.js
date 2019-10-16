@@ -141,7 +141,7 @@ class MonitoringInverter extends KafkaConsumer {
         // status
         let statusBits = utilsc.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);         // get a reversed array of bits (bit 0 is least significant bit)
         dataObj.status = {
-            bus_connect: utilsc.tristateBoolean(statusBits[0])                                      // bit 0    "status": { "bus_connect": true }, 
+            bus_connect: utilsc.tristateBoolean(statusBits[0], false, true)                         // bit 0    "status": { "bus_connect": true }, 
         }
 
         // add generic attributes
