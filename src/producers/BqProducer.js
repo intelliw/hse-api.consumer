@@ -46,7 +46,7 @@ class BqProducer {
                 .table(this.table)
                 .insert(rowArray);
 
-            // log output                                       // e.g. 2019-09-10 05:10:31.7310 [monitoring.inverter] 2 rows 
+            // log output                                       // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
             console.log(`[${this.dataset}.${this.table}] id: ${sharedId}, ${rowArray.length} rows`);
         
         } catch (e) {
