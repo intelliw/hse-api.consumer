@@ -68,7 +68,7 @@ class MonitoringPms extends KafkaConsumer {
         });
 
         // write to kafka                                               // remove comment if this is needed
-        this.producer.sendToTopic(sharedId, transformResults); 
+        // this.producer.sendToTopic(sharedId, transformResults); 
 
    
     }
