@@ -20,7 +20,7 @@ const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.pms;
 
 /**
  * instance attributes
- * producer                                                                             //  e.g. DatasetPms - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
 class MonitoringPms extends KafkaConsumer {
@@ -30,6 +30,10 @@ class MonitoringPms extends KafkaConsumer {
     */
     constructor() {
 
+        const kafkaWriteTopic = configc.env[configc.env.active].topics.dataset.pms;
+        const bqDataset = configc.env[configc.env.active].datawarehouse.datasets.monitoring;
+        const bqTable = configc.env[configc.env.active].datawarehouse.tables.pms;
+
         // start kafka consumer with a bq client
         super(
             KAFKA_CONSUMER_GROUPID,
@@ -37,7 +41,7 @@ class MonitoringPms extends KafkaConsumer {
         );
 
         // instance attributes
-        this.producer = new Producer.DatasetPms()
+        this.producer = new Producer.Dataset(kafkaWriteTopic, bqDataset, bqTable)
 
     }
 

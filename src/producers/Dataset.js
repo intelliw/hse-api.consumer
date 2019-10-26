@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./producers/MonitoringInverter.js
+ * ./producers/Dataset.js
  *  Kafka inverter message producers for api devices.datasets.post 
  */
 const consts = require('../host/constants');
@@ -18,19 +18,22 @@ const BQ_TABLE = configc.env[configc.env.active].datawarehouse.tables.inverter;
 
 /**
  */
-class DatasetInverter extends KafkaProducer {
+class Dataset extends KafkaProducer {
     /**
     instance attributes:  
 
      constructor arguments  
+    * @param {*} topic                                      //  kafka producer topic to write to
+    * @param {*} dataset                                    //  bq dataset name
+    * @param {*} table                                      //  bq dataset table name
     */
-    constructor() {
+    constructor(topic, dataset, table) {
 
         // construct super
-        super(KAFKA_WRITE_TOPIC);
+        super(topic);
 
         // instance attributes
-        this.bqClient = new BqProducer(BQ_DATASET, BQ_TABLE);                         // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"      
+        this.bqClient = new BqProducer(dataset, table);                         // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"      
 
     }
 
@@ -38,4 +41,4 @@ class DatasetInverter extends KafkaProducer {
 
 
 
-module.exports = DatasetInverter;
+module.exports = Dataset;

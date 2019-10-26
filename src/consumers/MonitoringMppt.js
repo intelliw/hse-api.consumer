@@ -21,7 +21,7 @@ const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.mppt;
 
 /**
  * instance attributes
- * producer                                                                             //  e.g. DatasetMppt - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
 class MonitoringMppt extends KafkaConsumer {
@@ -30,6 +30,10 @@ class MonitoringMppt extends KafkaConsumer {
     */
     constructor() {
 
+        const kafkaWriteTopic = configc.env[configc.env.active].topics.dataset.mppt;
+        const bqDataset = configc.env[configc.env.active].datawarehouse.datasets.monitoring;
+        const bqTable = configc.env[configc.env.active].datawarehouse.tables.mppt;
+
         // start kafka consumer with a bq client
         super(
             KAFKA_CONSUMER_GROUPID,
@@ -37,7 +41,7 @@ class MonitoringMppt extends KafkaConsumer {
         );
 
         // instance attributes
-        this.producer = new Producer.DatasetMppt()
+        this.producer = new Producer.Dataset(kafkaWriteTopic, bqDataset, bqTable)
 
     }
 

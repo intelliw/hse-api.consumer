@@ -21,7 +21,7 @@ const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.inverter;
 
 /**
  * instance attributes
- * producer                                                                             //  e.g. DatasetInverter - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
 class MonitoringInverter extends KafkaConsumer {
@@ -31,6 +31,10 @@ class MonitoringInverter extends KafkaConsumer {
     */
     constructor() {
 
+        const kafkaWriteTopic = configc.env[configc.env.active].topics.dataset.inverter;
+        const bqDataset = configc.env[configc.env.active].datawarehouse.datasets.monitoring;
+        const bqTable = configc.env[configc.env.active].datawarehouse.tables.inverter;
+
         // start kafka consumer with a bq client
         super(
             KAFKA_CONSUMER_GROUPID,
@@ -38,7 +42,7 @@ class MonitoringInverter extends KafkaConsumer {
         );
 
         // instance attributes
-        this.producer = new Producer.DatasetInverter()
+        this.producer = new Producer.Dataset(kafkaWriteTopic, bqDataset, bqTable)
 
     }
 
