@@ -10,3 +10,5 @@ module.exports.KafkaConsumer = require('./KafkaConsumer');
 module.exports.MonitoringPms = require('./MonitoringPms');
 module.exports.MonitoringMppt = require('./MonitoringMppt');
 module.exports.MonitoringInverter = require('./MonitoringInverter');
+
+module.exports.Feature = require('./Feature');

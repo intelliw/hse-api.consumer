@@ -74,8 +74,8 @@ class KafkaConsumer {
 
                     let results = message;
 
-                    // extract monitoring dataItems                                 // transformMonitoringDataset implemented by this supertype which calls transformDataItem in subtype
-                    if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic) {
+                    // if this is a monitoring dataset extract & transform the dataItems                                 // transformMonitoringDataset implemented by this supertype which calls transformDataItem in subtype
+                    if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic)) {
                         results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
                     }
 
@@ -95,7 +95,6 @@ class KafkaConsumer {
      * transforms the dataset inside the kafka consumedMessage 
      * and returns a results object containing an array of kafka messages with modified data items 
      *  consumedMessage - a kafka message whose message.value contains a monitoring api dataset  
-     *  dataItemTransformer - a transform callback function implemented by the consumer subclass
      * the returned results object contains these properties
      *  itemCount  - a count of the total number of dataitems in all datasets / message
      *  messages[] - array of kafka messages, each message.value contains a dataset with modified data items
@@ -104,9 +103,8 @@ class KafkaConsumer {
      *      written to bq with bqClient insertRows(data), 
      *      converted to kafka messages and sent to this producer's writeTopic - producer.sendToTopic(data)
      * @param {*} consumedMessage                                                   a kafka message
-     * @param {*} dataItemTransformer                                               callback function to transform a dataitem in the message
     */
-    transformMonitoringDataset(consumedMessage, dataItemTransformer) {
+    transformMonitoringDataset(consumedMessage) {
 
         let key, dataSet, newDataItem;
         let dataItems = [];
