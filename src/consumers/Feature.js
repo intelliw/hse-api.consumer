@@ -62,7 +62,7 @@ class Feature extends KafkaConsumer {
             log.initialise(); 
         }
         
-        // log it
+        // log the feature configurations
         log.trace(`${KAFKA_READ_TOPIC} ${feature}`, jsonValue);
     }
 

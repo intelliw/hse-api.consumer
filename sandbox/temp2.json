@@ -1,0 +1,212 @@
+[
+    {
+        "pms_id": "SFT-02",
+        "pack_id": "66cff353734574e43231516",
+        "pms": {},
+        "pack": {
+            "volts": 54.424,
+            "amps": 6553,
+            "watts": 356640.472,
+            "vcl": 3.863,
+            "vch": 3.903,
+            "dock": 15,
+            "temp_top": "32",
+            "temp_mid": "33",
+            "temp_bottom": "32"
+        },
+        "cell": [
+            {
+                "volts": 3.9,
+                "dvcl": 37,
+                "open": false
+            },
+            {
+                "volts": 3.898,
+                "dvcl": 35,
+                "open": false
+            },
+            {
+                "volts": 3.903,
+                "dvcl": 40,
+                "open": false
+            },
+            {
+                "volts": 3.898,
+                "dvcl": 35,
+                "open": false
+            },
+            {
+                "volts": 3.896,
+                "dvcl": 33,
+                "open": false
+            },
+            {
+                "volts": 3.902,
+                "dvcl": 39,
+                "open": false
+            },
+            {
+                "volts": 3.864,
+                "dvcl": 1,
+                "open": false
+            },
+            {
+                "volts": 3.866,
+                "dvcl": 3,
+                "open": false
+            },
+            {
+                "volts": 3.867,
+                "dvcl": 4,
+                "open": false
+            },
+            {
+                "volts": 3.868,
+                "dvcl": 5,
+                "open": false
+            },
+            {
+                "volts": 3.863,
+                "dvcl": 0,
+                "open": false
+            },
+            {
+                "volts": 3.9,
+                "dvcl": 37,
+                "open": false
+            },
+            {
+                "volts": 3.9,
+                "dvcl": 37,
+                "open": false
+            },
+            {
+                "volts": 3.899,
+                "dvcl": 36,
+                "open": false
+            }
+        ],
+        "fet_in": {
+            "open": false,
+            "temp": "36"
+        },
+        "fet_out": {
+            "open": false,
+            "temp": "35"
+        },
+        "status": {
+            "bus_connect": null
+        },
+        "sys": {
+            "source": "S002"
+        },
+        "time_event": "2019-10-27 09:50:44.9170",
+        "time_zone": "+07:00",
+        "time_processing": "2019-10-27 09:51:09.5620"
+    },
+    {
+        "pms_id": "SFT-02",
+        "pack_id": "670ff353734574e43244124",
+        "pms": {},
+        "pack": {
+            "volts": 54.436,
+            "amps": 6553,
+            "watts": 356719.108,
+            "vcl": 3.884,
+            "vch": 3.892,
+            "dock": 3,
+            "temp_top": "34",
+            "temp_mid": "34",
+            "temp_bottom": "31"
+        },
+        "cell": [
+            {
+                "volts": 3.886,
+                "dvcl": 2,
+                "open": false
+            },
+            {
+                "volts": 3.891,
+                "dvcl": 7,
+                "open": false
+            },
+            {
+                "volts": 3.892,
+                "dvcl": 8,
+                "open": false
+            },
+            {
+                "volts": 3.889,
+                "dvcl": 5,
+                "open": false
+            },
+            {
+                "volts": 3.884,
+                "dvcl": 0,
+                "open": false
+            },
+            {
+                "volts": 3.885,
+                "dvcl": 1,
+                "open": false
+            },
+            {
+                "volts": 3.886,
+                "dvcl": 2,
+                "open": false
+            },
+            {
+                "volts": 3.89,
+                "dvcl": 6,
+                "open": false
+            },
+            {
+                "volts": 3.89,
+                "dvcl": 6,
+                "open": false
+            },
+            {
+                "volts": 3.889,
+                "dvcl": 5,
+                "open": false
+            },
+            {
+                "volts": 3.888,
+                "dvcl": 4,
+                "open": false
+            },
+            {
+                "volts": 3.89,
+                "dvcl": 6,
+                "open": false
+            },
+            {
+                "volts": 3.89,
+                "dvcl": 6,
+                "open": false
+            },
+            {
+                "volts": 3.886,
+                "dvcl": 2,
+                "open": false
+            }
+        ],
+        "fet_in": {
+            "open": false,
+            "temp": "37"
+        },
+        "fet_out": {
+            "open": false,
+            "temp": "36"
+        },
+        "status": {
+            "bus_connect": null
+        },
+        "sys": {
+            "source": "S002"
+        },
+        "time_event": "2019-10-27 09:50:51.2610",
+        "time_zone": "+07:00",
+        "time_processing": "2019-10-27 09:51:09.5620"
+    }
+]

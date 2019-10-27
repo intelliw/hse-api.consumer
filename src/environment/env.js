@@ -243,4 +243,4 @@ module.exports.CONFIGS = {
 }
 
 // env.active returns the active environment 
-module.exports.active = this.CONFIGS.prodcloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
+module.exports.active = this.CONFIGS.local;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
