@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/BqPms.js
+ * ./consumers/MonitoringMppt.js
  *  
  */
 

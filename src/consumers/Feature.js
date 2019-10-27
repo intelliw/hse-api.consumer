@@ -1,7 +1,8 @@
 //@ts-check
 'use strict';
 /**
- * ./consumers/MonitoringPms.js
+ * ./consumers/Feature.js
+ *  topic consumer for feature toggles - to apply configuration changes from host to consumer through message broker 
  *  
  */
 
@@ -15,24 +16,20 @@ const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
-const KAFKA_READ_TOPIC = env.active.topics.monitoring.pms;
-const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.pms;
+const KAFKA_READ_TOPIC = env.active.topics.system.feature;
+const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.system.feature;
 
 /**
  * instance attributes
  * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringPms extends KafkaConsumer {
+class Feature extends KafkaConsumer {
 
     /**
     instance attributes, constructor arguments  - see super
     */
     constructor() {
-
-        const kafkaWriteTopic = env.active.topics.dataset.pms;
-        const bqDataset = env.active.datawarehouse.datasets.monitoring;
-        const bqTable = env.active.datawarehouse.tables.pms;
 
         // start kafka consumer with a bq client
         super(
@@ -40,15 +37,12 @@ class MonitoringPms extends KafkaConsumer {
             KAFKA_READ_TOPIC
         );
 
-        // instance attributes
-        this.producer = new Producer.Dataset(kafkaWriteTopic, bqDataset, bqTable)
-
     }
 
 
     // subtype implements specific transforms or calls super 
     transform(consumedMessage) {
-        return super.transformMonitoringDataset(consumedMessage);
+        return consumedMessage;                                         // no transforms required
     }
 
     /* writes to bq and to the datasets kafka topic 
@@ -162,4 +156,4 @@ class MonitoringPms extends KafkaConsumer {
 
 
 
-module.exports = MonitoringPms;
+module.exports = Feature;

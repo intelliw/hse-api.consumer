@@ -10,6 +10,7 @@
  *      - it then calls the subtype's produce method with the transformed message
  */
 const env = require('../environment/env');
+const utils = require('../environment/utils');
 const log = require('../host').log;
 
 const { Kafka } = require('kafkajs');
@@ -36,7 +37,7 @@ class KafkaConsumer {
 
         // store params
         this.readTopic = readTopic;
-        
+
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: env.active.kafka.brokers,
@@ -70,10 +71,14 @@ class KafkaConsumer {
             await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning });
             await this.kafkaConsumer.run({
                 eachMessage: async ({ topic, partition, message }) => {
-                                                
-                    // extract dataItems                                            // transformMonitoringDataset implemented by this supertype which calls transformDataItem in subtype
-                    let results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
-                    
+
+                    let results = message;
+
+                    // extract monitoring dataItems                                 // transformMonitoringDataset implemented by this supertype which calls transformDataItem in subtype
+                    if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic) {
+                        results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
+                    }
+
                     // write to bq and kafka topic
                     this.produce(results);                                          // produce is implemented by subtype        
 
@@ -113,7 +118,7 @@ class KafkaConsumer {
 
         // add each data item in the dataset as an individual message
         dataSet.data.forEach(dataItem => {                                              // e.g. "data": [ { "time_local": "2
-        
+
             // transform and add data to the dataitems array
             newDataItem = this.transformDataItem(key, dataSet, dataItem);               // subtyupe implements this. makes a new dataitem with dataset-specific attributes
             dataItems.push(newDataItem);
@@ -125,7 +130,7 @@ class KafkaConsumer {
         results.messages.push(this.producer.createMessage(key, dataItems));
 
         return results;
-        
+
     }
 
 
