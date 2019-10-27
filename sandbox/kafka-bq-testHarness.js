@@ -1,9 +1,10 @@
 //@ts-check
 "use strict";
 
-const consts = require('../src/host/constants');
+
 const enums = require('../src/host/enums');
-const configc = require('../src/common/configc');
+
+const env = require('../src/xenvironment/env');
 
 const { Kafka } = require('kafkajs');
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -11,29 +12,29 @@ const { BigQuery } = require('@google-cloud/bigquery');
 // const kafkaBrokerHost = '10.140.0.6';             // 10.140.0.6 / 35.201.177.2     192.168.1.106 
 const KAFKA_CONSUME_FROM_BEGINNING = true;
 
-const topicName = configc.env[configc.env.active].topics.monitoring.pms;
+const topicName = env.active.topics.monitoring.pms;
 const consumerGroupId = enums.messageBroker.consumers.groupId.pms;      // group name convention = <target system>.<target dataset>.<target table>
 
 const consumerClientId = `${consumerGroupId}.001`;      // 
 
 const kafka = new Kafka({
-  brokers: configc.env[configc.env.active].kafka.brokers,
+  brokers: env.active.kafka.brokers,
   clientId: consumerClientId,
 })
 
 const consumer = kafka.consumer({
   groupId: consumerGroupId,
-  sessionTimeout: configc.kafkajs.consumer.sessionTimeout,
-  heartbeatInterval: configc.kafkajs.consumer.heartbeatInterval,
-  rebalanceTimeout: configc.kafkajs.consumer.rebalanceTimeout,
-  metadataMaxAge: configc.kafkajs.consumer.metadataMaxAge,
-  allowAutoTopicCreation:configc.kafkajs.consumer.allowAutoTopicCreation,
-  maxBytesPerPartition: configc.kafkajs.consumer.maxBytesPerPartition,
-  minBytes: configc.kafkajs.consumer.minBytes,
-  maxBytes: configc.kafkajs.consumer.maxBytes,
-  maxWaitTimeInMs: configc.kafkajs.consumer.maxWaitTimeInMs,
-  retry: configc.kafkajs.consumer.retry,
-  readUncommitted: configc.kafkajs.consumer.readUncommitted
+  sessionTimeout: env.active.kafkajs.consumer.sessionTimeout,
+  heartbeatInterval: env.active.kafkajs.consumer.heartbeatInterval,
+  rebalanceTimeout: env.active.kafkajs.consumer.rebalanceTimeout,
+  metadataMaxAge: env.active.kafkajs.consumer.metadataMaxAge,
+  allowAutoTopicCreation:env.active.kafkajs.consumer.allowAutoTopicCreation,
+  maxBytesPerPartition: env.active.kafkajs.consumer.maxBytesPerPartition,
+  minBytes: env.active.kafkajs.consumer.minBytes,
+  maxBytes: env.active.kafkajs.consumer.maxBytes,
+  maxWaitTimeInMs: env.active.kafkajs.consumer.maxWaitTimeInMs,
+  retry: env.active.kafkajs.consumer.retry,
+  readUncommitted: env.active.kafkajs.consumer.readUncommitted
 })
 const bqClient = new BigQuery();                  // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
 

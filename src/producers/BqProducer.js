@@ -6,7 +6,6 @@
  */
 const consts = require('../host/constants');
 const enums = require('../host/enums');
-const configc = require('../common/configc');
 
 const moment = require('moment');
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -20,8 +19,8 @@ class BqProducer {
         this.table
 
      constructor arguments 
-    * @param {*} dataset                                        //  configc.env[configc.env.active].datawarehouse.datasets   - e.g. monitoring
-    * @param {*} table                                          //  configc.env[configc.env.active].datawarehouse.tables   - e.g. pms
+    * @param {*} dataset                                        //  env.active.datawarehouse.datasets   - e.g. monitoring
+    * @param {*} table                                          //  env.active.datawarehouse.tables   - e.g. pms
     */
     constructor(dataset, table) {
 
@@ -50,7 +49,7 @@ class BqProducer {
             console.log(`[${this.dataset}.${this.table}] id: ${sharedId}, ${rowArray.length} rows`);
         
         } catch (e) {
-            console.error(`>>>>>> BQ INSERT ERROR: [${configc.kafkajs.consumer.clientId}] ${e.message}`, e)
+            console.error(`>>>>>> BQ INSERT ERROR: [${env.active.kafkajs.consumer.clientId}] ${e.message}`, e)
         }
 
     }

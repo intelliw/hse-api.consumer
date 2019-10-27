@@ -4,17 +4,14 @@
  * ./producers/Dataset.js
  *  Kafka inverter message producers for api devices.datasets.post 
  */
-const consts = require('../host/constants');
-const enums = require('../host/enums');
-
-const configc = require('../common/configc');
+const env = require('../xenvironment/env');
 
 const BqProducer = require('./BqProducer');
 const KafkaProducer = require('../producers/KafkaProducer');
 
-const KAFKA_WRITE_TOPIC = configc.env[configc.env.active].topics.dataset.inverter;
-const BQ_DATASET = configc.env[configc.env.active].datawarehouse.datasets.monitoring;
-const BQ_TABLE = configc.env[configc.env.active].datawarehouse.tables.inverter;
+const KAFKA_WRITE_TOPIC = env.active.topics.dataset.inverter;
+const BQ_DATASET = env.active.datawarehouse.datasets.monitoring;
+const BQ_TABLE = env.active.datawarehouse.tables.inverter;
 
 /**
  */

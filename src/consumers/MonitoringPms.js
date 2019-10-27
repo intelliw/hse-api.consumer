@@ -7,15 +7,15 @@
 
 const enums = require('../host/enums');
 const consts = require('../host/constants');
+const env = require('../xenvironment/env');
 
-const utilsc = require('../common/utilsc');
-const configc = require('../common/configc');
+const utils = require('../xenvironment/utils');
 
 const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
-const KAFKA_READ_TOPIC = configc.env[configc.env.active].topics.monitoring.pms;
+const KAFKA_READ_TOPIC = env.active.topics.monitoring.pms;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.pms;
 
 /**
@@ -30,9 +30,9 @@ class MonitoringPms extends KafkaConsumer {
     */
     constructor() {
 
-        const kafkaWriteTopic = configc.env[configc.env.active].topics.dataset.pms;
-        const bqDataset = configc.env[configc.env.active].datawarehouse.datasets.monitoring;
-        const bqTable = configc.env[configc.env.active].datawarehouse.tables.pms;
+        const kafkaWriteTopic = env.active.topics.dataset.pms;
+        const bqDataset = env.active.datawarehouse.datasets.monitoring;
+        const bqTable = env.active.datawarehouse.tables.pms;
 
         // start kafka consumer with a bq client
         super(
@@ -144,9 +144,9 @@ class MonitoringPms extends KafkaConsumer {
         }
 
         // status
-        let statusBits = utilsc.hex2bitArray(p.status, consts.equStatus.BIT_LENGTH);                // get a reversed array of bits (bit 0 is least significant bit)
+        let statusBits = utils.hex2bitArray(p.status, consts.equStatus.BIT_LENGTH);                // get a reversed array of bits (bit 0 is least significant bit)
         dataObj.status = {
-            bus_connect: utilsc.tristateBoolean(statusBits[0], false, true)                         // bit 0    "status": { "bus_connect": true }, 
+            bus_connect: utils.tristateBoolean(statusBits[0], false, true)                         // bit 0    "status": { "bus_connect": true }, 
         }
 
         // add generic attributes

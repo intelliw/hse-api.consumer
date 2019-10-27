@@ -8,9 +8,8 @@
 const { Kafka } = require('kafkajs');
 
 const enums = require('../host/enums');
-const consts = require('../host/constants');
 
-const configc = require('../common/configc');
+const env = require('../xenvironment/env');
 
 const moment = require('moment');
 
@@ -22,17 +21,17 @@ class KafkaProducer {
      * 
     instance attributes:  
      producerObj": kafka.producer()
-     writeTopic:  configc.env[configc.env.active].topics.dataset                              // this is the topic to which the subclassed producer writes, in sendTopic()  
+     writeTopic:  env.active.topics.dataset                              // this is the topic to which the subclassed producer writes, in sendTopic()  
     */
     constructor(writeTopic) {
         
         // create a kafka producer
         const kafka = new Kafka({
-            brokers: configc.env[configc.env.active].kafka.brokers,                 //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]
-            clientId: configc.kafkajs.producer.clientId,
-            retry: configc.kafkajs.producer.retry,                                            // retry options  https://kafka.js.org/docs/configuration   
-            connectionTimeout: configc.kafkajs.producer.connectionTimeout,                    // milliseconds to wait for a successful connection   
-            requestTimeout: configc.kafkajs.producer.requestTimeout                           // milliseconds to wait for a successful request.     
+            brokers: env.active.kafka.brokers,                 //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]
+            clientId: env.active.kafkajs.producer.clientId,
+            retry: env.active.kafkajs.producer.retry,                                            // retry options  https://kafka.js.org/docs/configuration   
+            connectionTimeout: env.active.kafkajs.producer.connectionTimeout,                    // milliseconds to wait for a successful connection   
+            requestTimeout: env.active.kafkajs.producer.requestTimeout                           // milliseconds to wait for a successful request.     
         })
 
         // setup instance variables
@@ -55,19 +54,19 @@ class KafkaProducer {
                 topic: this.writeTopic,
                 messages: transformResults.messages,
                 acks: enums.messageBroker.ack.default,                                  // default is 'leader'
-                timeout: configc.kafkajs.producer.timeout
+                timeout: env.active.kafkajs.producer.timeout
             })
-                .catch(e => console.error(`[${configc.kafkajs.producer.clientId}] ${e.message}`, e));
+                .catch(e => console.error(`[${env.active.kafkajs.producer.clientId}] ${e.message}`, e));
 
             // log output               e.g. 2019-09-10 05:04:44.6630 [monitoring.mppt:2-3] 2 messages, 4 items 
             console.log(`[${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}] id: ${sharedId}, ${transformResults.messages.length} msgs, ${transformResults.itemCount} items`)
-            if (configc.env[configc.env.active].log.verbose) console.log(transformResults.messages);        // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 
+            if (env.active.log.verbose) console.log(transformResults.messages);        // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 
 
             // disconnect
             await this.producerObj.disconnect();
 
         } catch (e) {
-            console.error(`>>>>>> CONNECT ERROR: [${configc.kafkajs.producer.clientId}] ${e.message}`, e)
+            console.error(`>>>>>> CONNECT ERROR: [${env.active.kafkajs.producer.clientId}] ${e.message}`, e)
         }
 
     }

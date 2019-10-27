@@ -9,9 +9,7 @@
  *      - the Consumer supertype then performs generic transforms to the message, if any 
  *      - it then calls the subtype's produce method with the transformed message
  */
-const consts = require('../host/constants');
-const enums = require('../host/enums');
-const configc = require('../common/configc');
+const env = require('../xenvironment/env');
 
 const { Kafka } = require('kafkajs');
 
@@ -19,7 +17,7 @@ const { Kafka } = require('kafkajs');
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-const CLIENT_ID = configc.kafkajs.consumer.clientId;         // unique client id for this instance, created at startup 
+const CLIENT_ID = env.active.kafkajs.consumer.clientId;         // unique client id for this instance, created at startup 
 
 class KafkaConsumer {
     /**9
@@ -31,7 +29,7 @@ class KafkaConsumer {
 
      constructor arguments 
     * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
-    * @param {*} readTopic                                  //  the topic to read from configc.env[configc.env.active].topics.monitoring
+    * @param {*} readTopic                                  //  the topic to read from env.active.topics.monitoring
     */
     constructor(groupId, readTopic) {
 
@@ -40,22 +38,22 @@ class KafkaConsumer {
         
         // create the kafka consumer
         const kafka = new Kafka({
-            brokers: configc.env[configc.env.active].kafka.brokers,
+            brokers: env.active.kafka.brokers,
             clientId: CLIENT_ID,
         })
         this.kafkaConsumer = kafka.consumer({
             groupId: groupId,
-            sessionTimeout: configc.kafkajs.consumer.sessionTimeout,
-            heartbeatInterval: configc.kafkajs.consumer.heartbeatInterval,
-            rebalanceTimeout: configc.kafkajs.consumer.rebalanceTimeout,
-            metadataMaxAge: configc.kafkajs.consumer.metadataMaxAge,
-            allowAutoTopicCreation: configc.kafkajs.consumer.allowAutoTopicCreation,
-            maxBytesPerPartition: configc.kafkajs.consumer.maxBytesPerPartition,
-            minBytes: configc.kafkajs.consumer.minBytes,
-            maxBytes: configc.kafkajs.consumer.maxBytes,
-            maxWaitTimeInMs: configc.kafkajs.consumer.maxWaitTimeInMs,
-            retry: configc.kafkajs.consumer.retry,
-            readUncommitted: configc.kafkajs.consumer.readUncommitted
+            sessionTimeout: env.active.kafkajs.consumer.sessionTimeout,
+            heartbeatInterval: env.active.kafkajs.consumer.heartbeatInterval,
+            rebalanceTimeout: env.active.kafkajs.consumer.rebalanceTimeout,
+            metadataMaxAge: env.active.kafkajs.consumer.metadataMaxAge,
+            allowAutoTopicCreation: env.active.kafkajs.consumer.allowAutoTopicCreation,
+            maxBytesPerPartition: env.active.kafkajs.consumer.maxBytesPerPartition,
+            minBytes: env.active.kafkajs.consumer.minBytes,
+            maxBytes: env.active.kafkajs.consumer.maxBytes,
+            maxWaitTimeInMs: env.active.kafkajs.consumer.maxWaitTimeInMs,
+            retry: env.active.kafkajs.consumer.retry,
+            readUncommitted: env.active.kafkajs.consumer.readUncommitted
         });
 
         // start the consumer    
@@ -68,7 +66,7 @@ class KafkaConsumer {
     async retrieveMessages() {
         try {
             await this.kafkaConsumer.connect();
-            await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: configc.kafkajs.consumer.consumeFromBeginning });
+            await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning });
             await this.kafkaConsumer.run({
                 eachMessage: async ({ topic, partition, message }) => {
                                                 
@@ -82,7 +80,7 @@ class KafkaConsumer {
             });
 
         } catch (e) {
-            console.error(`>>>>>> RETRIEVE ERROR: [${configc.kafkajs.consumer.clientId}] ${e.message}`, e)
+            console.error(`>>>>>> RETRIEVE ERROR: [${env.active.kafkajs.consumer.clientId}] ${e.message}`, e)
         }
 
     }
