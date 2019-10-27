@@ -67,8 +67,8 @@ class Logger {
         this.error = function(label, errObject) {            // errObject is a Error object created with 'new Error(message)'
             errorStatement.write(label, errObject);
         }
-        this.trace = function(label, event) {
-            traceStatement.write(label, event);
+        this.trace = function(label, object) {
+            traceStatement.write(label, object);
         }
 
     }
