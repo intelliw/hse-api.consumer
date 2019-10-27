@@ -10,3 +10,4 @@ const pms = new Consumer.MonitoringPms();
 const mppt = new Consumer.MonitoringMppt();      
 const inverter = new Consumer.MonitoringInverter();      
 
+// feature toggle consumers

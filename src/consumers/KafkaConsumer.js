@@ -10,6 +10,7 @@
  *      - it then calls the subtype's produce method with the transformed message
  */
 const env = require('../environment/env');
+const log = require('../host').log;
 
 const { Kafka } = require('kafkajs');
 
@@ -58,7 +59,7 @@ class KafkaConsumer {
 
         // start the consumer    
         this.initialiseTraps();
-        this.retrieveMessages().catch(e => console.error(`[${CLIENT_ID}] ${e.message}`, e))
+        this.retrieveMessages().catch(e => log.error(`[${CLIENT_ID}] ${e.message}`, e))
 
     }
 
@@ -80,7 +81,7 @@ class KafkaConsumer {
             });
 
         } catch (e) {
-            console.error(`>>>>>> RETRIEVE ERROR: [${env.active.kafkajs.consumer.clientId}] ${e.message}`, e)
+            log.error(`[${env.active.kafkajs.consumer.clientId}] retrieve Error`, e)
         }
 
     }
@@ -135,7 +136,7 @@ class KafkaConsumer {
             process.on(type, async e => {
                 try {
                     console.log(`errorTypes: process.on ${type}`)
-                    console.error(e)
+                    log.error(`errorTypes: process.on ${type}`, e)
                     await this.kafkaConsumer.disconnect()
                     process.exit(0)
                 } catch (_) {

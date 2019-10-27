@@ -10,6 +10,7 @@ const { Kafka } = require('kafkajs');
 const enums = require('../environment/enums');
 
 const env = require('../environment/env');
+const log = require('../host').log;
 
 const moment = require('moment');
 
@@ -56,17 +57,16 @@ class KafkaProducer {
                 acks: enums.messageBroker.ack.default,                                  // default is 'leader'
                 timeout: env.active.kafkajs.producer.timeout
             })
-                .catch(e => console.error(`[${env.active.kafkajs.producer.clientId}] ${e.message}`, e));
+                .catch(e => log.error(`[${env.active.kafkajs.producer.clientId}] send Error`, e));
 
             // log output               e.g. 2019-09-10 05:04:44.6630 [monitoring.mppt:2-3] 2 messages, 4 items 
-            console.log(`[${this.writeTopic}:${result[0].baseOffset}-${Number(result[0].baseOffset) + (transformResults.messages.length - 1)}] id: ${sharedId}, ${transformResults.messages.length} msgs, ${transformResults.itemCount} items`)
-            if (env.active.log.verbose) console.log(transformResults.messages);        // if verbose logging on..  e.g. [ { key: '025', value: '[{"pms_id" .... 
+            log.messaging(this.writeTopic, result[0].baseOffset, transformResults.messages, transformResults.itemCount, env.active.kafkajs.consumer.clientId);         // info = (topic, offset, msgqty, itemqty, sender) {
 
             // disconnect
             await this.producerObj.disconnect();
 
         } catch (e) {
-            console.error(`>>>>>> CONNECT ERROR: [${env.active.kafkajs.producer.clientId}] ${e.message}`, e)
+            log.error(`${this.writeTopic} connect Error`, e);
         }
 
     }

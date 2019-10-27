@@ -7,6 +7,8 @@
 const consts = require('../host/constants');
 const enums = require('../environment/enums');
 
+const log = require('../host').log;
+
 const moment = require('moment');
 const { BigQuery } = require('@google-cloud/bigquery');
 
@@ -46,10 +48,10 @@ class BqProducer {
                 .insert(rowArray);
 
             // log output                                       // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
-            console.log(`[${this.dataset}.${this.table}] id: ${sharedId}, ${rowArray.length} rows`);
+            log.data(this.dataset, this.table, sharedId, rowArray); 
         
         } catch (e) {
-            console.error(`>>>>>> BQ INSERT ERROR: [${env.active.kafkajs.consumer.clientId}] ${e.message}`, e)
+            log.error(`${this.dataset}.${this.table}`, e);
         }
 
     }
