@@ -5,7 +5,7 @@
  *  base type for BigQuery client  
  */
 const consts = require('../host/constants');
-const enums = require('../host/enums');
+const enums = require('../environment/enums');
 
 const moment = require('moment');
 const { BigQuery } = require('@google-cloud/bigquery');

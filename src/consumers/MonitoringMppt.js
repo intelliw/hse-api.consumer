@@ -5,19 +5,19 @@
  *  
  */
 
-const enums = require('../host/enums');
+const enums = require('../environment/enums');
 const consts = require('../host/constants');
 
-const utils = require('../xenvironment/utils');
+const utils = require('../environment/utils');
 
-const env = require('../xenvironment/env');
+const env = require('../environment/env');
 
 const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
 const KAFKA_READ_TOPIC = env.active.topics.monitoring.mppt;
-const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.mppt;
+const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.mppt;
 
 
 /**
@@ -130,14 +130,14 @@ class MonitoringMppt extends KafkaConsumer {
         let statusBits = utils.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);                             // get a reversed array of bits (bit 0 is least significant bit)
         dataObj.status = {
             bus_connect: utils.tristateBoolean(statusBits[0], false, true),                                            // bit 0    "status": { "bus_connect": true }, 
-            input: enums.equStatus.mppt.input[consts.equStatus.ENUM_PREFIX + statusBits[1] + statusBits[2]],            // bit 1,2              "input": "normal"
+            input: consts.equStatus.mppt.input[consts.equStatus.ENUM_PREFIX + statusBits[1] + statusBits[2]],            // bit 1,2              "input": "normal"
             chgfet: utils.tristateBoolean(statusBits[3], "ok", "short"),                                                              // bit 3                "chgfet": true, 
             chgfet_antirev: utils.tristateBoolean(statusBits[4], "ok", "short"),                                                      // bit 4                "chgfet_antirev": true, 
             fet_antirev: utils.tristateBoolean(statusBits[5], "ok", "short"),                                                         // bit 5                "fet_antirev": true,   
             input_current: utils.tristateBoolean(statusBits[6], "ok", "overcurrent"),                                                       // bit 6                "input_current": true, 
-            load: enums.equStatus.mppt.load[consts.equStatus.ENUM_PREFIX + statusBits[7] + statusBits[8]],              // bit 7,8              "load": "ok", 
+            load: consts.equStatus.mppt.load[consts.equStatus.ENUM_PREFIX + statusBits[7] + statusBits[8]],              // bit 7,8              "load": "ok", 
             pv_input: utils.tristateBoolean(statusBits[9], "ok", "short"),                                                            // bit 9                "pv_input": true, 
-            charging: enums.equStatus.mppt.charging[consts.equStatus.ENUM_PREFIX + statusBits[10] + statusBits[11]],    // bit 10,11            "charging": "not-charging", 
+            charging: consts.equStatus.mppt.charging[consts.equStatus.ENUM_PREFIX + statusBits[10] + statusBits[11]],    // bit 10,11            "charging": "not-charging", 
             system: utils.tristateBoolean(statusBits[12], "ok", "fault"),                                                             // bit 12               "system": true,  
             standby: utils.tristateBoolean(statusBits[13], "standby", "running")                                                             // bit 13               "standby": true } 
         }

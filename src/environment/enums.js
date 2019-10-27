@@ -118,6 +118,16 @@ module.exports.apiKey.default = this.apiKey.PROXY;
 
 // kafka
 module.exports.messageBroker = {                    // kafka message broker. topics are based on enums.params.datasets. 
+    consumerGroups: {                                            // consumer group ids
+        monitoring: {
+            pms: 'group.monitoring.pms',                    // group id convention = <target system>.<target dataset>.<target table>
+            mppt: 'group.monitoring.mppt',
+            inverter: 'group.monitoring.inverter'
+        }, 
+        system: {
+            feature: 'group.system.feature'
+        }
+    },
     ack: {
         all: -1,                                    // -1 = all replicas must acknowledge (default) 
         none: 0,                                    //  0 = no acknowledgments 

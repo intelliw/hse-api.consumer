@@ -9,7 +9,7 @@
  *      - the Consumer supertype then performs generic transforms to the message, if any 
  *      - it then calls the subtype's produce method with the transformed message
  */
-const env = require('../xenvironment/env');
+const env = require('../environment/env');
 
 const { Kafka } = require('kafkajs');
 
@@ -28,7 +28,7 @@ class KafkaConsumer {
         this.readTopic = readTopic;
 
      constructor arguments 
-    * @param {*} groupId                                    //  enums.messageBroker.consumers.groupId
+    * @param {*} groupId                                    //  enums.messageBroker.consumersGroups.monitoring
     * @param {*} readTopic                                  //  the topic to read from env.active.topics.monitoring
     */
     constructor(groupId, readTopic) {

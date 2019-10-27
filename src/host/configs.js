@@ -4,6 +4,6 @@
  * ./config/configs.js
  * configuration settings 
  */
-const consts = require('../xhost/constants');
+const consts = require('../host/constants');
 
 

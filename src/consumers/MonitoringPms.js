@@ -5,18 +5,18 @@
  *  
  */
 
-const enums = require('../host/enums');
+const enums = require('../environment/enums');
 const consts = require('../host/constants');
-const env = require('../xenvironment/env');
+const env = require('../environment/env');
 
-const utils = require('../xenvironment/utils');
+const utils = require('../environment/utils');
 
 const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
 const KAFKA_READ_TOPIC = env.active.topics.monitoring.pms;
-const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.pms;
+const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.pms;
 
 /**
  * instance attributes

@@ -2,9 +2,9 @@
 "use strict";
 
 
-const enums = require('../src/host/enums');
+const enums = require('../src/environment/enums');
 
-const env = require('../src/xenvironment/env');
+const env = require('../src/environment/env');
 
 const { Kafka } = require('kafkajs');
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -13,7 +13,7 @@ const { BigQuery } = require('@google-cloud/bigquery');
 const KAFKA_CONSUME_FROM_BEGINNING = true;
 
 const topicName = env.active.topics.monitoring.pms;
-const consumerGroupId = enums.messageBroker.consumers.groupId.pms;      // group name convention = <target system>.<target dataset>.<target table>
+const consumerGroupId = enums.messageBroker.consumerGroups.monitoring.pms;      // group name convention = <target system>.<target dataset>.<target table>
 
 const consumerClientId = `${consumerGroupId}.001`;      // 
 

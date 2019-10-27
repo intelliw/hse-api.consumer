@@ -7,9 +7,9 @@
  */
 const { Kafka } = require('kafkajs');
 
-const enums = require('../host/enums');
+const enums = require('../environment/enums');
 
-const env = require('../xenvironment/env');
+const env = require('../environment/env');
 
 const moment = require('moment');
 

@@ -2,7 +2,12 @@
 'use strict';
 /**
  * PACKAGE: ./host/index.js
- * common services, tools, schemas and constants
+ * *per project* configurations, constants, enums, and utiltiies
  */
-module.exports.constants = require('./constants');
-module.exports.enums = require('./enums');
+
+module.exports.configs = require('./configs');
+module.exports.consts = require('./constants');
+
+// Logger instance - construct with this host's id 
+module.exports.log = new (require('../logger/Logger'));
+

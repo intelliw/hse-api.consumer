@@ -5,18 +5,19 @@
  *  
  */
 
-const enums = require('../host/enums');
+const enums = require('../environment/enums');
+
 const consts = require('../host/constants');
 
-const utils = require('../xenvironment/utils');
-const env = require('../xenvironment/env');
+const utils = require('../environment/utils');
+const env = require('../environment/env');
 
 const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
 const KAFKA_READ_TOPIC = env.active.topics.monitoring.inverter;
-const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumers.groupId.inverter;
+const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.inverter;
 
 
 /**
