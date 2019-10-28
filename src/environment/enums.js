@@ -15,6 +15,16 @@ module.exports.energyData = {
     gridout: 'grid.out'
 }
 
+// api paths enumerations 
+module.exports.paths = {
+    energy: 'energy',
+    device: 'device',
+    devices: 'devices',
+    logging: 'logging',         //  api/logging
+    features: 'features',       //  api/features
+    versions: 'versions'        //  api/versions
+}
+
 // api parameter enumerations 
 module.exports.params = {
     energy: {
@@ -47,8 +57,15 @@ module.exports.params.energy.default = this.params.energy.hse;
 module.exports.params.period.default = this.params.period.week;
 
 // flags for feature toogles
-module.exports.feature = {
-    logging: 'logging'                              // logging reconfiguration feature
+module.exports.features = {
+    release: { },
+    operational: {
+        none: "none",
+        logging: 'logging',                         // logging reconfiguration feature
+        validation: 'validation'                    // whether or not to to perform in-depth input validation for post requests
+    },
+    experiment: { },
+    permission: { }
 }
 
 module.exports.timeOfDay = {
@@ -123,7 +140,7 @@ module.exports.messageBroker = {                    // kafka message broker. top
             pms: 'group.monitoring.pms',                    // group id convention = <target system>.<target dataset>.<target table>
             mppt: 'group.monitoring.mppt',
             inverter: 'group.monitoring.inverter'
-        }, 
+        },
         system: {
             feature: 'group.system.feature'
         }
@@ -137,11 +154,7 @@ module.exports.messageBroker = {                    // kafka message broker. top
 module.exports.messageBroker.ack.default = this.messageBroker.ack.leader
 
 // logging and error reporting framework 
-module.exports.logging = {                           
-    appenders: {                                    // output options for logging and error reporting      
-        console: "console",
-        stackdriver: "stackdriver"
-    },
+module.exports.logging = {
     statements: {                                   // determines which log statements will be included in log output 
         data: "data",
         error: "error",
@@ -153,10 +166,14 @@ module.exports.logging = {
         none: "none",
         info: "info",
         debug: "debug"
+    },
+    appenders: {                                    // output options for logging and error reporting      
+        console: "console",
+        stackdriver: "stackdriver"
     }
 }
 // gcp project enumerations
-module.exports.gcp = {           
+module.exports.gcp = {
     projects: {
         sundaya: "sundaya"
     }

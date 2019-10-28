@@ -11,8 +11,8 @@ const moment = require('moment');
 
 const NONE = global.undefined;
 
-// capitalise first letter of first word or all words
-module.exports.capitalise = (str, allWords) => {
+// capitalise first letter of first word or all words 
+module.exports.capitalise = (str, allWords) => {                   // str = e.g. 'the priest of the palace...'    
 
     const SPACE_DELIMITER = ' ';
     let outStr = '';
@@ -25,10 +25,10 @@ module.exports.capitalise = (str, allWords) => {
         words.forEach(word => {
             outStr += word.charAt(0).toUpperCase() + word.slice(1) + SPACE_DELIMITER;
         });
-        outStr = outStr.trim();
+        outStr = outStr.trim();                                     // e.g.  'The Priest Of The Palace...'        
 
     } else {
-        outStr = str.charAt(0).toUpperCase() + str.slice(1);
+        outStr = str.charAt(0).toUpperCase() + str.slice(1);        // e.g.  'The priest of the palace...'
     }
 
     return outStr;

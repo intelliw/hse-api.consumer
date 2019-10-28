@@ -57,7 +57,7 @@ class Feature extends KafkaConsumer {
         let jsonValue = JSON.parse(consumedMessage.value);
 
         // logging feature
-        if (feature == enums.feature.logging) {
+        if (feature == enums.features.operational.logging) {
             env.active.logging = jsonValue;
             log.initialise(); 
         }
