@@ -61,14 +61,14 @@ class Logger {
         this.data = function (dataset, table, id, rowArray) {
             dataStatement.write(dataset, table, id, rowArray);
         }
-        this.exception = function(functionName, errMessage, errEvent) {         // errEvent is a ErrorEvent object created with log.ERR.event()
-            exceptionStatement.write(functionName, errMessage, errEvent);
+        this.exception = function(label, errMessage, errEvent) {         // errEvent is a ErrorEvent object created with log.ERR.event()
+            exceptionStatement.write(label, errMessage, errEvent);
         }
         this.error = function(label, errObject) {            // errObject is a Error object created with 'new Error(message)'
             errorStatement.write(label, errObject);
         }
-        this.trace = function(label, object) {
-            traceStatement.write(label, object);
+        this.trace = function(label, id, object) {
+            traceStatement.write(label, id, object);
         }
 
     }

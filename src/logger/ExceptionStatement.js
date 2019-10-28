@@ -22,10 +22,10 @@ class ExceptionStatement extends Statement {
     }
 
     // entrypoint for clients to call. errEvent is a ErrorEvent object created with log.ERR.event()
-    write(functionName, errMessage, errEvent) {
+    write(label, errMessage, errEvent) {
         
         // setup the error function, message, and service context 
-        errEvent.setFunctionName(functionName)
+        errEvent.setFunctionName(label)
             .setMessage(errMessage)
             .serviceContext = {
                 service: env.active.api.host,
@@ -33,37 +33,37 @@ class ExceptionStatement extends Statement {
                 resourceType: env.active.stackdriver.logging.resource                      // e.g. gce_instance
             }
 
-        this._writeConsoleInfo(functionName, errMessage, errEvent);
-        this._writeConsoleDebug(functionName, errMessage, errEvent);
-        this._writeStackdriverInfo(functionName, errMessage, errEvent);
-        this._writeStackdriverDebug(functionName, errMessage, errEvent);
+        this._writeConsoleInfo(label, errMessage, errEvent);
+        this._writeConsoleDebug(label, errMessage, errEvent);
+        this._writeStackdriverInfo(label, errMessage, errEvent);
+        this._writeStackdriverDebug(label, errMessage, errEvent);
 
     }
 
     // calls to super - these are annulled by initialise function based on configs  
-    _writeConsoleInfo(functionName, errMessage, errEvent) {
-        let payload = `[${functionName}] ${errMessage}`;
+    _writeConsoleInfo(label, errMessage, errEvent) {
+        let payload = `[${label}] ${errMessage}`;
         super._writeConsole(this.statementName, Statement.Severity.WARNING, enums.logging.verbosity.info, payload);
     }
-    _writeConsoleDebug(functionName, errMessage, errEvent) {
+    _writeConsoleDebug(label, errMessage, errEvent) {
         let payload = {
-            event: errEvent, function: functionName, message: errMessage
+            event: errEvent, label: label, message: errMessage
         }
         super._writeConsole(this.statementName, Statement.Severity.WARNING, enums.logging.verbosity.debug, payload);
     }
 
     // exceptions write the same content once only for info or debug, not both.
-    _writeStackdriverInfo(functionName, errMessage, errEvent) {
+    _writeStackdriverInfo(label, errMessage, errEvent) {
         let payload = {
-            event: errEvent, function: functionName, message: errMessage, statement: this.statementName
+            event: errEvent, label: label, message: errMessage, statement: this.statementName
         }
         super._writeStackdriver(this.statementName, Statement.Severity.WARNING, payload);
         this.errorReporter.report(errEvent);
 
     };
-    _writeStackdriverDebug(functionName, errMessage, errEvent) {
+    _writeStackdriverDebug(label, errMessage, errEvent) {
         let payload = {
-            event: errEvent, function: functionName, message: errMessage, statement: this.statementName
+            event: errEvent, label: label, message: errMessage, statement: this.statementName
         }
         super._writeStackdriver(this.statementName, Statement.Severity.WARNING, payload);
         this.errorReporter.report(errEvent);
@@ -75,34 +75,34 @@ class ExceptionStatement extends Statement {
 
         // messaging
         if (!super._isException()) {
-            this.write = function (functionName, errMessage, errEvent) { };
+            this.write = function (label, errMessage, errEvent) { };
         }
 
         // Stackdriver
         if (!super._isStackdriver()) {
-            this._writeStackdriverInfo = function (functionName, errMessage, errEvent) { };
-            this._writeStackdriverDebug = function (functionName, errMessage, errEvent) { };
+            this._writeStackdriverInfo = function (label, errMessage, errEvent) { };
+            this._writeStackdriverDebug = function (label, errMessage, errEvent) { };
         } else {
             // only 1 applies. if both info and debug are configured debug will take precedence
             if (!super._isDebug()) {
-                this._writeStackdriverDebug = function (functionName, errMessage, errEvent) { };
+                this._writeStackdriverDebug = function (label, errMessage, errEvent) { };
             }
             if (super._isDebug() || (!super._isInfo())) {
-                this._writeStackdriverInfo = function (functionName, errMessage, errEvent) { };
+                this._writeStackdriverInfo = function (label, errMessage, errEvent) { };
             }
         }
 
         // Console
         if (!super._isConsole()) {
-            this._writeConsoleInfo = function (functionName, errMessage, errEvent) { };
-            this._writeConsoleDebug = function (functionName, errMessage, errEvent) { };
+            this._writeConsoleInfo = function (label, errMessage, errEvent) { };
+            this._writeConsoleDebug = function (label, errMessage, errEvent) { };
         } else {
             // only 1 applies. if both info and debug are configured debug will take precedence
             if (!super._isDebug()) {
-                this._writeConsoleDebug = function (functionName, errMessage, errEvent) { };
+                this._writeConsoleDebug = function (label, errMessage, errEvent) { };
             }
             if (super._isDebug() || (!super._isInfo())) {
-                this._writeConsoleInfo = function (functionName, errMessage, errEvent) { };
+                this._writeConsoleInfo = function (label, errMessage, errEvent) { };
             }
         }
     }
