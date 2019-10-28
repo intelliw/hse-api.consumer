@@ -51,7 +51,7 @@ class DataStatement extends Statement {
     };
     _writeStackdriverDebug(dataset, table, id, rowArray) {
         let payload = {
-            rows: rowArray, rowqty: rowArray.length, 
+            rows: JSON.stringify(rowArray), rowqty: rowArray.length, 
             dataset: dataset, table: table, id: id, statement: this.statementName
         }
         super._writeStackdriver(this.statementName, Statement.Severity.DEBUG, payload);

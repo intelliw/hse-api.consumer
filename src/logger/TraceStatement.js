@@ -54,7 +54,7 @@ class TraceStatement extends Statement {
     };
     _writeStackdriverDebug(label, object) {
         let payload = {
-            object: object, time: moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat), label: label, statement: this.statementName
+            object: JSON.stringify(object), time: moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat), label: label, statement: this.statementName
         }
         super._writeStackdriver(this.statementName, Statement.Severity.NONE, payload);
     }

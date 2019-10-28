@@ -321,16 +321,6 @@ module.exports.selectFirstMatch = (findInCVL, find, defaultIfNotFound) => {
 }
 
 
-// returns true if a property with a matching value exists in the object. Can be used to check if a value exists in an enum
-module.exports.valueExistsInObject = (obj, value) => {
-
-    const MISSING = -1;
-
-    const exists = this.indexFromValue(obj, value) != MISSING;
-    return exists;
-
-}
-
 
 
 // SHARED UTILS =====================================================================================
@@ -342,20 +332,20 @@ module.exports.valueExistsInObject = (obj, value) => {
 module.exports.hex2bitArray = (hexValue, minLength) => {
     const hexBase = 16;
     const binaryBase = 2;
-    
+
     let bitArray = [];
 
     // process  if hexValue is valid
     if (hexValue != NONE) {
 
-        // convert hex to binary - e.g. 1A79 --> 0001 1010 0111 1001
+        // convert hex to binary - e.g. '0801‬' is equivalent to 0000 1000 0000 0001 
         let binaryValue = parseInt(hexValue, hexBase).toString(binaryBase).padStart(minLength, '0');
-        
-        // reverse the array - e.g  bitArray[0] = 1, bitArray[1] = 0          
-        bitArray = binaryValue.split('').reverse();             
 
-    // if hexValue is invalid return null array
-    } else {    
+        // reverse the array - e.g  bitArray[0] = 1, bitArray[1] = 0          
+        bitArray = binaryValue.split('').reverse();
+
+        // if hexValue is invalid return null array
+    } else {
         bitArray = new Array(minLength).fill(null);
     }
 
@@ -383,11 +373,11 @@ module.exports.randomFloat = (min, max, decimalPlaces) => {
 module.exports.randomIntegerString = (min, max) => {
 
     const ZERO_DECIMAL_PLACES = 0;
-    
+
     // get a random number 
-    let minLength = max.toString().length;               
+    let minLength = max.toString().length;
     let randomInt = this.randomFloat(min, max, ZERO_DECIMAL_PLACES);
-    let randomIntStr = randomInt.toString().substring(0,minLength);
+    let randomIntStr = randomInt.toString().substring(0, minLength);
 
     // pad zeros if shorter than max 
     return randomIntStr.padStart(minLength, '0');
@@ -395,22 +385,34 @@ module.exports.randomIntegerString = (min, max) => {
 }
 
 
-/* returns true, false, or null 
-   depending on whether bitValue is 1, 0, or null/invalid
+/* returns ifZero, ifOne or null 
+   depending on whether bitValue is 0, 1, or null/invalid
+   the parameters ifZero and ifOne correspond to a bitvalue of 0 or 1 respectively 
 */
-module.exports.tristateBoolean = (bitValue) => {
+module.exports.tristateBoolean = (bitValue, ifZero, ifOne) => {
 
     let tristate = null;
 
     // return true/false if bitValue is 1,0
     if (bitValue == 1) {
-        tristate = true;
+        tristate = ifOne;
     } else if (bitValue == 0) {
-        tristate = false;
+        tristate = ifZero;
     }
 
     return tristate;
 }
+
+// returns true if a property with a matching value exists in the object. Can be used to check if a value exists in an enum
+module.exports.valueExistsInObject = (obj, value) => {
+
+    const MISSING = -1;
+
+    const exists = this.indexFromValue(obj, value) != MISSING;
+    return exists;
+
+}
+
 
 
 // test... node src/environment/utils

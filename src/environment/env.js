@@ -16,7 +16,7 @@ const PRODUCER_CLIENTID = `producer.${utils.randomIntegerString(1, 9999)}`
 /* environment configurables  
     env.js is mastered in hse-api-host project and shared by hse-api-consumers etc.
         it should be edited in hse-api-host and copied across to hse-api-consumers project if any changes are made 
-    logging verbosity and appenders provide startup configuration for host.logs  - at runtime it canb e changed through GET: api/logging?verbosity=info,debug&appenders=console,stackdriver;
+    logging verbosity and appenders provide startup configuration for logger.logs  - at runtime it canb e changed through GET: api/logging?verbosity=info,debug&appenders=console,stackdriver;
     - verbosity determines the loglevel (none, info, or debug)
     - appenders determines the output destination (console, or stackdriver)
 */
@@ -129,7 +129,7 @@ const LOGGING = {
             enums.logging.statements.error,
             enums.logging.statements.trace],
         verbosity: [
-            enums.logging.verbosity.info],
+            enums.logging.verbosity.debug],
         appenders: [
             enums.logging.appenders.stackdriver,
             enums.logging.appenders.console]
@@ -160,7 +160,7 @@ const LOGGING = {
 
 
 // bq datasets for each environment type 
-const BQ_DATASETS = {
+const BQ = {
     DEV: {                                                                  // bq datasets for DEV environments 
         datasets: { monitoring: 'monitoring' },
         tables: { pms: 'dev_pms', mppt: 'dev_mppt', inverter: 'dev_inverter', TEST: 'TEST' }
@@ -184,7 +184,7 @@ module.exports.CONFIGS = {
         api: { host: '192.168.1.108:8080', scheme: 'http', versions: API_VERSIONS },
         kafka: { brokers: ['192.168.1.108:9092'] },                             // localhost   | 192.168.1.108            
         topics: KAFKA_TOPICS.DEV,
-        datawarehouse: BQ_DATASETS.DEV,
+        datawarehouse: BQ.DEV,
         logging: LOGGING.DEV,
         kafkajs: KAFKAJS,
         stackdriver: STACKDRIVER.DEV,
@@ -194,7 +194,7 @@ module.exports.CONFIGS = {
         api: { host: API_HOST.TEST, scheme: 'https', versions: API_VERSIONS },
         kafka: { brokers: KAFKA_BROKERS.SINGLE },
         topics: KAFKA_TOPICS.TEST,
-        datawarehouse: BQ_DATASETS.TEST,
+        datawarehouse: BQ.TEST,
         logging: LOGGING.TEST,
         kafkajs: KAFKAJS,
         stackdriver: STACKDRIVER.TEST,
@@ -204,7 +204,7 @@ module.exports.CONFIGS = {
         api: { host: API_HOST.DEV, scheme: 'https', versions: API_VERSIONS },
         kafka: { brokers: KAFKA_BROKERS.SINGLE },                                     // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
         topics: KAFKA_TOPICS.DEV,
-        datawarehouse: BQ_DATASETS.DEV,
+        datawarehouse: BQ.DEV,
         logging: LOGGING.DEV,
         kafkajs: KAFKAJS,
         stackdriver: STACKDRIVER.DEV,
@@ -214,7 +214,7 @@ module.exports.CONFIGS = {
         api: { host: API_HOST.DEV, scheme: 'https', versions: API_VERSIONS },
         kafka: { brokers: KAFKA_BROKERS.HA },                                         // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         topics: KAFKA_TOPICS.DEV,
-        datawarehouse: BQ_DATASETS.DEV,
+        datawarehouse: BQ.DEV,
         logging: LOGGING.DEV,
         kafkajs: KAFKAJS,
         stackdriver: STACKDRIVER.DEV,
@@ -224,7 +224,7 @@ module.exports.CONFIGS = {
         api: { host: API_HOST.PROD, scheme: 'https', versions: API_VERSIONS },
         kafka: { brokers: KAFKA_BROKERS.SINGLE },                                     // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11   
         topics: KAFKA_TOPICS.PROD,
-        datawarehouse: BQ_DATASETS.PROD,
+        datawarehouse: BQ.PROD,
         logging: LOGGING.PROD,
         kafkajs: KAFKAJS,
         stackdriver: STACKDRIVER.PROD,
@@ -234,7 +234,7 @@ module.exports.CONFIGS = {
         api: { host: API_HOST.PROD, scheme: 'https', versions: API_VERSIONS },
         kafka: { brokers: KAFKA_BROKERS.HA },                                         // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         topics: KAFKA_TOPICS.PROD,
-        datawarehouse: BQ_DATASETS.PROD,
+        datawarehouse: BQ.PROD,
         logging: LOGGING.PROD,
         kafkajs: KAFKAJS,
         stackdriver: STACKDRIVER.PROD,

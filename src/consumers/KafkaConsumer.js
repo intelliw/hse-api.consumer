@@ -11,7 +11,7 @@
  */
 const env = require('../environment/env');
 const utils = require('../environment/utils');
-const log = require('../host').log;
+const log = require('../logger').log;
 
 const { Kafka } = require('kafkajs');
 
@@ -60,7 +60,7 @@ class KafkaConsumer {
 
         // start the consumer    
         this.initialiseTraps();
-        this.retrieveMessages().catch(e => log.error(`[${CLIENT_ID}] ${e.message}`, e))
+        this.retrieveMessages().catch(e => log.error(`[${CLIENT_ID}] Kafka consumer retrieve Error`, e))
 
     }
 
@@ -86,7 +86,7 @@ class KafkaConsumer {
             });
 
         } catch (e) {
-            log.error(`[${env.active.kafkajs.consumer.clientId}] retrieve Error`, e)
+            log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve/produce Error `, e)
         }
 
     }

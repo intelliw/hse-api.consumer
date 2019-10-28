@@ -11,7 +11,7 @@ const enums = require('../environment/enums');
 const env = require('../environment/env');
 const utils = require('../environment/utils');
 
-const log = require('../host').log;
+const log = require('../logger').log;
 
 const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');

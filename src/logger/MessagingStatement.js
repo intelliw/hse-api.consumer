@@ -51,7 +51,7 @@ class MessagingStatement extends Statement {
     };
     _writeStackdriverDebug(topic, offset, msgsArray, itemQty, sender) {
         let payload = {
-            messages: msgsArray, msgsqty: msgsArray.length, itemqty: itemQty,
+            messages: JSON.stringify(msgsArray), msgsqty: msgsArray.length, itemqty: itemQty,
             topic: topic, offset: `${offset}-${Number(offset) + (msgsArray.length - 1)}`,             // e.g. 225-229
             sender: sender, statement: this.statementName
         }

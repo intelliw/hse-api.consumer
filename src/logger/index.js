@@ -14,3 +14,7 @@ module.exports.Statement = require('./Statement');
 // module.exports.ExceptionStatement = require('./ExceptionStatement');
 // module.exports.TraceStatement = require('./TraceStatement');
 
+
+// Logger instance 
+const log = new (require('../logger/Logger'));
+module.exports.log = log;                       

@@ -6,10 +6,10 @@
  */
 const consts = require('../host/constants');
 const enums = require('../environment/enums');
-
-const log = require('../host').log;
+const log = require('../logger').log;
 
 const moment = require('moment');
+
 const { BigQuery } = require('@google-cloud/bigquery');
 
 class BqProducer {
@@ -21,13 +21,13 @@ class BqProducer {
         this.table
 
      constructor arguments 
-    * @param {*} dataset                                        //  env.active.datawarehouse.datasets   - e.g. monitoring
-    * @param {*} table                                          //  env.active.datawarehouse.tables   - e.g. pms
+    * @param {*} dataset                                                    //  env.active.datawarehouse.datasets   - e.g. monitoring
+    * @param {*} table                                                      //  env.active.datawarehouse.tables   - e.g. pms
     */
     constructor(dataset, table) {
 
         // create the bq client
-        this.bqClient = new BigQuery();                         // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
+        this.bqClient = new BigQuery();                                     // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
         this.dataset = dataset;
         this.table = table;
 
@@ -41,17 +41,17 @@ class BqProducer {
         //let rows = JSON.parse(rowArray);
         
         try {
+            // log data output before trying insert                         // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
+            log.data(this.dataset, this.table, sharedId, rowArray); 
+
             // @DEBUG console.log(`bq rows: ${JSON.stringify(rows)}`);       
             await this.bqClient
                 .dataset(this.dataset)
                 .table(this.table)
                 .insert(rowArray);
-
-            // log output                                       // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
-            log.data(this.dataset, this.table, sharedId, rowArray); 
         
         } catch (e) {
-            log.error(`${this.dataset}.${this.table}`, e);
+            log.error(`${this.dataset}.${this.table} BQ insert error`, e);
         }
 
     }
