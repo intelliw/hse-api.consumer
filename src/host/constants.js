@@ -14,7 +14,7 @@ module.exports.dateTime = {
 // system configuration constants
 module.exports.system = {
     MONITORING_PRECISION: 4,                                                 // decimal places for float values in monitoring dataset
-    INSTANCE_ID: 'api-consumer'                                              // or api-consumer for logging - resource: {  labels: { instance_id:    
+    INSTANCE_ID: 'api_consumer'                                              // or api_host for logging - resource: {  labels: { instance_id:    
 }
 
 // equipment status constants - for non-binary statuses based on a tuple of multiple bits e.g if the 2 'mppt.input' bits have a value tuple of '00' the statis is 'normal'
