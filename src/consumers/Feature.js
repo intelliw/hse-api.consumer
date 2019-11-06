@@ -22,7 +22,7 @@ const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.system.feature
 
 /**
  * instance attributes
- * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+* producer                                                                          //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
 class Feature extends KafkaConsumer {
@@ -43,7 +43,7 @@ class Feature extends KafkaConsumer {
 
     // subtype implements specific transforms or calls super 
     transform(consumedMessage) {
-        return consumedMessage;                                         // no transforms required
+        return consumedMessage;                                                     // no transforms required 
     }
 
     /* writes to bq and to the datasets kafka topic 

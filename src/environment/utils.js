@@ -34,6 +34,14 @@ module.exports.capitalise = (str, allWords) => {                   // str = e.g.
     return outStr;
 };
 
+// clones a json object - including arrays to any nesting depth
+module.exports.clone = (jsonObj) => {                                   // e.g. { .. }    
+
+    let clone = JSON.parse(JSON.stringify(jsonObj));
+
+    return clone;
+};
+
 /**
  * returns a number sequence (e.g. days of the month '01 02 ..' etc) in a delimited string with zero pads
  * howMany is the number of numbers to output including the startNum 
@@ -48,9 +56,9 @@ module.exports.createSequence = (startNum, howMany, delimiter, prefix, pad) => {
     const PAD_ZERO = "0";
 
     let zerosToPad; let digits; let num;
-    
+
     pad = pad ? pad : true;
-    let seqStr = prefix !== NONE? prefix.trim() : "";                      // prepend prefix if provided
+    let seqStr = prefix !== NONE ? prefix.trim() : "";                      // prepend prefix if provided
     let maxNum = Number(startNum) + (howMany - 1);
     let maxDigits = maxNum.toString().length;
 
@@ -60,7 +68,7 @@ module.exports.createSequence = (startNum, howMany, delimiter, prefix, pad) => {
 
         num = i.toString();
         zerosToPad = pad ? maxDigits - num.length : 0;
-        
+
         seqStr += PAD_ZERO.repeat(zerosToPad) + num + (i <= maxNum - 1 ? delimiter : "");
     }
 
@@ -142,19 +150,19 @@ module.exports.datetimeToLocal = (instant, returnUtcFormat, offsetHours) => {
    - is not in UTC format (no trailing 'Z') 
 */
 module.exports.datetimeZoneOffset = (instant) => {
-    
+
     let tzOffset;
 
     // get offset in minutes
     let offsetMinutes = moment.parseZone(instant).utcOffset();      // 20190209T150006.032+0700 -> 420, 20190209T150006Z -> 0     
-    
+
     // get the sign, hours, and minutes from the offset
     let sign = (Math.sign(offsetMinutes) < 0) ? '-' : '+';                                          // +/- from +1 or -1
     let hours = Math.abs(moment.duration(offsetMinutes, 'minutes').hours());                        // 7 
     let minutes = Math.abs(moment.duration(offsetMinutes, 'minutes').minutes());                    // 0
 
     // construct offset string, pad hrs and mins with zeros to 2 places
-    tzOffset =  sign + hours.toString().padStart(2, '0') + ':' +  minutes.toString().padStart(2, '0');
+    tzOffset = sign + hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
 
     return tzOffset;                                                                               // return formatted 
 
@@ -197,6 +205,21 @@ module.exports.indexFromValue = (obj, value) => {
     return index;
 
 }
+
+
+// returns whether the response status is a 200 level response
+module.exports.is200response = (status) => {
+
+    const status200 = 200;
+    const responseStatus = Number(status);
+
+    let is200 = (responseStatus >= status200) && (responseStatus < (status200 + 100));
+
+    return is200;
+
+}
+
+
 // returns the key name of the first property with a matching value. Can be used to retrieve an enum key from its value
 module.exports.keynameFromValue = (obj, value) => {
 
@@ -273,10 +296,10 @@ module.exports.objectKeysToArray = (jsonObj) => {
 
     var result = [];
 
-    for(var i in jsonObj)
+    for (var i in jsonObj)
         result.push(i);
 
-    return result;        
+    return result;
 }
 
 // returns true at random. This was needed to limit the periods which are outputted fior 'instant' to simulate real-life data logging
@@ -416,4 +439,4 @@ module.exports.valueExistsInObject = (obj, value) => {
 
 
 // test... node src/environment/utils
-// console.log(...);
+//console.log(this.is200response(201));

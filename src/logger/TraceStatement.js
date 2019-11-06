@@ -23,40 +23,40 @@ class TraceStatement extends Statement {
         this.initialise();
     }
 
-    // entrypoint for clients to call. errEvent is a ErrorEvent object created with log.ERR.event()
-    write(label, id, object) {
+    // entrypoint for clients to call
+    write(label, value, payload) {
 
-        this._writeConsoleInfo(label, id, object);
-        this._writeConsoleDebug(label, id, object);
-        this._writeStackdriverInfo(label, id, object);
-        this._writeStackdriverDebug(label, id, object);
+        this._writeConsoleInfo(label, value, payload);
+        this._writeConsoleDebug(label, value, payload);
+        this._writeStackdriverInfo(label, value, payload);
+        this._writeStackdriverDebug(label, value, payload);
 
     }
 
     // calls to super - these are annulled by initialise function based on configs  
-    _writeConsoleInfo(label, id, object) {
-        let payload = `[${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}] ${label} ${id}`;
-        super._writeConsole(this.statementName, Statement.Severity.INFO, enums.logging.verbosity.info, payload);
+    _writeConsoleInfo(label, value, payload) {
+        let payloadObj = `[${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}] ${label} ${value}`;
+        super._writeConsole(this.statementName, Statement.Severity.INFO, enums.logging.verbosity.info, payloadObj);
     }
-    _writeConsoleDebug(label, id, object) {
-        let payload = {
-            object: object, time: moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat), label: label, id: id
+    _writeConsoleDebug(label, value, payload) {
+        let payloadObj = {
+            payload: payload, time: moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat), label: label, value: value
         }
-        super._writeConsole(this.statementName, Statement.Severity.DEBUG, enums.logging.verbosity.debug, payload);
+        super._writeConsole(this.statementName, Statement.Severity.DEBUG, enums.logging.verbosity.debug, payloadObj);
     }
 
     // traces write the same content once only for info or debug, not both.
-    _writeStackdriverInfo(label, id, object) {
-        let payload = {
-            time: moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat), label: label, id: id, statement: this.statementName
+    _writeStackdriverInfo(label, value, payload) {
+        let payloadObj = {
+            label: label, value: value, statement: this.statementName
         }
-        super._writeStackdriver(this.statementName, Statement.Severity.NONE, payload);
+        super._writeStackdriver(this.statementName, Statement.Severity.NONE, payloadObj);
     };
-    _writeStackdriverDebug(label, id, object) {
-        let payload = {
-            object: object, time: moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat), label: label, id: id, statement: this.statementName
+    _writeStackdriverDebug(label, value, payload) {
+        let payloadObj = {
+            payload: payload, label: label, value: value, statement: this.statementName
         }
-        super._writeStackdriver(this.statementName, Statement.Severity.NONE, payload);
+        super._writeStackdriver(this.statementName, Statement.Severity.NONE, payloadObj);
     }
 
 
@@ -65,34 +65,34 @@ class TraceStatement extends Statement {
 
         // messaging
         if (!super._isTrace()) {
-            this.write = function (label, id, object) { };
+            this.write = function (label, value, payload) { };
         }
 
         // Stackdriver
         if (!super._isStackdriver()) {
-            this._writeStackdriverInfo = function (label, id, object) { };
-            this._writeStackdriverDebug = function (label, id, object) { };
+            this._writeStackdriverInfo = function (label, value, payload) { };
+            this._writeStackdriverDebug = function (label, value, payload) { };
         } else {
             // only 1 applies. if both info and debug are configured debug will take precedence
             if (!super._isDebug()) {
-                this._writeStackdriverDebug = function (label, id, object) { };
+                this._writeStackdriverDebug = function (label, value, payload) { };
             }
             if (super._isDebug() || (!super._isInfo())) {
-                this._writeStackdriverInfo = function (label, id, object) { };
+                this._writeStackdriverInfo = function (label, value, payload) { };
             }
         }
 
         // Console
         if (!super._isConsole()) {
-            this._writeConsoleInfo = function (label, id, object) { };
-            this._writeConsoleDebug = function (label, id, object) { };
+            this._writeConsoleInfo = function (label, value, payload) { };
+            this._writeConsoleDebug = function (label, value, payload) { };
         } else {
             // only 1 applies. if both info and debug are configured debug will take precedence
             if (!super._isDebug()) {
-                this._writeConsoleDebug = function (label, id, object) { };
+                this._writeConsoleDebug = function (label, value, payload) { };
             }
             if (super._isDebug() || (!super._isInfo())) {
-                this._writeConsoleInfo = function (label, id, object) { };
+                this._writeConsoleInfo = function (label, value, payload) { };
             }
         }
     }

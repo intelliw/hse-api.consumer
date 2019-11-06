@@ -26,7 +26,6 @@ class Statement {
         this.logWriter = logWriter;
         this.resourceType = env.active.stackdriver.logging.resource;
         this.instanceId = consts.system.INSTANCE_ID;
-        
     }
 
     // Stackdriver write operatation
@@ -59,7 +58,7 @@ class Statement {
     // Console write operatation
     async _writeConsole(statement, severity, verbosity, payload) {
 
-        console.log(`${statement}.${verbosity.toUpperCase()}`, payload)
+        console.log(`${statement.toUpperCase()}.${verbosity}`, payload)
     }
 
 
