@@ -79,7 +79,8 @@ class Logger {
                 requestStatus: "Request",
                 responseStatus: "Response",
                 configChange: "Configs",
-                watchVar: "Variable"                                                // use for watch variables - this can be combined with an release or experiment feature, to watch a variable in a new feature
+                watchVar: "Variable",                                                // use for watch variables - this can be combined with an release or experiment feature, to watch a variable in a new feature
+                unexpected: "Unexpected"
             }
         }
 
