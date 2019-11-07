@@ -12,8 +12,8 @@ const Statement = require('./Statement');
 class MessagingStatement extends Statement {
     
     // constructor
-    constructor(logWriter) {
-        super(logWriter);
+    constructor(logWriter, serviceId) {
+        super(logWriter, serviceId);
         this.statementName = enums.logging.statements.messaging;
         this.initialise();
     }

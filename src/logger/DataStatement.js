@@ -12,8 +12,8 @@ const Statement = require('./Statement');
 class DataStatement extends Statement {
 
     // constructor
-    constructor(logWriter) {
-        super(logWriter);
+    constructor(logWriter, serviceId) {
+        super(logWriter, serviceId);
         this.statementName = enums.logging.statements.data;
         
         this.initialise();

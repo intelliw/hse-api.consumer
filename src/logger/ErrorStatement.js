@@ -12,9 +12,9 @@ const Statement = require('./Statement');
 class ErrorStatement extends Statement {
 
     // constructor
-    constructor(logWriter, errorReporter) {
+    constructor(logWriter, serviceId, errorReporter) {
 
-        super(logWriter, errorReporter);
+        super(logWriter, serviceId);
         this.statementName = enums.logging.statements.error;
         this.errorReporter = errorReporter;
 

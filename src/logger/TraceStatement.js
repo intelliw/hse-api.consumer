@@ -6,18 +6,19 @@
  */
 const enums = require('../environment/enums');
 const env = require('../environment/env');
-const consts = require('../host/constants');
 
 const Statement = require('./Statement');
 
 const moment = require('moment');
 
+const TIMESTAMP_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSSS'             // "2019-02-09T16:00:17.0200"  same as consts.bigqueryZonelessTimestampFormat     
+
 class TraceStatement extends Statement {
 
     // constructor
-    constructor(logWriter) {
+    constructor(logWriter, serviceId) {
 
-        super(logWriter);
+        super(logWriter, serviceId);
         this.statementName = enums.logging.statements.trace;
 
         this.initialise();
@@ -35,12 +36,12 @@ class TraceStatement extends Statement {
 
     // calls to super - these are annulled by initialise function based on configs  
     _writeConsoleInfo(label, value, payload) {
-        let payloadObj = `[${moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat)}] ${label} ${value}`;
+        let payloadObj = `[${moment.utc().format(TIMESTAMP_FORMAT)}] ${label} ${value}`;
         super._writeConsole(this.statementName, Statement.Severity.INFO, enums.logging.verbosity.info, payloadObj);
     }
     _writeConsoleDebug(label, value, payload) {
         let payloadObj = {
-            payload: payload, time: moment.utc().format(consts.dateTime.bigqueryZonelessTimestampFormat), label: label, value: value
+            payload: payload, time: moment.utc().format(TIMESTAMP_FORMAT), label: label, value: value
         }
         super._writeConsole(this.statementName, Statement.Severity.DEBUG, enums.logging.verbosity.debug, payloadObj);
     }

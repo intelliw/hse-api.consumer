@@ -5,16 +5,10 @@
  * global constants
  */
 
-// constants for dates and timestamps
-module.exports.dateTime = {
-    bigqueryUtcTimestampFormat: 'YYYY-MM-DD HH:mm:ss.SSSSZ',                 // "2019-02-09T16:00:17.0200+08:00"
-    bigqueryZonelessTimestampFormat: 'YYYY-MM-DD HH:mm:ss.SSSS',             // "2019-02-09T16:00:17.0200"          use this format to force bigquery to store local time without converting to utc          
-}
-
 // system configuration constants
 module.exports.system = {
     MONITORING_PRECISION: 4,                                                 // decimal places for float values in monitoring dataset
-    INSTANCE_ID: 'api_consumer'                                              // or api_host for logging - resource: {  labels: { instance_id:    
+    SERVICE_ID: 'api_consumer'                                              // or api_host for logging - resource: {  labels: { service_id:    
 }
 
 // equipment status constants - for non-binary statuses based on a tuple of multiple bits e.g if the 2 'mppt.input' bits have a value tuple of '00' the statis is 'normal'

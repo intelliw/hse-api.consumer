@@ -8,6 +8,7 @@ const { ErrorReporting } = require('@google-cloud/error-reporting');
 const { Logging } = require('@google-cloud/logging');               // google cloud logging client library
 
 const env = require('../environment');
+const consts = require('../host/constants');
 
 const MessagingStatement = require('./MessagingStatement');
 const DataStatement = require('./DataStatement');
@@ -22,20 +23,28 @@ class Logger {
     /**
      * instance variables
      * this.messaging, this.data, this.error, this.exception, this.trace
+     * this.ERR
      */
     constructor() {
 
-        // create a Stackdriver log writer and error reporter
         const project = env.active.gcp.project;
         const logname = env.active.stackdriver.logging.logName;
+        const serviceId = consts.system.SERVICE_ID
+
+        // create a Stackdriver log writer 
         logWriter = new Logging({                                     
             projectId: project,
         }).log(logname);                                                        // select the log to write to        
 
         // create a Stackdriver error reporter        
         errorReporter = new ErrorReporting({                                    // all configuration options are optional.
+            projectId: project,
             reportMode: env.active.stackdriver.errors.reportMode,               // 'production' (default), 'always', 'never' - production will not log unless NODE-ENV=production. Specifies when errors are reported to the Error Reporting Console. 
-            logLevel: env.active.stackdriver.errors.logLevel                    // 2 (warnings). 0 (no logs) 5 (all logs) 
+            logLevel: env.active.stackdriver.errors.logLevel,                   // 2 (warnings). 0 (no logs) 5 (all logs) 
+            serviceContext: {
+                service: serviceId,
+                version: env.active.api.versions.current
+            }            
         });
         this.ERR = errorReporter;
 
@@ -46,13 +55,15 @@ class Logger {
 
     // toggle logging based on current configs
     initialise() {                                                              // called by constructor and by api/logging at runtim  
+        
+        const serviceId = consts.system.SERVICE_ID
 
         // (re)create an instance of each statement     
-        messagingStatement = new MessagingStatement(logWriter);
-        dataStatement = new DataStatement(logWriter);
-        exceptionStatement = new ExceptionStatement(logWriter, errorReporter);
-        errorStatement = new ErrorStatement(logWriter, errorReporter);
-        traceStatement = new TraceStatement(logWriter);
+        messagingStatement = new MessagingStatement(logWriter, serviceId);
+        dataStatement = new DataStatement(logWriter, serviceId);
+        exceptionStatement = new ExceptionStatement(logWriter, serviceId, errorReporter);
+        errorStatement = new ErrorStatement(logWriter, serviceId, errorReporter);
+        traceStatement = new TraceStatement(logWriter, serviceId);
 
 
         // create the public interface for this Logger, for clients to use 

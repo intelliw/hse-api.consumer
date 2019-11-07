@@ -6,7 +6,6 @@
  */
 const enums = require('../environment/enums');
 const env = require('../environment/env');
-const consts = require('../host/constants');
 
 // stackdriver severities
 const SEVERITY = {
@@ -14,18 +13,18 @@ const SEVERITY = {
     DEBUG: "DEBUG",
     WARNING: "WARNING",
     ERROR: "ERROR",
-    NONE: consts.NONE
+    NONE: global.undefined
 }
 
 class Statement {
 
     // constructor
-    constructor(logWriter) {
+    constructor(logWriter, serviceId) {
 
         // store logwriter instance variables 
         this.logWriter = logWriter;
         this.resourceType = env.active.stackdriver.logging.resource;
-        this.instanceId = consts.system.INSTANCE_ID;
+        this.serviceId = serviceId;
     }
 
     // Stackdriver write operatation
@@ -38,7 +37,7 @@ class Statement {
             const metadata = {                                                          // the metadata associated with a log entry
                 resource: {
                     type: this.resourceType,
-                    labels: { instance_id: this.instanceId }
+                    labels: { service_id: this.serviceId }
                 },
                 severity: severity                                                      // LogSeverity      https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity    
             };
