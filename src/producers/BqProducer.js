@@ -44,7 +44,6 @@ class BqProducer {
             // log data output before trying insert                         // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
             log.data(this.dataset, this.table, sharedId, rowArray); 
 
-            // @DEBUG console.log(`bq rows: ${JSON.stringify(rows)}`);       
             await this.bqClient
                 .dataset(this.dataset)
                 .table(this.table)

@@ -128,7 +128,7 @@ class MonitoringMppt extends KafkaConsumer {
         
         // status
         let statusBits = utils.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);                             // get a reversed array of bits (bit 0 is least significant bit)
-        console.log(statusBits)
+
         dataObj.status = {
             bus_connect: utils.tristateBoolean(statusBits[0], false, true),                                            // bit 0    "status": { "bus_connect": true }, 
             input: consts.equStatus.mppt.input[consts.equStatus.ENUM_PREFIX + statusBits[1] + statusBits[2]],            // bit 1,2              "input": "normal"
@@ -142,7 +142,7 @@ class MonitoringMppt extends KafkaConsumer {
             system: utils.tristateBoolean(statusBits[12], "ok", "fault"),                                                             // bit 12               "system": true,  
             standby: utils.tristateBoolean(statusBits[13], "standby", "running")                                                             // bit 13               "standby": true } 
         }
-        console.log(dataObj.status)
+
         // add generic attributes
         dataObj.sys = { source: dataItem.sys.source }
         dataObj.time_event = dataItem.time_event
