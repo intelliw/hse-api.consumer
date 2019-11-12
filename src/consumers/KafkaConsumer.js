@@ -74,19 +74,19 @@ class KafkaConsumer {
 
                     let results = message;
 
-                    // if this is a monitoring dataset extract & transform the dataItems                                 // transformMonitoringDataset implemented by this supertype which calls transformDataItem in subtype
+                    // if this is a monitoring dataset extract & transform the dataItems with transformMonitoringDataset()                         
                     if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic)) {
-                        results = this.transformMonitoringDataset(message);         // e.g. results: { itemCount: 9, messages: [. . .] }
-                    }
+                        results = this.transformMonitoringDataset(message);                                     // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype
+                    }                                                                                           // e.g. results: { itemCount: 9, messages: [. . .] }
 
                     // write to bq and kafka topic
-                    this.produce(results);                                          // produce is implemented by subtype        
+                    this.produce(results);                                                                      // produce is implemented by subtype        
 
                 }
             });
 
         } catch (e) {
-            log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve/produce Error `, e)
+            log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve/produce Error`, e)
         }
 
     }

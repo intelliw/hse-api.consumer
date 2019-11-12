@@ -4,8 +4,8 @@
  * ./consumers/Bq.js
  *  base type for BigQuery client  
  */
-const consts = require('../host/constants');
 const enums = require('../environment/enums');
+const env = require('../environment/env');
 const log = require('../logger').log;
 
 const moment = require('moment');
@@ -28,8 +28,10 @@ class BqProducer {
 
         // create the bq client
         this.bqClient = new BigQuery();                                     // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
-        this.dataset = dataset;
-        this.table = table;
+        this.bqClient.projectId = env.active.gcp.project;                   // e.g. sundaya-dev
+
+        this.dataset = dataset;                                             // e.g. monitoring
+        this.table = table;                                                 // e.g. mppt
 
     }
     /* insert rows into Bigquery. rows is an array of data objects

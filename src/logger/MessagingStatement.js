@@ -30,13 +30,13 @@ class MessagingStatement extends Statement {
 
     // calls to super - these are annulled by initialise function based on configs  
     _writeConsoleInfo(topic, offset, msgsArray, itemQty, sender) {
-        let payload = `[${topic}:${offset}-${Number(offset) + (msgsArray.length - 1)}] ${msgsArray.length} msgs, ${itemQty} items, sender:${sender}`;
+        let payload = `[${topic}:${offset}-${parseInt(offset) + (msgsArray.length - 1)}] ${msgsArray.length} msgs, ${itemQty} items, sender:${sender}`;
         super._writeConsole(this.statementName, Statement.Severity.INFO, enums.logging.verbosity.info, payload);
     }
     _writeConsoleDebug(topic, offset, msgsArray, itemQty, sender) {
         let payload = {
             messages: msgsArray, msgsqty: msgsArray.length, itemqty: itemQty,
-            topic: topic, offset: `${offset}-${Number(offset) + (msgsArray.length - 1)}`,             // e.g. 225-229
+            topic: topic, offset: `${offset}-${parseInt(offset) + (msgsArray.length - 1)}`,             // e.g. 225-229
             sender: sender
         }
         super._writeConsole(this.statementName, Statement.Severity.DEBUG, enums.logging.verbosity.debug, payload);
@@ -44,7 +44,7 @@ class MessagingStatement extends Statement {
     _writeStackdriverInfo(topic, offset, msgsArray, itemQty, sender) {
         let payload = {
             msgsqty: msgsArray.length, itemqty: itemQty,
-            topic: topic, offset: `${offset}-${Number(offset) + (msgsArray.length - 1)}`,             // e.g. 225-229
+            topic: topic, offset: `${offset}-${parseInt(offset) + (msgsArray.length - 1)}`,             // e.g. 225-229
             sender: sender, statement: this.statementName
         }
         super._writeStackdriver(this.statementName, Statement.Severity.INFO, payload);
@@ -52,7 +52,7 @@ class MessagingStatement extends Statement {
     _writeStackdriverDebug(topic, offset, msgsArray, itemQty, sender) {
         let payload = {
             messages: msgsArray, msgsqty: msgsArray.length, itemqty: itemQty,
-            topic: topic, offset: `${offset}-${Number(offset) + (msgsArray.length - 1)}`,             // e.g. 225-229
+            topic: topic, offset: `${offset}-${parseInt(offset) + (msgsArray.length - 1)}`,             // e.g. 225-229
             sender: sender, statement: this.statementName
         }
         super._writeStackdriver(this.statementName, Statement.Severity.DEBUG, payload);

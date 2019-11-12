@@ -65,7 +65,7 @@ const _FEATURES = {
 }
 
 
-// standard configurations for logging 
+// logging configurations - statements, verbosity, and appenders, for each environment
 const _LOGGING = {
     DEV: {
         statements: [
@@ -137,8 +137,8 @@ const _KAFKAJS = {
         requestTimeout: 25000,                                              // milliseconds to wait for a successful request. (25000)   
         timeout: 30000,
         retry: {                                                            // retry options  https://kafka.js.org/docs/configuration
-            maxRetryTime: 10000,                                            // max milliseconds wait for a retry (30000) (10000)
-            initialRetryTime: 100,                                          // initial value in milliseconds (300), randomized after first time 
+            maxRetryTime: 30000,                                            // max milliseconds wait for a retry (30000) (10000)
+            initialRetryTime: 300,                                          // initial value in milliseconds (300), randomized after first time 
             factor: 0.2,                                                    // Randomization factor	(0.2)   
             multiplier: 2,                                                  // Exponential factor (2)
             retries: 8,                                                     // max number of retries per call (5)
@@ -148,23 +148,11 @@ const _KAFKAJS = {
 }
 
 
-// standard kafka topics for each environment type 
-const _TOPICS = {
-    DEV: {                                                                  // kafka topics for DEV environments 
-        monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
-        system: { feature: 'system.feature' },
-        dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
-    },
-    TEST: {                                                                  // kafka topics for TEST environments 
-        monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
-        system: { feature: 'system.feature' },
-        dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
-    },
-    PROD: {                                                                 // kafka topics for PROD environments 
-        monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },                            //  topics for monitoring data received from api host
-        system: { feature: 'system.feature' },
-        dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }        //  topics for monitoring datasets for bq update, created by consumer at 1st stage of monitoring
-    }
+// standard kafka topics for each environment 
+const _TOPICS = {                                                           // kafka topics for all environments 
+    monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
+    system: { feature: 'system.feature' },
+    dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
 }
 
 
@@ -196,19 +184,9 @@ const _STACKDRIVER = {
 
 
 // bq datasets for each environment type 
-const _DATAWAREHOUSE = {
-    DEV: {                                                                  // bq datasets for DEV environments 
-        datasets: { monitoring: 'monitoring' },
-        tables: { pms: 'pms', mppt: 'mppt', inverter: 'inverter'}
-    },
-    TEST: {                                                                  // bq datasets for TEST environments 
-        datasets: { monitoring: 'monitoring' },
-        tables: { pms: 'pms', mppt: 'mppt', inverter: 'inverter'}
-    },
-    PROD: {                                                                 // bq datasets for PROD environments 
-        datasets: { monitoring: 'monitoring' },
-        tables: { pms: 'pms', mppt: 'mppt', inverter: 'inverter'}
-    }
+const _DATAWAREHOUSE = {                                                    // bq datasets for all environments 
+    datasets: { monitoring: 'monitoring' },
+    tables: { pms: 'pms', mppt: 'mppt', inverter: 'inverter' }
 }
 
 
@@ -224,10 +202,10 @@ module.exports.CONFIGS = {
         logging: _LOGGING.DEV,
         kafka: { brokers: ['192.168.1.108:9092'] },                             // localhost   | 192.168.1.108            
         kafkajs: _KAFKAJS,
-        topics: _TOPICS.DEV,
+        topics: _TOPICS,
         gcp: _GCP.DEV,
         stackdriver: _STACKDRIVER.DEV,
-        datawarehouse: _DATAWAREHOUSE.DEV
+        datawarehouse: _DATAWAREHOUSE
     },
     testcloud: {                                                                // single node kafka, or Kafka Std - 1 master, N workers
         api: { host: _API.HOST.TEST, scheme: 'https', versions: _API.VERSIONS },
@@ -235,10 +213,10 @@ module.exports.CONFIGS = {
         logging: _LOGGING.TEST,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },
         kafkajs: _KAFKAJS,
-        topics: _TOPICS.TEST,
+        topics: _TOPICS,
         gcp: _GCP.TEST,
         stackdriver: _STACKDRIVER.TEST,
-        datawarehouse: _DATAWAREHOUSE.TEST
+        datawarehouse: _DATAWAREHOUSE
     },
     devcloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
         api: { host: _API.HOST.DEV, scheme: 'https', versions: _API.VERSIONS },
@@ -246,10 +224,10 @@ module.exports.CONFIGS = {
         logging: _LOGGING.DEV,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                                     // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
         kafkajs: _KAFKAJS,
-        topics: _TOPICS.DEV,
+        topics: _TOPICS,
         gcp: _GCP.DEV,
         stackdriver: _STACKDRIVER.DEV,
-        datawarehouse: _DATAWAREHOUSE.DEV
+        datawarehouse: _DATAWAREHOUSE
     },
     devcloud_HA: {                                                              // single node kafka, or Kafka Std - 1 master, N workers
         api: { host: _API.HOST.DEV, scheme: 'https', versions: _API.VERSIONS },
@@ -257,10 +235,10 @@ module.exports.CONFIGS = {
         logging: _LOGGING.DEV,
         kafka: { brokers: _KAFKA.BROKERS.HA },                                         // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         kafkajs: _KAFKAJS,
-        topics: _TOPICS.DEV,
+        topics: _TOPICS,
         gcp: _GCP.DEV,
         stackdriver: _STACKDRIVER.DEV,
-        datawarehouse: _DATAWAREHOUSE.DEV
+        datawarehouse: _DATAWAREHOUSE
     },
     prodcloud: {                                                                // single node kafka, or Kafka Std - 1 master, N workers
         api: { host: _API.HOST.PROD, scheme: 'https', versions: _API.VERSIONS },
@@ -268,10 +246,10 @@ module.exports.CONFIGS = {
         logging: _LOGGING.PROD,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                                     // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11   
         kafkajs: _KAFKAJS,
-        topics: _TOPICS.PROD,
+        topics: _TOPICS,
         gcp: _GCP.PROD,
         stackdriver: _STACKDRIVER.PROD,
-        datawarehouse: _DATAWAREHOUSE.PROD
+        datawarehouse: _DATAWAREHOUSE
     },
     prodcloud_HA: {                                                             // Kafka HA - 3 masters, N workers
         api: { host: _API.HOST.PROD, scheme: 'https', versions: _API.VERSIONS },
@@ -279,10 +257,10 @@ module.exports.CONFIGS = {
         logging: _LOGGING.PROD,
         kafka: { brokers: _KAFKA.BROKERS.HA },                                         // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         kafkajs: _KAFKAJS,
-        topics: _TOPICS.PROD,
+        topics: _TOPICS,
         gcp: _GCP.PROD,
         stackdriver: _STACKDRIVER.PROD,
-        datawarehouse: _DATAWAREHOUSE.PROD
+        datawarehouse: _DATAWAREHOUSE
     }
 }
 

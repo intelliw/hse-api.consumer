@@ -102,24 +102,22 @@ module.exports.createNumberSequence = (startNum, howMany) => {
 */
 module.exports.datetimeToLocal = (instant, returnUtcFormat, offsetHours) => {
 
-    let offsetSubstringStart = -1;
-    let zuluStart = -1;
-    let localTime;
+    let offsetSubstringStart, zuluStart, localTime;
 
+    const NOT_FOUND = -1;
     const INVALID_INSTANT = '';
 
     // get start of trailing +/- offset substring or 'Z' in the input instant                                               
-    offsetSubstringStart = instant.indexOf('-');                                                    // the instant must have a +/- offset
-    if (offsetSubstringStart <= 0) offsetSubstringStart = instant.indexOf('+');
-    if (offsetSubstringStart <= 0) zuluStart = instant.toUpperCase().indexOf('Z');                  // check if Z has been specified 
-
+    offsetSubstringStart = instant.search(/[+-]/);                                                  // the instant must have a +/- offset or a z
+    zuluStart = offsetSubstringStart == NOT_FOUND ? instant.toUpperCase().indexOf('Z') : NOT_FOUND; // check if Z has been specified 
+    
     // if it is a local time with a trailing +/- offset 
-    if (offsetSubstringStart > 0) {
+    if (offsetSubstringStart > NOT_FOUND) {
 
         localTime = moment.parseZone(instant).format(returnUtcFormat)                               // e.g. "2019-02-09T15:00:17.0200+07:00"
 
         // if UTC time convert instant to a 'local' UTC time with +00:00 offset
-    } else if (zuluStart > 0) {
+    } else if (zuluStart > NOT_FOUND) {
 
         // get float value of offsetHours - if offsetHours is missing or not valid assume 0
         offsetHours = (offsetHours === "" || offsetHours == NONE || isNaN(offsetHours)) ? 0 : parseFloat(offsetHours)
@@ -138,16 +136,16 @@ module.exports.datetimeToLocal = (instant, returnUtcFormat, offsetHours) => {
 
 }
 
-/* converts and formats a localtime or UTC instant, to a zone offset expressed in +/-HH:MM format. Returns a string in the specified return format
-   the function may be called with one of the following options:
-   1) instant is local time with +/- UTC offset (e.g. 20190209T1630+0700). 
+/* converts and formats a local or UTC instant, to a zone offset expressed in +/-HH:MM format. 
+   Returns a string in the specified return format
+   the instant argument can be one the following:
+   1) a local time with +/- UTC offset (e.g. 20190209T1630+0700). 
    - the local timezone offset is the trailing +/- offset 
-   2) instant is in UTC time with the required Z suffix - (e.g. 20190209T1630Z)
-   - the local timezone offset is zero 
-   the returned timezone offset is a string formatted and returned as '+/-HH:mm'
-   assume zero offset hours (i.e the instant *is* 'local' UTC time) if the instant 
-   - is missing a trailing +/- offset ..or 
-   - is not in UTC format (no trailing 'Z') 
+   2) UTC time with the optional required Z suffix (e.g. 20190209T1630Z)
+   - the timezone offset is considered to be zero if the instant
+        - has a trailing Z suffix or 
+        - has no trailing 'Z' and no trailing +/- offset 
+   the returned timezone offset is a string formatted as '+/-HH:mm'
 */
 module.exports.datetimeZoneOffset = (instant) => {
 
@@ -208,15 +206,16 @@ module.exports.indexFromValue = (obj, value) => {
 
 
 // returns whether the response status is a 200 level response
-module.exports.is200response = (status) => {
+module.exports.is200response = (statusCode) => {
 
-    const status200 = 200;
-    const responseStatus = Number(status);
-
-    let is200 = (responseStatus >= status200) && (responseStatus < (status200 + 100));
+    const statusCode200 = 200;
+    
+    statusCode = parseInt(statusCode);
+    
+    let is200 = (statusCode >= statusCode200) && (statusCode < (statusCode200 + 100));
 
     return is200;
-
+    
 }
 
 
@@ -309,7 +308,7 @@ module.exports.randomTrue = () => {
     const max = 30;                                                     // the larger this number the more skips there will be  
     const random_match = 5;                                             // this can be any number less than MOCK_max
 
-    randomnum = Number(randomFloat(1, max, 0));                    // get a random integer between 1 and MOCK_max
+    randomnum = Number(randomFloat(1, max, 0));                         // get a random integer between 1 and MOCK_max
     randomTrue = (randomnum == random_match) ? false : true;            // skip unless there is a match
 
     return randomTrue;                                                  // return whether to skip  

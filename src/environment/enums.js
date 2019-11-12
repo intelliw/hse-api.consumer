@@ -135,7 +135,7 @@ module.exports.linkRender.default = this.linkRender.none;
 module.exports.responseStatus = {
     '200': 'OK',
     '201': 'Created',
-    '204': 'Created',
+    '204': 'Created-No Content',
     '400': 'Bad Request',
     '401': 'Unauthorized',
     '404': 'Not Found',
