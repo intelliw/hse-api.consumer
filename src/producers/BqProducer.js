@@ -28,8 +28,8 @@ class BqProducer {
 
         // create the bq client
         this.bqClient = new BigQuery();                                     // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
-        this.bqClient.projectId = env.active.gcp.project;                   // e.g. sundaya-dev
 
+        this.bqClient.projectId = env.active.gcp.project;                   // e.g. sundaya-dev
         this.dataset = dataset;                                             // e.g. monitoring
         this.table = table;                                                 // e.g. mppt
 
