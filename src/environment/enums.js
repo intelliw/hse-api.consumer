@@ -172,7 +172,6 @@ module.exports.messageBroker = {                        // kafka message broker.
         leader: 1                                       //  1 = only waits for the leader to acknowledge 
     }
 }
-module.exports.messageBroker.ack.default = this.messageBroker.ack.leader
 
 // gcp project enumerations
 module.exports.gcp = {

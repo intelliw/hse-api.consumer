@@ -19,7 +19,7 @@ const { Kafka } = require('kafkajs');
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-const CLIENT_ID = env.active.kafkajs.consumer.clientId;         // unique client id for this instance, created at startup 
+const MESSAGE_PREFIX = 'KAFKA CONSUMER';
 
 class KafkaConsumer {
     /**9
@@ -37,57 +37,43 @@ class KafkaConsumer {
 
         // store params
         this.readTopic = readTopic;
-
+        
         // create the kafka consumer
         const kafka = new Kafka({
-            brokers: env.active.kafka.brokers,
-            clientId: CLIENT_ID,
-        })
-        this.kafkaConsumer = kafka.consumer({
-            groupId: groupId,
-            sessionTimeout: env.active.kafkajs.consumer.sessionTimeout,
-            heartbeatInterval: env.active.kafkajs.consumer.heartbeatInterval,
-            rebalanceTimeout: env.active.kafkajs.consumer.rebalanceTimeout,
-            metadataMaxAge: env.active.kafkajs.consumer.metadataMaxAge,
-            allowAutoTopicCreation: env.active.kafkajs.consumer.allowAutoTopicCreation,
-            maxBytesPerPartition: env.active.kafkajs.consumer.maxBytesPerPartition,
-            minBytes: env.active.kafkajs.consumer.minBytes,
-            maxBytes: env.active.kafkajs.consumer.maxBytes,
-            maxWaitTimeInMs: env.active.kafkajs.consumer.maxWaitTimeInMs,
-            retry: env.active.kafkajs.consumer.retry,
-            readUncommitted: env.active.kafkajs.consumer.readUncommitted
+            brokers: env.active.kafka.brokers               //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
         });
+        this.kafkaConsumer = kafka.consumer({...env.active.kafkajs.consumer, groupId: groupId});
 
         // start the consumer    
         this.initialiseTraps();
-        this.retrieveMessages().catch(e => log.error(`[${CLIENT_ID}] Kafka consumer retrieve Error`, e))
+        this.retrieveMessages().catch(e => log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve Error`, e))
 
     }
 
     // connect and listen for messages
     async retrieveMessages() {
-        try {
-            await this.kafkaConsumer.connect();
-            await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning });
-            await this.kafkaConsumer.run({
-                eachMessage: async ({ topic, partition, message }) => {
 
-                    let results = message;
+        await this.kafkaConsumer.connect()
+            .catch(e => log.error(`${MESSAGE_PREFIX} connect Error [${this.readTopic}]`, e));
 
-                    // if this is a monitoring dataset extract & transform the dataItems with transformMonitoringDataset()                         
-                    if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic)) {
-                        results = this.transformMonitoringDataset(message);                                     // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype
-                    }                                                                                           // e.g. results: { itemCount: 9, messages: [. . .] }
+        await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning })
+            .catch(e => log.error(`${MESSAGE_PREFIX} subscribe Error [${this.readTopic}]`, e));
 
-                    // write to bq and kafka topic
-                    this.produce(results);                                                                      // produce is implemented by subtype        
+        await this.kafkaConsumer.run({
+            eachMessage: async ({ topic, partition, message }) => {
 
-                }
-            });
+                let results = message;
 
-        } catch (e) {
-            log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve/produce Error`, e)
-        }
+                // if this is a monitoring dataset extract & transform the dataItems with transformMonitoringDataset()                         
+                if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic)) {
+                    results = this.transformMonitoringDataset(message);                                     // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype
+                }                                                                                           // e.g. results: { itemCount: 9, messages: [. . .] }
+
+                // write to bq and kafka topic
+                this.produce(results);                                                                      // produce is implemented by subtype        
+
+            }
+        }).catch(e => log.error(`${MESSAGE_PREFIX} run Error [${this.readTopic}]`, e));
 
     }
 

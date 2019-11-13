@@ -117,7 +117,7 @@ const _KAFKA = {
 // kafkajs client configuration options
 const _KAFKAJS = {
     consumer: {
-        clientId: `consumer.${utils.randomIntegerString(1, 9999)}`,                                        // producer client id prefix - preferred convention = <api path>.<api path>
+        clientId: `consumer.${utils.randomIntegerString(1, 9999)}`,         // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
         consumeFromBeginning: true,
         sessionTimeout: 30000,
         heartbeatInterval: 3000,
@@ -131,11 +131,10 @@ const _KAFKAJS = {
         retry: 10,
         readUncommitted: false
     },
-    producer: {                                                             // https://kafka.js.org/docs/producing   
+    producer: {      
         clientId: `producer.${utils.randomIntegerString(1, 9999)}`,         // generate a unique client id for this container instance - if this consumer is clustered each instance will have a unique id                               // producer client id prefix - preferred convention = <api path>.<api path> 
         connectionTimeout: 3000,                                            // milliseconds to wait for a successful connection (3000)  
         requestTimeout: 25000,                                              // milliseconds to wait for a successful request. (25000)   
-        timeout: 30000,
         retry: {                                                            // retry options  https://kafka.js.org/docs/configuration
             maxRetryTime: 30000,                                            // max milliseconds wait for a retry (30000) (10000)
             initialRetryTime: 300,                                          // initial value in milliseconds (300), randomized after first time 
@@ -143,8 +142,14 @@ const _KAFKAJS = {
             multiplier: 2,                                                  // Exponential factor (2)
             retries: 8,                                                     // max number of retries per call (5)
             maxInFlightRequests: 100                                        // max num requests in progress at any time (200). If falsey then no limit (null)
-        }
-    }
+        },
+        metadataMaxAge: 300000,                                             // milliseconds after which we force refresh of partition leadership changes to proactively discover new brokers or partitions
+        allowAutoTopicCreation: true,
+        transactionTimeout: 25000                                           // maximum ms that transaction coordinator will wait for a status update from producer before aborting
+    }, 
+    send: {
+        timeout: 30000                                                      // time to await a response in ms
+    } 
 }
 
 
