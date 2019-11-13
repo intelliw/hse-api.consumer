@@ -104,7 +104,7 @@ class KafkaConsumer {
         dataSet.data.forEach(dataItem => {                                              // e.g. "data": [ { "time_local": "2
 
             // transform and add data to the dataitems array
-            newDataItem = this.transformDataItem(key, dataSet, dataItem);               // subtyupe implements this. makes a new dataitem with dataset-specific attributes
+            newDataItem = this.transformDataItem(key, dataSet, dataItem);               // subtype implements this. makes a new dataitem with dataset-specific attributes
             dataItems.push(newDataItem);
 
         });
