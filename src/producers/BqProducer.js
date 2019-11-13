@@ -49,7 +49,7 @@ class BqProducer {
             .dataset(this.dataset)
             .table(this.table)
             .insert(rowArray)
-            .catch(e => log.error(`${this.dataset}.${this.table} BQ insert error`, e))
+            .catch(e => log.error(`BQ insert error [${this.dataset}.${this.table}]`, e))
 
     }
 
