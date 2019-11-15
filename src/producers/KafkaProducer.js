@@ -13,7 +13,6 @@ const log = require('../logger').log;
 
 const moment = require('moment');
 
-const MESSAGE_PREFIX = 'KAFKA PRODUCER';
 
 class KafkaProducer {
     /**
@@ -43,23 +42,20 @@ class KafkaProducer {
      */
     async sendToTopic(sharedId, msgObj) {
 
+        const MESSAGE_PREFIX = 'KAFKA PRODUCER';
+
         // send the message to the topic
         await this.producerObj.connect()
-            .catch(e => log.error(`${MESSAGE_PREFIX} connect Error [${this.writeTopic}]`, e));
-
-        let result = await this.producerObj.send({
-            topic: this.writeTopic,
-            messages: msgObj.messages,
-            acks: enums.messageBroker.ack.all,                                  // default is 'all'
-            timeout: env.active.kafkajs.send.timeout                            // milliseconds    
-        })
-            // log output               e.g. 2019-09-10 05:04:44.6630 [monitoring.mppt:2-3] 2 messages, 4 items 
+            .then(() => this.producerObj.send({
+                topic: this.writeTopic,
+                messages: msgObj.messages,
+                acks: enums.messageBroker.ack.all,                                  // default is 'all'
+                timeout: env.active.kafkajs.send.timeout                            // milliseconds    
+            }))
             .then(r => log.messaging(this.writeTopic, r[0].baseOffset, msgObj.messages, msgObj.itemCount, env.active.kafkajs.consumer.clientId))         // info = (topic, offset, msgqty, itemqty, sender) {
-            .catch(e => log.error(`${MESSAGE_PREFIX} send Error [${this.writeTopic}]`, e));
-    
-        // disconnect
-        await this.producerObj.disconnect()
-            .catch(e => log.error(`${MESSAGE_PREFIX} disconnect Error [${this.writeTopic}]`, e));
+            .then(this.producerObj.disconnect())
+            .catch(e => log.error(`${MESSAGE_PREFIX} sendToTopic() Error [${this.writeTopic}]`, e));
+
     }
 
     /* creates and returns a kafka message

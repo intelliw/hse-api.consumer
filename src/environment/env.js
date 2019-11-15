@@ -114,6 +114,7 @@ const _KAFKA = {
 }
 
 
+
 // kafkajs client configuration options
 const _KAFKAJS = {
     consumer: {
@@ -149,11 +150,10 @@ const _KAFKAJS = {
     }, 
     send: {
         timeout: 30000                                                      // time to await a response in ms
-    } 
+    }
 }
 
-
-// standard kafka topics for each environment 
+// standard kafka topics for each environment type                          
 const _TOPICS = {                                                           // kafka topics for all environments 
     monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
     system: { feature: 'system.feature' },

@@ -19,8 +19,6 @@ const { Kafka } = require('kafkajs');
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-const MESSAGE_PREFIX = 'KAFKA CONSUMER';
-
 class KafkaConsumer {
     /**9
      * superclass - 
@@ -37,12 +35,12 @@ class KafkaConsumer {
 
         // store params
         this.readTopic = readTopic;
-        
+
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: env.active.kafka.brokers               //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
         });
-        this.kafkaConsumer = kafka.consumer({...env.active.kafkajs.consumer, groupId: groupId});
+        this.kafkaConsumer = kafka.consumer({ ...env.active.kafkajs.consumer, groupId: groupId });
 
         // start the consumer    
         this.initialiseTraps();
@@ -53,27 +51,26 @@ class KafkaConsumer {
     // connect and listen for messages
     async retrieveMessages() {
 
+        const MESSAGE_PREFIX = 'KAFKA CONSUMER';
+
         await this.kafkaConsumer.connect()
-            .catch(e => log.error(`${MESSAGE_PREFIX} connect Error [${this.readTopic}]`, e));
+            .then(this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning }))
+            .then(this.kafkaConsumer.run({
+                eachMessage: async ({ topic, partition, message }) => {
 
-        await this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning })
-            .catch(e => log.error(`${MESSAGE_PREFIX} subscribe Error [${this.readTopic}]`, e));
+                    let results = message;
 
-        await this.kafkaConsumer.run({
-            eachMessage: async ({ topic, partition, message }) => {
+                    // if this is a monitoring dataset extract & transform the dataItems with transformMonitoringDataset()                         
+                    if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic)) {
+                        results = this.transformMonitoringDataset(message);                                     // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype
+                    }                                                                                           // e.g. results: { itemCount: 9, messages: [. . .] }
 
-                let results = message;
+                    // write to bq and kafka topic
+                    this.produce(results);                                                                      // produce is implemented by subtype        
 
-                // if this is a monitoring dataset extract & transform the dataItems with transformMonitoringDataset()                         
-                if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic)) {
-                    results = this.transformMonitoringDataset(message);                                     // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype
-                }                                                                                           // e.g. results: { itemCount: 9, messages: [. . .] }
-
-                // write to bq and kafka topic
-                this.produce(results);                                                                      // produce is implemented by subtype        
-
-            }
-        }).catch(e => log.error(`${MESSAGE_PREFIX} run Error [${this.readTopic}]`, e));
+                }
+            }))
+            .catch(e => log.error(`${MESSAGE_PREFIX} retrieveMessages() Error [${this.readTopic}]`, e));
 
     }
 
