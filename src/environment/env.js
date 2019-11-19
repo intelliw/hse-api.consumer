@@ -173,16 +173,19 @@ const _GCP = {
 // stackdriver client configuration options
 const _STACKDRIVER = {
     DEV: {
-        logging: { logName: 'monitoring_dev', resource: 'gce_instance' },       // appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]"
-        errors: { reportMode: 'always', logLevel: 5 }                           // 'production' (default), 'always', or 'never' - 'production' (default), 'always', 'never' - production will not log unless NODE-ENV=production. Specifies when errors are reported to the Error Reporting Console. // 2 (warnings). 0 (no logs) 5 (all logs)      
+        logging: { logName: 'monitoring_dev', resource: 'gce_instance' },               // appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]"
+        errors: { reportMode: 'always', logLevel: 5 },                                  // 'production' (default), 'always', or 'never' - 'production' (default), 'always', 'never' - production will not log unless NODE-ENV=production. Specifies when errors are reported to the Error Reporting Console. // 2 (warnings). 0 (no logs) 5 (all logs)      
+        trace: {ignoreUrls: [ /^\/static/ ], ignoreMethods: [ 'OPTIONS', 'PUT' ] }      // ignore /static path, ignore requests with OPTIONS & PUT methods (case-insensitive)
     },
     TEST: {
         logging: { logName: 'monitoring_test', resource: 'gce_instance' },
-        errors: { reportMode: 'always', logLevel: 5 }
+        errors: { reportMode: 'always', logLevel: 5 },
+        trace: {ignoreUrls: [ /^\/static/ ], ignoreMethods: [ 'OPTIONS', 'PUT' ] }
     },
     PROD: {
         logging: { logName: 'monitoring_prod', resource: 'gce_instance' },
-        errors: { reportMode: 'always', logLevel: 5 }
+        errors: { reportMode: 'always', logLevel: 5 },
+        trace: {ignoreUrls: [ /^\/static/ ], ignoreMethods: [ 'OPTIONS', 'PUT' ] }
     }
 }
 

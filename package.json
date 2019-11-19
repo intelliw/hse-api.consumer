@@ -13,6 +13,7 @@
     "@google-cloud/bigquery": "^4.1.8",
     "@google-cloud/error-reporting": "^1.1.2",
     "@google-cloud/logging": "^5.5.3",
+    "@google-cloud/trace-agent": "^4.2.3",
     "kafkajs": "^1.10.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0"
