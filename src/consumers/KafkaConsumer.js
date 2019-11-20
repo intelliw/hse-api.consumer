@@ -43,7 +43,7 @@ class KafkaConsumer {
         this.kafkaConsumer = kafka.consumer({ ...env.active.kafkajs.consumer, groupId: groupId });
 
         // start the consumer    
-        this.initialiseTraps();
+        this._initialiseTraps();
         this.retrieveMessages().catch(e => log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve Error`, e))
 
     }
@@ -58,15 +58,11 @@ class KafkaConsumer {
             .then(this.kafkaConsumer.run({
                 eachMessage: async ({ topic, partition, message }) => {
 
-                    let results = message;
-
-                    // if this is a monitoring dataset extract & transform the dataItems with transformMonitoringDataset()                         
-                    if (utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic)) {
-                        results = this.transformMonitoringDataset(message);                                     // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype
-                    }                                                                                           // e.g. results: { itemCount: 9, messages: [. . .] }
+                    // transform dataItems if required                                                                  // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype 
+                    let results = this._isMonitoringDataset() ? this.transformMonitoringDataset(message) : message;     // e.g. results: { itemCount: 9, messages: [. . .] }
 
                     // write to bq and kafka topic
-                    this.produce(results);                                                                      // produce is implemented by subtype        
+                    this.produce(results);                                                                              // produce is implemented by subtype        
 
                 }
             }))
@@ -116,7 +112,7 @@ class KafkaConsumer {
 
 
     // initialise error and signal traps
-    async initialiseTraps() {
+    async _initialiseTraps() {
 
         errorTypes.map(type => {
             process.on(type, async e => {
@@ -145,6 +141,8 @@ class KafkaConsumer {
     }
 
 
+    // returns whether this instance (readtopic) produces for a monitoring dataset 
+    _isMonitoringDataset() { return utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic); }
 }
 
 

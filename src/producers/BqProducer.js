@@ -39,7 +39,7 @@ class BqProducer {
      */
     async insertRows(sharedId, rowArray) {
 
-        // log out data before trying insert                         // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
+        // log out data before trying insert                                // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
         log.data(this.dataset, this.table, sharedId, rowArray);
 
         // [start trace] -------------------------------
@@ -54,7 +54,7 @@ class BqProducer {
             .insert(rowArray)
             .catch(e => log.error(`${log.enums.methods.bqInsertRows} Error  [${this.dataset}.${this.table}]`, e))
 
-        // [end trace] -------------------------------
+        // [end trace] ---------------------------------
         sp.endSpan();
 
     }
