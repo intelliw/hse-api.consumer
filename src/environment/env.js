@@ -17,7 +17,7 @@ const enums = require('./enums');
     - appenders determines the output destination (console, or stackdriver)
 */
 
-// referenced configs - these configs are reused in the ENVIRONMENT section -----------------------------------------------------------------------------------------------------------------
+// referenced configs - these configs are included by reference in the CONFIGS block below -----------------------------------------------------------------------------------------------------------------
 
 // API 
 const _API = {
@@ -118,7 +118,7 @@ const _KAFKA = {
 // kafkajs client configuration options
 const _KAFKAJS = {
     consumer: {
-        clientId: `consumer.${utils.randomIntegerString(1, 9999)}`,         // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
+        clientId: `consumer.${utils.randomIntegerString(1, 9999)}`,             // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
         consumeFromBeginning: true,
         sessionTimeout: 30000,
         heartbeatInterval: 3000,
@@ -132,7 +132,7 @@ const _KAFKAJS = {
         retry: 10,
         readUncommitted: false
     },
-    producer: {      
+    producer: {
         clientId: `producer.${utils.randomIntegerString(1, 9999)}`,         // generate a unique client id for this container instance - if this consumer is clustered each instance will have a unique id                               // producer client id prefix - preferred convention = <api path>.<api path> 
         connectionTimeout: 3000,                                            // milliseconds to wait for a successful connection (3000)  
         requestTimeout: 25000,                                              // milliseconds to wait for a successful request. (25000)   
@@ -147,14 +147,14 @@ const _KAFKAJS = {
         metadataMaxAge: 300000,                                             // milliseconds after which we force refresh of partition leadership changes to proactively discover new brokers or partitions
         allowAutoTopicCreation: true,
         transactionTimeout: 25000                                           // maximum ms that transaction coordinator will wait for a status update from producer before aborting
-    }, 
+    },
     send: {
         timeout: 30000                                                      // time to await a response in ms
     }
 }
 
 // standard kafka topics for each environment type                          
-const _TOPICS = {                                                           // kafka topics for all environments 
+const _TOPICS = {                                                                       // kafka topics for all environments 
     monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
     system: { feature: 'system.feature' },
     dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
@@ -175,24 +175,33 @@ const _STACKDRIVER = {
     DEV: {
         logging: { logName: 'monitoring_dev', resource: 'gce_instance' },               // appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]"
         errors: { reportMode: 'always', logLevel: 5 },                                  // 'production' (default), 'always', or 'never' - 'production' (default), 'always', 'never' - production will not log unless NODE-ENV=production. Specifies when errors are reported to the Error Reporting Console. // 2 (warnings). 0 (no logs) 5 (all logs)      
-        trace: {ignoreUrls: [ /^\/static/ ], ignoreMethods: [ 'OPTIONS', 'PUT' ] }      // ignore /static path, ignore requests with OPTIONS & PUT methods (case-insensitive)
+        trace: {
+            samplingRate: 500, enabled: true,                                           // enabled=false to turn OFF tracing. samplingRate 500 means sample 1 trace every half-second, 5 means at most 1 every 200 ms.
+            ignoreUrls: [/^\/static/], ignoreMethods: ['OPTIONS', 'PUT']                // ignore /static path, ignore requests with OPTIONS & PUT methods (case-insensitive)
+        }      
     },
     TEST: {
         logging: { logName: 'monitoring_test', resource: 'gce_instance' },
         errors: { reportMode: 'always', logLevel: 5 },
-        trace: {ignoreUrls: [ /^\/static/ ], ignoreMethods: [ 'OPTIONS', 'PUT' ] }
+        trace: {
+            samplingRate: 500, enabled: true,
+            ignoreUrls: [/^\/static/], ignoreMethods: ['OPTIONS', 'PUT']
+        }
     },
     PROD: {
         logging: { logName: 'monitoring_prod', resource: 'gce_instance' },
         errors: { reportMode: 'always', logLevel: 5 },
-        trace: {ignoreUrls: [ /^\/static/ ], ignoreMethods: [ 'OPTIONS', 'PUT' ] }
+        trace: {
+            samplingRate: 500, enabled: true,
+            ignoreUrls: [/^\/static/], ignoreMethods: ['OPTIONS', 'PUT']
+        }
     }
 }
 
 
 
 // bq datasets for each environment type 
-const _DATAWAREHOUSE = {                                                    // bq datasets for all environments 
+const _DATAWAREHOUSE = {                                                                // bq datasets for all environments 
     datasets: { monitoring: 'monitoring' },
     tables: { pms: 'pms', mppt: 'mppt', inverter: 'inverter' }
 }
@@ -273,4 +282,4 @@ module.exports.CONFIGS = {
 }
 
 // env.active returns the active environment 
-module.exports.active = this.CONFIGS.local;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
+module.exports.active = this.CONFIGS.prodcloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               

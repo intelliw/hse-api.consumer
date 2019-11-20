@@ -51,8 +51,8 @@ class Logger {
         // start the Stackdriver tracing agent 
         this.TRACE = traceAgent.start({                                         // use log.TRACE for creating custom spans
             projectId: env.active.gcp.project,
-            samplingRate: 5,                                                    // sample 5 traces per second, or at most 1 every 200 milliseconds.
-            enabled: true,                                                      // tracing is disabled if the trace statments are off     
+            samplingRate: env.active.stackdriver.trace.samplingRate,            // 5 means sample 5 traces per second or at most 1 every 200 ms. if 500, Sample one trace every half-second.
+            enabled: env.active.stackdriver.trace.enabled,                                                      // tracing is disabled if the trace statments are off     
             ignoreUrls: env.active.stackdriver.trace.ignoreUrls,                // ignore /static path
             ignoreMethods: env.active.stackdriver.trace.ignoreMethods,          // ignore requests with OPTIONS & PUT methods (case-insensitive)
             serviceContext: {
@@ -78,7 +78,6 @@ class Logger {
         STMT_EXCEPTION = new ExceptionStatement(LOG_WRITER, serviceId, this.ERR);
         STMT_ERROR = new ErrorStatement(LOG_WRITER, serviceId, this.ERR);
         STMT_TRACE = new TraceStatement(LOG_WRITER, serviceId);
-
 
 
         // create the public interface for this Logger, for clients to use 
@@ -109,8 +108,9 @@ class Logger {
                 unexpected: 'Unexpected'
             }, 
             methods: {                                                               // methods used in trace agent child spans, and trace statements
-                kafkaSendToTopic: 'kafka: sendToTopic()',
-                bqInsertRows: 'bq: insertRows()'
+                kafkaSendToTopic: 'kafka: sendToTopic',
+                bqInsertRows: 'bq: insertRows',
+                energyExecuteGet: 'energy: executeGet',
             }
         }
 
