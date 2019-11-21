@@ -8,7 +8,7 @@
 // system configuration constants
 module.exports.system = {
     MONITORING_PRECISION: 4,                                                 // decimal places for float values in monitoring dataset
-    SERVICE_ID: 'api_consumer'                                              // or api_host for logging - resource: {  labels: { service_id:    
+    SERVICE_ID: 'api-consumer'                                              // or api_host for logging - resource: {  labels: { service_id:    
 }
 
 // equipment status constants - for non-binary statuses based on a tuple of multiple bits e.g if the 2 'mppt.input' bits have a value tuple of '00' the statis is 'normal'
