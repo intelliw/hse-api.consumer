@@ -54,7 +54,7 @@ class Logger {
             serviceContext: {
                 service: env.active.api.host,
                 version: env.active.api.versions.current,
-                resourceType: env.active.stackdriver.logging.resource                      // e.g. gce_instance
+                resourceType: env.active.stackdriver.logging.resourceType                      // e.g. gce_instance
             }
         });
 

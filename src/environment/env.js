@@ -24,7 +24,7 @@ const _API = {
 
     // API host and versions for dev, prod, and test            version = major.minor[.build[.revision]]   ..Odd-numbers for development even for stable
     LOCAL: { host: '192.168.1.108:8080', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.12.10' } },
-    DEV: { host: 'api.dev.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.20' } },
+    DEV: { host: 'api.dev.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.22beta' } },
     TEST: { host: 'api.test.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.10' } },
     PROD: { host: 'api.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.10' } }
 
@@ -155,7 +155,6 @@ const _TOPICS = {                                                               
 }
 
 
-
 // GCP project configs per environment 
 const _GCP = {
     DEV: { project: enums.gcp.projects.sundayaDev },
@@ -167,7 +166,7 @@ const _GCP = {
 // stackdriver client configuration options
 const _STACKDRIVER = {
     DEV: {
-        logging: { logName: 'monitoring_dev', resource: 'gce_instance' },               // appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]"
+        logging: { logName: 'monitoring_dev', resourceType: 'gce_instance' },           // cloud run resourceType is "cloud_run_revision", for GCE VM Instance it is ''gce_instance' logName appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]". 
         errors: { reportMode: 'always', logLevel: 5 },                                  // 'production' (default), 'always', or 'never' - 'production' (default), 'always', 'never' - production will not log unless NODE-ENV=production. Specifies when errors are reported to the Error Reporting Console. // 2 (warnings). 0 (no logs) 5 (all logs)      
         trace: {
             samplingRate: 500, enabled: true, flushDelaySeconds: 1,                     // enabled=false to turn OFF tracing. samplingRate 500 means sample 1 trace every half-second, 5 means at most 1 every 200 ms. flushDelaySeconds = seconds to buffer traces before publishing to Stackdriver, keep short to allow cloud run to async trace immedatily after sync run
@@ -175,7 +174,7 @@ const _STACKDRIVER = {
         }
     },
     TEST: {
-        logging: { logName: 'monitoring_test', resource: 'gce_instance' },
+        logging: { logName: 'monitoring_test', resourceType: 'gce_instance' },
         errors: { reportMode: 'always', logLevel: 5 },
         trace: {
             samplingRate: 500, enabled: true, flushDelaySeconds: 1,
@@ -183,7 +182,7 @@ const _STACKDRIVER = {
         }
     },
     PROD: {
-        logging: { logName: 'monitoring_prod', resource: 'gce_instance' },
+        logging: { logName: 'monitoring_prod', resourceType: 'gce_instance' },
         errors: { reportMode: 'always', logLevel: 5 },
         trace: {
             samplingRate: 500, enabled: true, flushDelaySeconds: 1,
@@ -269,11 +268,11 @@ module.exports.CONFIGS = {
         kafka: { brokers: _KAFKA.BROKERS.HA },                                  // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         kafkajs: _KAFKAJS,
         topics: _TOPICS,
-        gcp: _GCP.PROD,
+        gcp: _GCP.PROD, 
         stackdriver: _STACKDRIVER.PROD,
         datawarehouse: _DATAWAREHOUSE
     }
-}
+}  
 
 // env.active returns the active environment 
 module.exports.active = this.CONFIGS.devcloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               

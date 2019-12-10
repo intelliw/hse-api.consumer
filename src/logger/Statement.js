@@ -23,7 +23,7 @@ class Statement {
 
         // store logwriter instance variables 
         this.logWriter = logWriter;
-        this.resourceType = env.active.stackdriver.logging.resource;
+        this.resourceType = env.active.stackdriver.logging.resourceType;
         this.serviceId = serviceId;
     }
 
