@@ -181,6 +181,7 @@ module.exports.gcp = {
     projects: {
         sundayaProd: "sundaya",
         sundayaDev: "sundaya-dev",
+        sundayaStage: "sundaya-dev",
         sundayaTest: "sundaya-test"
     }
 }

@@ -25,6 +25,7 @@ const _API = {
     // API host and versions for dev, prod, and test            version = major.minor[.build[.revision]]   ..Odd-numbers for development even for stable
     LOCAL: { host: '192.168.1.108:8080', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.12.10' } },
     DEV: { host: 'api.dev.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.22beta' } },
+    STAGE: { host: 'api.stage.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.22beta' } },
     TEST: { host: 'api.test.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.10' } },
     PROD: { host: 'api.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.10' } }
 
@@ -158,6 +159,7 @@ const _TOPICS = {                                                               
 // GCP project configs per environment 
 const _GCP = {
     DEV: { project: enums.gcp.projects.sundayaDev },
+    STAGE: { project: enums.gcp.projects.sundayaStage },
     TEST: { project: enums.gcp.projects.sundayaTest },
     PROD: { project: enums.gcp.projects.sundayaProd }
 }
@@ -228,6 +230,17 @@ module.exports.CONFIGS = {
         stackdriver: _STACKDRIVER.TEST,
         datawarehouse: _DATAWAREHOUSE
     },
+    stagecloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
+        api: _API.STAGE,
+        features: _FEATURES.DEV,
+        logging: _LOGGING.DEV,
+        kafka: { brokers: _KAFKA.BROKERS.SINGLE },                              // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
+        kafkajs: _KAFKAJS,
+        topics: _TOPICS,
+        gcp: _GCP.STAGE,
+        stackdriver: _STACKDRIVER.DEV,
+        datawarehouse: _DATAWAREHOUSE
+    },
     devcloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
         api: _API.DEV,
         features: _FEATURES.DEV,
@@ -275,4 +288,4 @@ module.exports.CONFIGS = {
 }  
 
 // env.active returns the active environment 
-module.exports.active = this.CONFIGS.devcloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
+module.exports.active = this.CONFIGS.stagecloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
