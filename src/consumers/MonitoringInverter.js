@@ -6,33 +6,30 @@
  */
 
 const enums = require('../environment/enums');
-
 const consts = require('../host/constants');
-
 const utils = require('../environment/utils');
 const env = require('../environment/env');
 
-const Producer = require('../producers');
-const KafkaConsumer = require('../consumers/KafkaConsumer');
+const DatasetProducer = require('../producers/DatasetProducer');
+const ActiveMessageConsumer = require('../consumers').ActiveMessageConsumer;
 
 // instance parameters
-const KAFKA_READ_TOPIC = env.active.topics.monitoring.inverter;
+const KAFKA_READ_TOPIC = env.active.messagebroker.topics.monitoring.inverter;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.inverter;
-
 
 /**
  * instance attributes
  * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringInverter extends KafkaConsumer {
+class MonitoringInverter extends ActiveMessageConsumer {
 
     /**
     instance attributes, constructor arguments  - see super
     */
     constructor() {
 
-        const kafkaWriteTopic = env.active.topics.dataset.inverter;
+        const kafkaWriteTopic = env.active.messagebroker.topics.dataset.inverter;
         const bqDataset = env.active.datawarehouse.datasets.monitoring;
         const bqTable = env.active.datawarehouse.tables.inverter;
 
@@ -43,14 +40,10 @@ class MonitoringInverter extends KafkaConsumer {
         );
 
         // instance attributes
-        this.producer = new Producer.Dataset(kafkaWriteTopic, bqDataset, bqTable)
+        this.producer = new DatasetProducer(kafkaWriteTopic, bqDataset, bqTable)
 
     }
 
-    // subtype implements specific transforms or calls super 
-    transform(consumedMessage) {
-        return super.transformMonitoringDataset(consumedMessage);
-    }
 
     /* writes to bq and to the datasets kafka topic 
      * the transformResults object contains an array of kafka messages with modified data items

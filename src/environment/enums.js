@@ -84,8 +84,8 @@ module.exports.features = {
     release: { none: "none" },
     operational: {
         none: "none",
-        logging: 'logging',                         // logging reconfiguration feature
-        validation: 'validation'                    // whether or not to to perform in-depth input validation for post requests
+        logging: 'logging',                             // logging reconfiguration feature
+        validation: 'validation'                        // whether or not to to perform in-depth input validation for post requests
     },
     experiment: { none: "none" },
     permission: { none: "none" }
@@ -158,7 +158,11 @@ module.exports.apiKey = {
 module.exports.apiKey.default = this.apiKey.PROXY;
 
 // kafka
-module.exports.messageBroker = {                        // kafka message broker. topics are based on enums.params.datasets. 
+module.exports.messageBroker = {                        // topic names are based on enums.params.datasets
+    providers: {                                          
+        kafka: 'kafka', 
+        pubSub: 'pubSub'
+    },
     consumerGroups: {                                   // consumer group ids
         monitoring: {
             pms: 'group.monitoring.pms',                // group id convention = <target system>.<target dataset>.<target table>

@@ -6,6 +6,7 @@
  *  subclass producer objects are responsible for transforming a consumed message and if requested, sending it to a new topic
  */
 const { Kafka } = require('kafkajs');
+const MessageProducer = require('./MessageProducer');
 
 const enums = require('../environment/enums');
 const env = require('../environment/env');
@@ -14,7 +15,7 @@ const log = require('../logger').log;
 const moment = require('moment');
 
 
-class KafkaProducer {
+class KafkaProducer extends MessageProducer {
     /**
      * superclass - 
      * clients of subtypes must first call extractData(), then sendToTopic()
@@ -22,18 +23,20 @@ class KafkaProducer {
      * 
     instance attributes:  
      producerObj": kafka.producer()
-     writeTopic:  env.active.topics.dataset                                         // this is the topic to which the subclassed producer writes, in sendTopic()  
+     writeTopic:  env.active.messagebroker.topics.dataset                                         // this is the topic to which the subclassed producer writes, in sendTopic()  
     */
     constructor(writeTopic) {
+
+        super(writeTopic);
 
         // create a kafka producer
         const kafka = new Kafka({
             brokers: env.active.kafka.brokers                                       //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
         });
 
-        // setup instance variables
+        // setup instance variables specific to KafkaProducer 
         this.producerObj = kafka.producer(env.active.kafkajs.producer);
-        this.writeTopic = writeTopic;
+        
     }
 
     /* creates messages for each item in the data array and sends the message array to the broker
@@ -62,28 +65,6 @@ class KafkaProducer {
         // [end trace] -------------------------------
         sp.endSpan();
 
-    }
-
-    /* creates and returns a kafka message
-    * key - is a string
-    * data - contains the message value 
-    * headers - a json object (note: kafkajs produces a byte array for headers unlike messages which are a string buffer
-    *   e.g. { 'correlation-id': '2bfb68bb-893a-423b-a7fa-7b568cad5b67', system-id': 'my-system' }  
-    * this function prepends the id, processing time, utc time, local time, and data source - to the data object
-    */
-    createMessage(key, data, headers) {
-
-        // create the message
-        let message = {
-            key: key,
-            value: JSON.stringify(data)
-        };
-
-        if (headers) {
-            message.headers = JSON.stringify(headers);
-        }
-
-        return message;
     }
 
 }

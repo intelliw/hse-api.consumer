@@ -104,7 +104,7 @@ class Logger {
                 unexpected: 'Unexpected'
             },
             methods: {                                                               // methods used in trace agent child spans, and trace statements
-                kafkaSendToTopic: 'kafka: sendToTopic',
+                mbSendToTopic: 'messageBroker: sendToTopic',                         // message broker can be kafka or pubsub   
                 bqInsertRows: 'bq: insertRows',
                 energyExecuteGet: 'energy: executeGet',
             }

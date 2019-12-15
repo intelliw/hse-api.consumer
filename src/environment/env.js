@@ -24,8 +24,8 @@ const _API = {
 
     // API host and versions for dev, prod, and test            version = major.minor[.build[.revision]]   ..Odd-numbers for development even for stable
     LOCAL: { host: '192.168.1.108:8080', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.12.10' } },
-    DEV: { host: 'api.dev.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.22beta' } },
-    STAGE: { host: 'api.stage.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.22beta' } },
+    DEV: { host: 'api.dev.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.21' } },
+    STAGE: { host: 'api.stage.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.21' } },
     TEST: { host: 'api.test.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.10' } },
     PROD: { host: 'api.sundaya.monitored.equipment', scheme: 'https', versions: { supported: '0.2 0.3', current: '0.3.12.10' } }
 
@@ -148,13 +148,15 @@ const _KAFKAJS = {
     }
 }
 
-// standard kafka topics for each environment type                          
-const _TOPICS = {                                                                       // kafka topics for all environments 
-    monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
-    system: { feature: 'system.feature' },
-    dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
+// topics for each environment type                          
+const _MESSAGEBROKER = {
+    provider: enums.messageBroker.providers.kafka,
+    topics: {                                                               // kafka / pubsub topics for all environments 
+        monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
+        system: { feature: 'system.feature' },
+        dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
+    } 
 }
-
 
 // GCP project configs per environment 
 const _GCP = {
@@ -163,7 +165,6 @@ const _GCP = {
     TEST: { project: enums.gcp.projects.sundayaTest },
     PROD: { project: enums.gcp.projects.sundayaProd }
 }
-
 
 // stackdriver client configuration options
 const _STACKDRIVER = {
@@ -214,8 +215,8 @@ module.exports.CONFIGS = {
         logging: _LOGGING.DEV,
         kafka: { brokers: ['192.168.1.108:9092'] },                             // localhost   | 192.168.1.108            
         kafkajs: _KAFKAJS,
-        topics: _TOPICS,
         gcp: _GCP.DEV,
+        messagebroker: _MESSAGEBROKER,                     // kafka or pubsub 
         stackdriver: _STACKDRIVER.DEV,
         datawarehouse: _DATAWAREHOUSE
     },
@@ -225,19 +226,19 @@ module.exports.CONFIGS = {
         logging: _LOGGING.TEST,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },
         kafkajs: _KAFKAJS,
-        topics: _TOPICS,
         gcp: _GCP.TEST,
+        messagebroker: _MESSAGEBROKER,
         stackdriver: _STACKDRIVER.TEST,
         datawarehouse: _DATAWAREHOUSE
     },
-    stagecloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
+    stagecloud: {                                                               // single node kafka, or Kafka Std - 1 master, N workers
         api: _API.STAGE,
         features: _FEATURES.DEV,
         logging: _LOGGING.DEV,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                              // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
         kafkajs: _KAFKAJS,
-        topics: _TOPICS,
         gcp: _GCP.STAGE,
+        messagebroker: _MESSAGEBROKER,
         stackdriver: _STACKDRIVER.DEV,
         datawarehouse: _DATAWAREHOUSE
     },
@@ -247,8 +248,8 @@ module.exports.CONFIGS = {
         logging: _LOGGING.DEV,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                              // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
         kafkajs: _KAFKAJS,
-        topics: _TOPICS,
         gcp: _GCP.DEV,
+        messagebroker: _MESSAGEBROKER,
         stackdriver: _STACKDRIVER.DEV,
         datawarehouse: _DATAWAREHOUSE
     },
@@ -258,8 +259,8 @@ module.exports.CONFIGS = {
         logging: _LOGGING.DEV,
         kafka: { brokers: _KAFKA.BROKERS.HA },                                  // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         kafkajs: _KAFKAJS,
-        topics: _TOPICS,
         gcp: _GCP.DEV,
+        messagebroker: _MESSAGEBROKER,
         stackdriver: _STACKDRIVER.DEV,
         datawarehouse: _DATAWAREHOUSE
     },
@@ -269,8 +270,8 @@ module.exports.CONFIGS = {
         logging: _LOGGING.PROD,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                              // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11   
         kafkajs: _KAFKAJS,
-        topics: _TOPICS,
         gcp: _GCP.PROD,
+        messagebroker: _MESSAGEBROKER,
         stackdriver: _STACKDRIVER.PROD,
         datawarehouse: _DATAWAREHOUSE
     },
@@ -280,12 +281,12 @@ module.exports.CONFIGS = {
         logging: _LOGGING.PROD,
         kafka: { brokers: _KAFKA.BROKERS.HA },                                  // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         kafkajs: _KAFKAJS,
-        topics: _TOPICS,
-        gcp: _GCP.PROD, 
+        gcp: _GCP.PROD,
+        messagebroker: _MESSAGEBROKER, 
         stackdriver: _STACKDRIVER.PROD,
         datawarehouse: _DATAWAREHOUSE
     }
 }  
 
 // env.active returns the active environment 
-module.exports.active = this.CONFIGS.stagecloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
+module.exports.active = this.CONFIGS.local;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               

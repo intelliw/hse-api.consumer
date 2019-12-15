@@ -17,7 +17,7 @@ const Producer = require('../producers');
 const KafkaConsumer = require('../consumers/KafkaConsumer');
 
 // instance parameters
-const KAFKA_READ_TOPIC = env.active.topics.system.feature;
+const KAFKA_READ_TOPIC = env.active.messagebroker.topics.system.feature;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.system.feature;
 
 /**

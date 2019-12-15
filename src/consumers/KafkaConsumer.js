@@ -9,17 +9,18 @@
  *      - the Consumer supertype then performs generic transforms to the message, if any 
  *      - it then calls the subtype's produce method with the transformed message
  */
+const { Kafka } = require('kafkajs');
+const MessageConsumer = require('./MessageConsumer');
+
 const env = require('../environment/env');
 const utils = require('../environment/utils');
 const log = require('../logger').log;
-
-const { Kafka } = require('kafkajs');
 
 // exits for errors and terminal keyboard inputs  
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-class KafkaConsumer {
+class KafkaConsumer extends MessageConsumer{
     /**9
      * superclass - 
      * 
@@ -29,13 +30,13 @@ class KafkaConsumer {
 
      constructor arguments 
     * @param {*} groupId                                    //  enums.messageBroker.consumersGroups.monitoring
-    * @param {*} readTopic                                  //  the topic to read from env.active.topics.monitoring
+    * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.monitoring
     */
     constructor(groupId, readTopic) {
 
         // store params
-        this.readTopic = readTopic;
-
+        super(groupId, readTopic);
+        
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: env.active.kafka.brokers               //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
@@ -44,12 +45,12 @@ class KafkaConsumer {
 
         // start the consumer    
         this._initialiseTraps();
-        this.retrieveMessages().catch(e => log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve Error`, e))
+        this._retrieveMessages().catch(e => log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve Error`, e))
 
     }
 
     // connect and listen for messages
-    async retrieveMessages() {
+    async _retrieveMessages() {
 
         const MESSAGE_PREFIX = 'KAFKA CONSUMER';
 
@@ -59,7 +60,7 @@ class KafkaConsumer {
                 eachMessage: async ({ topic, partition, message }) => {
 
                     // transform dataItems if required                                                                  // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype 
-                    let results = this._isMonitoringDataset() ? this.transformMonitoringDataset(message) : message;     // e.g. results: { itemCount: 9, messages: [. . .] }
+                    let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(message) : message;     // e.g. results: { itemCount: 9, messages: [. . .] }
 
                     // write to bq and kafka topic
                     this.produce(results);                                                                              // produce is implemented by subtype        
@@ -67,46 +68,6 @@ class KafkaConsumer {
                 }
             }))
             .catch(e => log.error(`${MESSAGE_PREFIX} retrieveMessages() Error [${this.readTopic}]`, e));
-
-    }
-
-    /**
-     * transforms the dataset inside the kafka consumedMessage 
-     * and returns a results object containing an array of kafka messages with modified data items 
-     *  consumedMessage - a kafka message whose message.value contains a monitoring api dataset  
-     * the returned results object contains these properties
-     *  itemCount  - a count of the total number of dataitems in all datasets / message
-     *  messages[] - array of kafka messages, each message.value contains a dataset with modified data items
-     *      e.g. { itemCount: 9, messages: [. . .] }
-     * the returned results.messages[] array can be:
-     *      written to bq with bqClient insertRows(data), 
-     *      converted to kafka messages and sent to this producer's writeTopic - producer.sendToTopic(data)
-     * @param {*} consumedMessage                                                   a kafka message
-    */
-    transformMonitoringDataset(consumedMessage) {
-
-        let key, dataSet, newDataItem;
-        let dataItems = [];
-        let results = { itemCount: 0, messages: [] };
-
-        // get kafka message attributes
-        dataSet = JSON.parse(consumedMessage.value);                                    // e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
-        key = consumedMessage.key.toString();
-
-        // add each data item in the dataset as an individual message
-        dataSet.data.forEach(dataItem => {                                              // e.g. "data": [ { "time_local": "2
-
-            // transform and add data to the dataitems array
-            newDataItem = this.transformDataItem(key, dataSet, dataItem);               // subtype implements this. makes a new dataitem with dataset-specific attributes
-            dataItems.push(newDataItem);
-
-        });
-
-        // create and return a kafka message containing the transformed dataitems as its value
-        results.itemCount = dataSet.data.length;
-        results.messages.push(this.producer.createMessage(key, dataItems));
-
-        return results;
 
     }
 
@@ -140,9 +101,6 @@ class KafkaConsumer {
         })
     }
 
-
-    // returns whether this instance (readtopic) produces for a monitoring dataset 
-    _isMonitoringDataset() { return utils.valueExistsInObject(env.active.topics.monitoring, this.readTopic); }
 }
 
 

@@ -8,14 +8,13 @@
 const enums = require('../environment/enums');
 const consts = require('../host/constants');
 const env = require('../environment/env');
-
 const utils = require('../environment/utils');
 
-const Producer = require('../producers');
-const KafkaConsumer = require('../consumers/KafkaConsumer');
+const DatasetProducer = require('../producers/DatasetProducer');
+const ActiveMessageConsumer = require('../consumers').ActiveMessageConsumer;
 
 // instance parameters
-const KAFKA_READ_TOPIC = env.active.topics.monitoring.pms;
+const KAFKA_READ_TOPIC = env.active.messagebroker.topics.monitoring.pms;
 const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.pms;
 
 /**
@@ -23,14 +22,14 @@ const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.pms
  * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringPms extends KafkaConsumer {
+class MonitoringPms extends ActiveMessageConsumer {
 
     /**
     instance attributes, constructor arguments  - see super
     */
     constructor() {
 
-        const kafkaWriteTopic = env.active.topics.dataset.pms;
+        const kafkaWriteTopic = env.active.messagebroker.topics.dataset.pms;
         const bqDataset = env.active.datawarehouse.datasets.monitoring;
         const bqTable = env.active.datawarehouse.tables.pms;
 
@@ -41,15 +40,10 @@ class MonitoringPms extends KafkaConsumer {
         );
 
         // instance attributes
-        this.producer = new Producer.Dataset(kafkaWriteTopic, bqDataset, bqTable)
+        this.producer = new DatasetProducer(kafkaWriteTopic, bqDataset, bqTable)
 
     }
 
-
-    // subtype implements specific transforms or calls super 
-    transform(consumedMessage) {
-        return super.transformMonitoringDataset(consumedMessage);
-    }
 
     /* writes to bq and to the datasets kafka topic 
      * the transformResults object contains an array of kafka messages with modified data items
