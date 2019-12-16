@@ -11,7 +11,7 @@ const utils = require('../environment/utils');
 const env = require('../environment/env');
 
 const DatasetProducer = require('../producers/DatasetProducer');
-const ActiveMessageConsumer = require('../consumers').ActiveMessageConsumer;
+const ActiveConsumer = require('../consumers').ActiveConsumer;
 
 // instance parameters
 const KAFKA_READ_TOPIC = env.active.messagebroker.topics.monitoring.inverter;
@@ -22,7 +22,7 @@ const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.inv
  * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringInverter extends ActiveMessageConsumer {
+class MonitoringInverter extends ActiveConsumer {
 
     /**
     instance attributes, constructor arguments  - see super

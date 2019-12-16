@@ -10,7 +10,7 @@
  *      - it then calls the subtype's produce method with the transformed message
  */
 const { Kafka } = require('kafkajs');
-const MessageConsumer = require('./MessageConsumer');
+const Consumer = require('./Consumer');
 
 const env = require('../environment/env');
 const utils = require('../environment/utils');
@@ -20,7 +20,7 @@ const log = require('../logger').log;
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-class KafkaConsumer extends MessageConsumer{
+class KafkaConsumer extends Consumer{
     /**9
      * superclass - 
      * 

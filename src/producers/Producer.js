@@ -1,8 +1,8 @@
 //@ts-check
 "use strict";
 /**
- * ./producers/MessageBroker.js
- *  base type for message producers 
+ * ./producers/Producer.js
+ *  base type for all message producers 
  * this class deleagates to Kafka or PubSub depending on env.active.messagebroker
  */
 
@@ -10,7 +10,7 @@ const env = require('../environment');
 const enums = require('../environment/enums');
 const log = require('../logger').log;
 
-class MessageProducer {
+class Producer {
     /**
      * superclass - 
      * clients must call sendToTopic() 
@@ -64,4 +64,4 @@ class MessageProducer {
 
 }
 
-module.exports = MessageProducer;
+module.exports = Producer;

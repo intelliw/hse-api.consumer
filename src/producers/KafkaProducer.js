@@ -6,7 +6,7 @@
  *  subclass producer objects are responsible for transforming a consumed message and if requested, sending it to a new topic
  */
 const { Kafka } = require('kafkajs');
-const MessageProducer = require('./MessageProducer');
+const Producer = require('./Producer');
 
 const enums = require('../environment/enums');
 const env = require('../environment/env');
@@ -15,7 +15,7 @@ const log = require('../logger').log;
 const moment = require('moment');
 
 
-class KafkaProducer extends MessageProducer {
+class KafkaProducer extends Producer {
     /**
      * superclass - 
      * clients of subtypes must first call extractData(), then sendToTopic()

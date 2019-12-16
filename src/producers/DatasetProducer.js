@@ -7,7 +7,7 @@
 const env = require('../environment/env');
 
 const BqProducer = require('./BqProducer');
-const ActiveMessageProducer = require('../producers').ActiveMessageProducer;
+const ActiveProducer = require('../producers').ActiveProducer;
 
 const KAFKA_WRITE_TOPIC = env.active.messagebroker.topics.dataset.inverter;
 const BQ_DATASET = env.active.datawarehouse.datasets.monitoring;
@@ -15,7 +15,7 @@ const BQ_TABLE = env.active.datawarehouse.tables.inverter;
 
 /**
  */
-class DatasetProducer extends ActiveMessageProducer {
+class DatasetProducer extends ActiveProducer {
     /**
     instance attributes:  
 

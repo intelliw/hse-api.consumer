@@ -9,7 +9,7 @@ const utils = require('../environment/utils');
 const log = require('../logger').log;
 
 
-class MessageConsumer {
+class Consumer {
     /**9
      * superclass - 
      * 
@@ -75,4 +75,4 @@ class MessageConsumer {
 }
 
 
-module.exports = MessageConsumer;
+module.exports = Consumer;
