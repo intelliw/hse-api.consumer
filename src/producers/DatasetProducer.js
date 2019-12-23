@@ -5,6 +5,7 @@
  *  Kafka message producers for api devices.datasets.post 
  */
 const env = require('../environment/env');
+const log = require('../logger').log;
 
 const BqProducer = require('./BqProducer');
 const ActiveProducer = require('../producers').ActiveProducer;
@@ -34,6 +35,17 @@ class DatasetProducer extends ActiveProducer {
 
     }
 
+    /** extracts and modifies data items if needed, and sends these as messages to the broker 
+    * @param {*} msgObj                                                             
+    */
+    async sendToTopic(msgObj) {
+        try {
+            super.sendToTopic(msgObj);
+        } catch (e) {
+            log.error(`${log.enums.methods.mbSendToTopic}`, e);
+        }
+    }
+    
 }
 
 

@@ -163,16 +163,6 @@ module.exports.messageBroker = {                        // topic names are based
         kafka: 'kafka', 
         pubSub: 'pubSub'
     },
-    consumerGroups: {                                   // consumer group ids
-        monitoring: {
-            pms: 'group.monitoring.pms',                // group id convention = <target system>.<target dataset>.<target table>
-            mppt: 'group.monitoring.mppt',
-            inverter: 'group.monitoring.inverter'
-        },
-        system: {
-            feature: 'group.system.feature'
-        }
-    },
     ack: {
         all: -1,                                        // -1 = all replicas must acknowledge (default) 
         none: 0,                                        //  0 = no acknowledgments 

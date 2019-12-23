@@ -36,14 +36,14 @@ class KafkaProducer extends Producer {
 
         // setup instance variables specific to KafkaProducer 
         this.producerObj = kafka.producer(env.active.kafkajs.producer);
-        
+
     }
 
     /* creates messages for each item in the data array and sends the message array to the broker
      * the transformResults object contains an array of kafka messages with modified data items
      *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
      */
-    async sendToTopic(sharedId, msgObj) {
+    async sendToTopic(msgObj) {
 
         // [start trace] -------------------------------
         const sp = log.TRACE.createChildSpan({ name: `${log.enums.methods.kafkaSendToTopic}` });
@@ -60,7 +60,6 @@ class KafkaProducer extends Producer {
             .then(r => log.messaging(this.writeTopic, r[0].baseOffset, msgObj.messages, msgObj.itemCount, env.active.kafkajs.consumer.clientId))         // info = (topic, offset, msgqty, itemqty, sender) {
             .then(this.producerObj.disconnect())
             .catch(e => log.error(`${log.enums.methods.kafkaSendToTopic} Error [${this.writeTopic}]`, e));
-
 
         // [end trace] -------------------------------
         sp.endSpan();

@@ -100,11 +100,32 @@ const _LOGGING = {
 }
 
 
+// topics for each environment type                          
+const _MESSAGEBROKER = {
+    provider: enums.messageBroker.providers.kafka,                      // kafka or pubsub        
+    topics: {                                                           // kafka / pubsub topics for all environments 
+        monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
+        system: { feature: 'system.feature' },
+        dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
+    }, 
+    subscriptions: {                                                    // for kafka these are groupids 
+        monitoring: { pms: 'sub-monitoring.pms', mppt: 'sub-monitoring.mppt', inverter: 'sub-monitoring.inverter' },
+        system: { feature: 'sub-system.feature' }
+    }
+}
+
+const _PUBSUB = {
+    batching: { 
+        maxMessages: 1,                                                 // number of message to include in a batch before client library sends to topic. If batch size is msobj.messages.length batch will go to server after all are published. if batch size is 1 batching is effectively off. 
+        maxMilliseconds: 10000 }                                        // max number of millisecs to wait for MAX_MESSAGES_PER_BATCH before client lib sends all messages to the topic 
+}
+
+
 // kafka broker definitions for clustered and non-clustered environments 
 const _KAFKA = {
     BROKERS: {
-        SINGLE: ['kafka-1-vm:9092'],                                            // single broker instance
-        HA: ['kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']                        // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
+        SINGLE: ['kafka-1-vm:9092'],                                        // single broker instance
+        HA: ['kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']                    // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
     }
 }
 
@@ -113,7 +134,7 @@ const _KAFKA = {
 // kafkajs client configuration options
 const _KAFKAJS = {
     consumer: {
-        clientId: `consumer.${utils.randomIntegerString(1, 9999)}`,             // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
+        clientId: `consumer.${utils.randomIntegerString(1, 9999)}`,         // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
         consumeFromBeginning: true,
         sessionTimeout: 30000,
         heartbeatInterval: 3000,
@@ -148,15 +169,6 @@ const _KAFKAJS = {
     }
 }
 
-// topics for each environment type                          
-const _MESSAGEBROKER = {
-    provider: enums.messageBroker.providers.kafka,
-    topics: {                                                               // kafka / pubsub topics for all environments 
-        monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
-        system: { feature: 'system.feature' },
-        dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
-    } 
-}
 
 // GCP project configs per environment 
 const _GCP = {
@@ -213,77 +225,88 @@ module.exports.CONFIGS = {
         api: _API.LOCAL,
         features: _FEATURES.DEV,
         logging: _LOGGING.DEV,
+        stackdriver: _STACKDRIVER.DEV,
+        messagebroker: _MESSAGEBROKER,                                          // kafka or pubsub
+        pubsub: _PUBSUB,
         kafka: { brokers: ['192.168.1.108:9092'] },                             // localhost   | 192.168.1.108            
         kafkajs: _KAFKAJS,
-        gcp: _GCP.DEV,
-        messagebroker: _MESSAGEBROKER,                     // kafka or pubsub 
-        stackdriver: _STACKDRIVER.DEV,
+        gcp: _GCP.DEV,                                          
+        
         datawarehouse: _DATAWAREHOUSE
     },
     testcloud: {                                                                // single node kafka, or Kafka Std - 1 master, N workers
         api: _API.TEST,
         features: _FEATURES.TEST,
         logging: _LOGGING.TEST,
+        stackdriver: _STACKDRIVER.TEST,
+        messagebroker: _MESSAGEBROKER,
+        pubsub: _PUBSUB,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },
         kafkajs: _KAFKAJS,
         gcp: _GCP.TEST,
-        messagebroker: _MESSAGEBROKER,
-        stackdriver: _STACKDRIVER.TEST,
         datawarehouse: _DATAWAREHOUSE
     },
     stagecloud: {                                                               // single node kafka, or Kafka Std - 1 master, N workers
         api: _API.STAGE,
         features: _FEATURES.DEV,
         logging: _LOGGING.DEV,
+        stackdriver: _STACKDRIVER.DEV,
+        messagebroker: _MESSAGEBROKER,
+        pubsub: _PUBSUB,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                              // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
         kafkajs: _KAFKAJS,
         gcp: _GCP.STAGE,
-        messagebroker: _MESSAGEBROKER,
-        stackdriver: _STACKDRIVER.DEV,
+        
         datawarehouse: _DATAWAREHOUSE
     },
     devcloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
         api: _API.DEV,
         features: _FEATURES.DEV,
         logging: _LOGGING.DEV,
+        stackdriver: _STACKDRIVER.DEV,
+        messagebroker: _MESSAGEBROKER,
+        pubsub: _PUBSUB,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                              // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
         kafkajs: _KAFKAJS,
         gcp: _GCP.DEV,
-        messagebroker: _MESSAGEBROKER,
-        stackdriver: _STACKDRIVER.DEV,
+        
         datawarehouse: _DATAWAREHOUSE
     },
     devcloud_HA: {                                                              // single node kafka, or Kafka Std - 1 master, N workers
         api: _API.DEV,
         features: _FEATURES.DEV,
         logging: _LOGGING.DEV,
+        stackdriver: _STACKDRIVER.DEV,
+        messagebroker: _MESSAGEBROKER,
+        pubsub: _PUBSUB,
         kafka: { brokers: _KAFKA.BROKERS.HA },                                  // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         kafkajs: _KAFKAJS,
         gcp: _GCP.DEV,
-        messagebroker: _MESSAGEBROKER,
-        stackdriver: _STACKDRIVER.DEV,
+        
         datawarehouse: _DATAWAREHOUSE
     },
     prodcloud: {                                                                // single node kafka, or Kafka Std - 1 master, N workers
         api: _API.PROD,
         features: _FEATURES.PROD,
         logging: _LOGGING.PROD,
+        stackdriver: _STACKDRIVER.PROD,
+        messagebroker: _MESSAGEBROKER,
+        pubsub: _PUBSUB,
         kafka: { brokers: _KAFKA.BROKERS.SINGLE },                              // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11   
         kafkajs: _KAFKAJS,
         gcp: _GCP.PROD,
-        messagebroker: _MESSAGEBROKER,
-        stackdriver: _STACKDRIVER.PROD,
         datawarehouse: _DATAWAREHOUSE
     },
     prodcloud_HA: {                                                             // Kafka HA - 3 masters, N workers
         api: _API.PROD,
         features: _FEATURES.PROD,
         logging: _LOGGING.PROD,
+        stackdriver: _STACKDRIVER.PROD,
+        messagebroker: _MESSAGEBROKER,
+        pubsub: _PUBSUB,
         kafka: { brokers: _KAFKA.BROKERS.HA },                                  // array of kafka message brokers                       // [kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092']
         kafkajs: _KAFKAJS,
-        gcp: _GCP.PROD,
-        messagebroker: _MESSAGEBROKER, 
-        stackdriver: _STACKDRIVER.PROD,
+        gcp: _GCP.PROD, 
         datawarehouse: _DATAWAREHOUSE
     }
 }  

@@ -15,7 +15,7 @@ const ActiveConsumer = require('../consumers').ActiveConsumer;
 
 // instance parameters
 const KAFKA_READ_TOPIC = env.active.messagebroker.topics.monitoring.mppt;
-const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.mppt;
+const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.mppt;
 
 
 /**
@@ -35,7 +35,7 @@ class MonitoringMppt extends ActiveConsumer {
 
         // start kafka consumer with a bq client
         super(
-            KAFKA_CONSUMER_GROUPID,
+            SUBSCRIPTION_OR_GROUPID,
             KAFKA_READ_TOPIC
         );
 
@@ -54,7 +54,7 @@ class MonitoringMppt extends ActiveConsumer {
         let sharedId;
 
         // produce 
-        transformResults.messages.forEach(message => {                 
+        transformResults.messages.forEach(message => {
 
             // parse message
             rowArray = JSON.parse(message.value);                       // rowArray = [{"pms_id":"PMS-01-002","pack_id":"0248","pack":{"volts":51.262,"amps":-0.625,"watts":-32.039,"vcl":3.654,"vch":3.676,"dock":4,"temp_top":35,"temp_mid":33,"temp_bottom":34},"cell":[{"volts":3.661,"dvcl":7,"open":false},{"volts":3.666,"dvcl":12,"open":false},{"volts":3.654,"dvcl":0,"open":false},{"volts":3.676,"dvcl":22,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.662,"dvcl":8,"open":false},{"volts":3.66,"dvcl":6,"open":false},{"volts":3.659,"dvcl":5,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.657,"dvcl":3,"open":false},{"volts":3.656,"dvcl":2,"open":false},{"volts":3.665,"dvcl":11,"open":true},{"volts":3.669,"dvcl":15,"open":false},{"volts":3.661,"dvcl":7,"open":false}],"fet_in":{"open":true,"temp":34.1},"fet_out":{"open":false,"temp":32.2},"status":{"bus_connect":true},"sys":{"source":"S000"},"time_event":"2019-02-09 08:00:17.0200","time_zone":"+07:00","time_processing":"2019-09-08 05:00:48.9830"}]
@@ -62,11 +62,11 @@ class MonitoringMppt extends ActiveConsumer {
 
             // bq
             this.producer.bqClient.insertRows(sharedId, rowArray);      // message.value: [{"pms_id":"TEST-01","pack_id":"0241","pms":{"temp":48.1},"pack":{"volts":54.87,"amps":     
- 
+
         });
 
-        // write to kafka                                               // remove comment if this is needed
-        this.producer.sendToTopic(sharedId, transformResults); 
+        // write to secondary messagebroker topic                       // remove comment if this is needed
+        this.producer.sendToTopic(transformResults);
 
 
     }
@@ -119,7 +119,7 @@ class MonitoringMppt extends ActiveConsumer {
             attrArray.push({ volts: volts, amps: amps, watts: parseFloat(watts) });
         };
         dataObj.load = attrArray;                                                                   // "load": [ {"volts": 48, "amps": 6, "watts": 288 },
-        
+
         // status
         let statusBits = utils.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);                             // get a reversed array of bits (bit 0 is least significant bit)
 

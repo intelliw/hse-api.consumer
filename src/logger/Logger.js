@@ -77,8 +77,8 @@ class Logger {
 
 
         // create the public interface for this Logger, for clients to use 
-        this.messaging = function (topic, offset, msgsArray, itemQty, sender) {
-            STMT_MESSAGING.write(topic, offset, msgsArray, itemQty, sender);
+        this.messaging = function (topic, id, msgsArray, itemQty, sender) {
+            STMT_MESSAGING.write(topic, id, msgsArray, itemQty, sender);
         }
         this.data = function (dataset, table, id, rowArray) {
             STMT_DATA.write(dataset, table, id, rowArray);

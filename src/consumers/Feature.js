@@ -14,18 +14,18 @@ const utils = require('../environment/utils');
 const log = require('../logger').log;
 
 const Producer = require('../producers');
-const KafkaConsumer = require('../consumers/KafkaConsumer');
+const ActiveConsumer = require('../consumers').ActiveConsumer;
 
 // instance parameters
 const KAFKA_READ_TOPIC = env.active.messagebroker.topics.system.feature;
-const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.system.feature;
+const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.system.feature;
 
 /**
  * instance attributes
 * producer                                                                          //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class Feature extends KafkaConsumer {
+class Feature extends ActiveConsumer {
 
     /**
     instance attributes, constructor arguments  - see super
@@ -34,7 +34,7 @@ class Feature extends KafkaConsumer {
 
         // start kafka consumer with a bq client
         super(
-            KAFKA_CONSUMER_GROUPID,
+            SUBSCRIPTION_OR_GROUPID,
             KAFKA_READ_TOPIC
         );
 

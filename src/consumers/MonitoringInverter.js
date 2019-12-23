@@ -15,7 +15,7 @@ const ActiveConsumer = require('../consumers').ActiveConsumer;
 
 // instance parameters
 const KAFKA_READ_TOPIC = env.active.messagebroker.topics.monitoring.inverter;
-const KAFKA_CONSUMER_GROUPID = enums.messageBroker.consumerGroups.monitoring.inverter;
+const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.inverter;
 
 /**
  * instance attributes
@@ -35,7 +35,7 @@ class MonitoringInverter extends ActiveConsumer {
 
         // start kafka consumer with a bq client
         super(
-            KAFKA_CONSUMER_GROUPID,
+            SUBSCRIPTION_OR_GROUPID,
             KAFKA_READ_TOPIC
         );
 
@@ -65,8 +65,8 @@ class MonitoringInverter extends ActiveConsumer {
 
         });
 
-        // write to kafka                                               // remove comment if this is needed
-        this.producer.sendToTopic(sharedId, transformResults); 
+        // write to secondary messagebroker topic                       // remove comment if this is needed
+        this.producer.sendToTopic(transformResults);
 
 
     }
@@ -76,7 +76,7 @@ class MonitoringInverter extends ActiveConsumer {
      dataSet        - e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
      dataItem       - e.g. "data": [ { "time_local": "2
     */
-   transformDataItem(key, dataSet, dataItem) {
+    transformDataItem(key, dataSet, dataItem) {
 
 
         let volts, amps, watts, pf;
@@ -127,14 +127,14 @@ class MonitoringInverter extends ActiveConsumer {
         // grid
         attrArray = [];
         for (let i = 1; i <= dataItem.grid.volts.length; i++) {
-            attrArray.push({ 
+            attrArray.push({
                 volts: dataItem.grid.volts[i - 1],
                 amps: dataItem.grid.amps[i - 1],
                 pf: dataItem.grid.pf[i - 1],
                 watts: (volts * amps * pf * SQ_ROOT_OF_THREE).toFixed(PRECISION)                    // grid.watts == V x I x pf x √3  
             });
         };
-        dataObj.grid = attrArray;           
+        dataObj.grid = attrArray;
 
         // status
         let statusBits = utils.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);         // get a reversed array of bits (bit 0 is least significant bit)
