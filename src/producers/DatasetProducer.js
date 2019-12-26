@@ -31,7 +31,7 @@ class DatasetProducer extends ActiveProducer {
         super(writeTopic);
 
         // instance attributes
-        this.bqClient = new BqProducer(dataset, table);             // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"      
+        this.bqClient = new BqProducer(dataset, table);             // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hsy-api-consumer\credentials\sundaya-d75625d5dda7.json"      
 
     }
 

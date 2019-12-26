@@ -6,13 +6,13 @@
  */
 
 module.exports.energyData = {
-    hse: 'hse',
+    hsy: 'hsy',
     harvest: 'harvest',
     storein: 'store.in',
     storeout: 'store.out',
-    enjoy: 'enjoy',
-    gridin: 'grid.in',
-    gridout: 'grid.out'
+    yield: 'yield',
+    buyin: 'buy.in',
+    buyout: 'buy.out'
 }
 
 // api paths enumerations 
@@ -30,11 +30,11 @@ module.exports.paths = {
 // api parameter enumerations 
 module.exports.params = {
     energy: {
-        hse: 'hse',
+        hsy: 'hsy',
         harvest: 'harvest',
         store: 'store',
-        enjoy: 'enjoy',
-        grid: 'grid'
+        yield: 'yield',
+        buy: 'buy'
     },
     period: {
         instant: 'instant',
@@ -55,7 +55,7 @@ module.exports.params = {
         inverter: 'inverter',                       // corresponds to messageBroker.consumers.inverter
     }
 }
-module.exports.params.energy.default = this.params.energy.hse;
+module.exports.params.energy.default = this.params.energy.hsy;
 module.exports.params.period.default = this.params.period.week;
 
 

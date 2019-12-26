@@ -10,8 +10,8 @@ const utils = require('./utils');
 const enums = require('./enums');
 
 /* environment configurables  
-    env.js is mastered in hse-api-host project and shared by hse-api-consumers etc.
-        it should be edited in hse-api-host and copied across to hse-api-consumers project if any changes are made 
+    env.js is mastered in hsy-api-host project and shared by hsy-api-consumers etc.
+        it should be edited in hsy-api-host and copied across to hsy-api-consumers project if any changes are made 
     logging verbosity and appenders provide startup configuration for logger.logs  - at runtime it canb e changed through GET: api/logging?verbosity=info,debug&appenders=console,stackdriver;
     - verbosity determines the loglevel (none, info, or debug)
     - appenders determines the output destination (console, or stackdriver)

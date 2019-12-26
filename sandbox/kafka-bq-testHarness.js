@@ -36,7 +36,7 @@ const consumer = kafka.consumer({
   retry: env.active.kafkajs.consumer.retry,
   readUncommitted: env.active.kafkajs.consumer.readUncommitted
 })
-const bqClient = new BigQuery();                  // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hse-api-consumer\credentials\sundaya-d75625d5dda7.json"
+const bqClient = new BigQuery();                  // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hsy-api-consumer\credentials\sundaya-d75625d5dda7.json"
 
 const retrieve = async () => {
 

@@ -1,7 +1,7 @@
 # Energy Management API Host
 
 # GIT
-https://github.com/intelliw/hse-api.host
+https://github.com/intelliw/hsy-api.host
 
 git add . ; git commit -m "ok" ; git push origin master ; git push origin --tags
 
