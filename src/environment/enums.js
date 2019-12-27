@@ -10,9 +10,9 @@ module.exports.energyData = {
     harvest: 'harvest',
     storein: 'store.in',
     storeout: 'store.out',
-    yield: 'yield',
-    buyin: 'buy.in',
-    buyout: 'buy.out'
+    yield: 'yield',                                 // enjoy  
+    buyin: 'buy.in',                                // grid.in        
+    buyout: 'buy.out'                               // grid.out    
 }
 
 // api paths enumerations 
@@ -21,9 +21,9 @@ module.exports.paths = {
     device: 'device',
     devices: 'devices',
     api: {
-        logging: 'logging',                             //  api/logging
-        features: 'features',                           //  api/features
-        versions: 'versions'                            //  api/versions
+        logging: 'logging',                         //  api/logging
+        features: 'features',                       //  api/features
+        versions: 'versions'                        //  api/versions
     }
 }
 
@@ -33,8 +33,8 @@ module.exports.params = {
         hsy: 'hsy',
         harvest: 'harvest',
         store: 'store',
-        yield: 'yield',
-        buy: 'buy'
+        yield: 'yield',                            // enjoy                 
+        buy: 'buy'                                 // grid 
     },
     period: {
         instant: 'instant',
