@@ -59,7 +59,7 @@ class Producer {
 
 
     _isKafka() { return env.active.messagebroker.provider == enums.messageBroker.providers.kafka; }
-    _isPubSub() { return env.active.messagebroker.provider == enums.messageBroker.providers.pubSub; }
+    _isPubSub() { return env.active.messagebroker.provider == enums.messageBroker.providers.pubsub; }
 
 
 }

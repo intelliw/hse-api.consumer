@@ -46,7 +46,7 @@ class KafkaProducer extends Producer {
     async sendToTopic(msgObj) {
 
         // [start trace] -------------------------------
-        const sp = log.TRACE.createChildSpan({ name: `${log.enums.methods.kafkaSendToTopic}` });
+        const sp = log.TRACE.createChildSpan({ name: `${log.enums.methods.mbSendToTopic}` });
 
 
         // send the message to the topic
@@ -59,7 +59,7 @@ class KafkaProducer extends Producer {
             }))
             .then(r => log.messaging(this.writeTopic, r[0].baseOffset, msgObj.messages, msgObj.itemCount, env.active.kafkajs.consumer.clientId))         // info = (topic, offset, msgqty, itemqty, sender) {
             .then(this.producerObj.disconnect())
-            .catch(e => log.error(`${log.enums.methods.kafkaSendToTopic} Error [${this.writeTopic}]`, e));
+            .catch(e => log.error(`${log.enums.methods.mbSendToTopic} Error [${this.writeTopic}]`, e));
 
         // [end trace] -------------------------------
         sp.endSpan();

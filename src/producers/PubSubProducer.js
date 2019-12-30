@@ -1,11 +1,9 @@
 //@ts-check
 "use strict";
 /**
- * ./producers/Producer.js
- *  base type for Kafka message producers  
- *  subclass producer objects are responsible for transforming a consumed message and if requested, sending it to a new topic
+ * ./producers/PubSubProducer.js
  */
-const { Kafka } = require('kafkajs');
+const { PubSub } = require('@google-cloud/pubsub');
 const Producer = require('./Producer');
 
 const enums = require('../environment/enums');
@@ -15,7 +13,7 @@ const log = require('../logger').log;
 const moment = require('moment');
 
 
-class KafkaProducer extends Producer {
+class PubSubProducer extends Producer {
     /**
      * superclass - 
      * clients of subtypes must first call extractData(), then sendToTopic()
@@ -23,49 +21,60 @@ class KafkaProducer extends Producer {
      * 
     instance attributes:  
      producerObj": kafka.producer()
-     writeTopic:  env.active.messagebroker.topics.dataset                                         // this is the topic to which the subclassed producer writes, in sendTopic()  
+     writeTopic:  env.active.messagebroker.topics.dataset                                                       // this is the topic to which the subclassed producer writes, in sendTopic()  
     */
     constructor(writeTopic) {
 
         super(writeTopic);
 
-        // create a kafka producer
-        const kafka = new Kafka({
-            brokers: env.active.kafka.brokers                                       //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
-        });
+        // create a pubsub producer
+        const pubsub = new PubSub();
 
-        // setup instance variables specific to KafkaProducer 
-        this.producerObj = kafka.producer(env.active.kafkajs.producer);
+        // setup instance variables specific to PubSubProducer 
+        this.producerObj = pubsub;
 
     }
 
-    /* creates messages for each item in the data array and sends the message array to the broker
-     * the transformResults object contains an array of kafka messages with modified data items
-     *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
+    /**
+     * @param {*} msgObj
      */
     async sendToTopic(msgObj) {
 
-        // [start trace] -------------------------------
-        const sp = log.TRACE.createChildSpan({ name: `${log.enums.methods.kafkaSendToTopic}` });
+        const LOG_SENDER = 'PUBSUB PRODUCER';
+
+        let dataBuffer, dataAttributes;
+
+        // [start trace] -------------------------------    
+        const sp = log.TRACE.createChildSpan({ name: `${log.enums.methods.mbSendToTopic}` });                   // 2do  - consumer tracing does not have a root span ..
 
 
-        // send the message to the topic
-        await this.producerObj.connect()
-            .then(() => this.producerObj.send({
-                topic: this.writeTopic,
-                messages: msgObj.messages,
-                acks: enums.messageBroker.ack.all,                                  // default is 'all'
-                timeout: env.active.kafkajs.send.timeout                            // milliseconds    
-            }))
-            .then(r => log.messaging(this.writeTopic, r[0].baseOffset, msgObj.messages, msgObj.itemCount, env.active.kafkajs.consumer.clientId))         // info = (topic, offset, msgqty, itemqty, sender) {
-            .then(this.producerObj.disconnect())
-            .catch(e => log.error(`${log.enums.methods.kafkaSendToTopic} Error [${this.writeTopic}]`, e));
+        // create microbatching publisher                                                                       //note:  miocrobatch settings apply only for large msgObj.messages[] where you call batchPub.publish multiple times. The microbatch prevents client libs from sending messages to pubsub.             
+        const BATCH_OPTIONS = env.active.pubsub.batching;
+        BATCH_OPTIONS.maxMessages = msgObj.messages.length;                                                     // number of message to include in a batch before client library sends to topic. If batch size is msobj.messages.length batch will go to server after all are published 
 
-        // [end trace] -------------------------------
+        const batchPub = this.producerObj.topic(this.writeTopic, { batching: BATCH_OPTIONS });
+
+        // send each message to the topic - pubsub will batch and send to server after all are published
+        for (let i = 0; i < msgObj.messages.length; i++) {
+            (async () => {
+                
+                dataBuffer = Buffer.from(msgObj.messages[i].value);                                             // value attribute if kafka 
+                dataAttributes = {
+                    key: msgObj.messages[i].key                                                                                 
+                };
+
+                await batchPub.publish(dataBuffer, dataAttributes);
+
+            })().then(messageId => log.messaging(this.writeTopic, messageId, msgObj.messages, msgObj.itemCount, LOG_SENDER))    // info = (topic, id, msgqty, itemqty, sender) {;
+                .catch(e => log.error(`${this.apiPathIdentifier} ${log.enums.methods.mbSendToTopic} Error [${this.writeTopic}]`, e));
+        }
+
+
+        // [end trace] ---------------------------------    
         sp.endSpan();
 
     }
 
 }
 
-module.exports = KafkaProducer;
+module.exports = PubSubProducer;

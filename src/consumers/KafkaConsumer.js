@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/Consumer.js
+ * ./consumers/KafkaConsumer.js
  *  base type for Kafka message consumers  
  *  the Consumer supertype calls its subtype to transform messages (retrieveMessages() eachMessage:
  *      the subtype contains a Consumer object and implements methods to transform and produce output 
@@ -29,19 +29,19 @@ class KafkaConsumer extends Consumer{
         this.readTopic = readTopic;
 
      constructor arguments 
-    * @param {*} groupId                                    //  enums.messageBroker.consumersGroups.monitoring
+    * @param {*} subscriptionId                             //  env.active.messagebroker.subscriptions.monitoring
     * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.monitoring
     */
-    constructor(groupId, readTopic) {
+    constructor(subscriptionId, readTopic) {
 
         // store params
-        super(groupId, readTopic);
+        super(subscriptionId, readTopic);
         
         // create the kafka consumer
         const kafka = new Kafka({
             brokers: env.active.kafka.brokers               //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
         });
-        this.kafkaConsumer = kafka.consumer({ ...env.active.kafkajs.consumer, groupId: groupId });
+        this.consumerObj = kafka.consumer({ ...env.active.kafkajs.consumer, groupId: subscriptionId });
 
         // start the consumer    
         this._initialiseTraps();
@@ -54,20 +54,20 @@ class KafkaConsumer extends Consumer{
 
         const MESSAGE_PREFIX = 'KAFKA CONSUMER';
 
-        await this.kafkaConsumer.connect()
-            .then(this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning }))
-            .then(this.kafkaConsumer.run({
+        await this.consumerObj.connect()
+            .then(this.consumerObj.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning }))
+            .then(this.consumerObj.run({
                 eachMessage: async ({ topic, partition, message }) => {
 
                     // transform dataItems if required                                                                  // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype 
-                    let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(message) : message;     // e.g. results: { itemCount: 9, messages: [. . .] }
+                    let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(message) : message;    // e.g. results: { itemCount: 9, messages: [. . .] }
 
                     // write to bq and kafka topic
                     this.produce(results);                                                                              // produce is implemented by subtype        
 
                 }
             }))
-            .catch(e => log.error(`${MESSAGE_PREFIX} retrieveMessages() Error [${this.readTopic}]`, e));
+            .catch(e => log.error(`${MESSAGE_PREFIX} _retrieveMessages() Error [${this.readTopic}]`, e));
 
     }
 
@@ -80,7 +80,7 @@ class KafkaConsumer extends Consumer{
                 try {
                     console.log(`errorTypes: process.on ${type}`)
                     log.error(`errorTypes: process.on ${type}`, e)
-                    await this.kafkaConsumer.disconnect()
+                    await this.consumerObj.disconnect()
                     process.exit(0)
                 } catch (_) {
                     process.exit(1)
@@ -93,7 +93,7 @@ class KafkaConsumer extends Consumer{
             process.once(type, async () => {
                 try {
                     console.log(`signalTraps: process.once ${type}`)
-                    await this.kafkaConsumer.disconnect()
+                    await this.consumerObj.disconnect()
                 } finally {
                     process.kill(process.pid, type)
                 }

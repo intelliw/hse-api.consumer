@@ -1,15 +1,9 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/Consumer.js
- *  base type for Kafka message consumers  
- *  the Consumer supertype calls its subtype to transform messages (retrieveMessages() eachMessage:
- *      the subtype contains a Consumer object and implements methods to transform and produce output 
- *      - the Consumer supertype calls the subtype's transform method, which returns a transformed kafka message
- *      - the Consumer supertype then performs generic transforms to the message, if any 
- *      - it then calls the subtype's produce method with the transformed message
+ * ./consumers/PubSubConsumer.js
  */
-const { Kafka } = require('kafkajs');
+const { PubSub } = require('@google-cloud/pubsub');
 const Consumer = require('./Consumer');
 
 const env = require('../environment/env');
@@ -20,8 +14,10 @@ const log = require('../logger').log;
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-class KafkaConsumer extends Consumer{
-    /**9
+const FLOWCONTROL_MAX_MESSAGES = 100;                                       // allows processing this numbe of messages at the same time (default is 100) 
+
+class PubSubConsumer extends Consumer {
+    /**
      * superclass - 
      * 
     instance attributes:  
@@ -29,48 +25,60 @@ class KafkaConsumer extends Consumer{
         this.readTopic = readTopic;
 
      constructor arguments 
-    * @param {*} groupId                                    //  enums.messageBroker.consumersGroups.monitoring
-    * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.monitoring
+    * @param {*} subscriptionId                                             //  env.active.messagebroker.subscriptions.monitoring
+    * @param {*} readTopic                                                  //  the topic to read from env.active.messagebroker.topics.monitoring
     */
-    constructor(groupId, readTopic) {
+    constructor(subscriptionId, readTopic) {
 
         // store params
-        super(groupId, readTopic);
-        
-        // create the kafka consumer
-        const kafka = new Kafka({
-            brokers: env.active.kafka.brokers               //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
-        });
-        this.kafkaConsumer = kafka.consumer({ ...env.active.kafkajs.consumer, groupId: groupId });
+        super(subscriptionId, readTopic);
 
-        // start the consumer    
+        // setup pull client 
+        const pubsub = new PubSub();
+        this.consumerObj = pubsub.subscription(subscriptionId, {           // consumerObj is a subscription
+            flowControl: {
+                maxMessages: FLOWCONTROL_MAX_MESSAGES,                     // max messages to process at the same time (to allow in memory) before pausing the message stream. allowExcessMessages should be set to false 
+                allowExcessMessages: false                                 // this tells the client to manage and lock any excess messages 
+            }
+        });
+
+        // listen for messages
+        this._retrieveMessages();
+
+        // set signal traps 
         this._initialiseTraps();
-        this._retrieveMessages().catch(e => log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve Error`, e))
 
     }
 
-    // connect and listen for messages
+    // registered listener for the subscription
     async _retrieveMessages() {
 
-        const MESSAGE_PREFIX = 'KAFKA CONSUMER';
+        const MESSAGE_PREFIX = 'PUBSUB CONSUMER';
 
-        await this.kafkaConsumer.connect()
-            .then(this.kafkaConsumer.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning }))
-            .then(this.kafkaConsumer.run({
-                eachMessage: async ({ topic, partition, message }) => {
+        // start subscription listener
+        this.consumerObj.on(`error`, e => { log.error(`${MESSAGE_PREFIX} _retrieveMessages() Error [${this.readTopic}]`, e) });
+        this.consumerObj.on('message', message => {
 
-                    // transform dataItems if required                                                                  // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype 
-                    let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(message) : message;     // e.g. results: { itemCount: 9, messages: [. . .] }
+            // write to bq and write topic
+            const normalisedMessage = { key: message.attributes.key, value: message.data }                                          // normalise the message - pubsub messages are sent in the data attribute but the standard format is based on kafka which stores message data in the .value property
+            let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(normalisedMessage) : normalisedMessage;    // transform dataItems  e.g. results: { itemCount: 9, messages: [. . .] } .. transformMonitoringDataset is implemented by super, it calls transformDataItem in subtype 
+            this.produce(results);                                                                                                  // produce is implemented by subtype        
+            // console.log(`results: ${results.messages[0].value}`);
 
-                    // write to bq and kafka topic
-                    this.produce(results);                                                                              // produce is implemented by subtype        
-
-                }
-            }))
-            .catch(e => log.error(`${MESSAGE_PREFIX} retrieveMessages() Error [${this.readTopic}]`, e));
+            // acknowledge receipt of the message
+            message.ack();
+        });
 
     }
 
+    // this is for debug use only
+    async _listSubscriptions(pubsub) {
+
+        // Lists all subscriptions in the current project
+        const [subscriptions] = await pubsub.getSubscriptions();
+        subscriptions.forEach(subscription => log.trace(log.enums.labels.watchEnv, 'Subscription', subscription.name));
+        
+    }
 
     // initialise error and signal traps
     async _initialiseTraps() {
@@ -80,8 +88,7 @@ class KafkaConsumer extends Consumer{
                 try {
                     console.log(`errorTypes: process.on ${type}`)
                     log.error(`errorTypes: process.on ${type}`, e)
-                    await this.kafkaConsumer.disconnect()
-                    process.exit(0)
+                    await this.consumerObj.close().then(process.exit(0));
                 } catch (_) {
                     process.exit(1)
                 }
@@ -93,7 +100,7 @@ class KafkaConsumer extends Consumer{
             process.once(type, async () => {
                 try {
                     console.log(`signalTraps: process.once ${type}`)
-                    await this.kafkaConsumer.disconnect()
+                    await this.consumerObj.removeListener('message', this._retrieveMessages)
                 } finally {
                     process.kill(process.pid, type)
                 }
@@ -104,4 +111,4 @@ class KafkaConsumer extends Consumer{
 }
 
 
-module.exports = KafkaConsumer;
+module.exports = PubSubConsumer;

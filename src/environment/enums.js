@@ -161,7 +161,7 @@ module.exports.apiKey.default = this.apiKey.PROXY;
 module.exports.messageBroker = {                        // topic names are based on enums.params.datasets
     providers: {                                          
         kafka: 'kafka', 
-        pubSub: 'pubSub'
+        pubsub: 'pubsub'
     },
     ack: {
         all: -1,                                        // -1 = all replicas must acknowledge (default) 

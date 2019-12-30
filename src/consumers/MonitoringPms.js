@@ -11,10 +11,10 @@ const env = require('../environment/env');
 const utils = require('../environment/utils');
 
 const DatasetProducer = require('../producers/DatasetProducer');
-const ActiveConsumer = require('../consumers').ActiveConsumer;
+const ActiveMsgConsumer = require('../consumers').ActiveMsgConsumer;
 
 // instance parameters
-const KAFKA_READ_TOPIC = env.active.messagebroker.topics.monitoring.pms;
+const MESSAGEBROKER_READ_TOPIC = env.active.messagebroker.topics.monitoring.pms;
 const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.pms;
 
 /**
@@ -22,13 +22,13 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitorin
  * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringPms extends ActiveConsumer {
+class MonitoringPms extends ActiveMsgConsumer {
 
     /**
     instance attributes, constructor arguments  - see super
     */
     constructor() {
-
+        
         const writeTopic = env.active.messagebroker.topics.dataset.pms;
         const bqDataset = env.active.datawarehouse.datasets.monitoring;
         const bqTable = env.active.datawarehouse.tables.pms;
@@ -36,7 +36,7 @@ class MonitoringPms extends ActiveConsumer {
         // start kafka consumer with a bq client
         super(
             SUBSCRIPTION_OR_GROUPID,
-            KAFKA_READ_TOPIC
+            MESSAGEBROKER_READ_TOPIC
         );
 
         // instance attributes
