@@ -41,7 +41,12 @@ const _SHARED = {
         batching: {
             maxMessages: 1,                                                     // number of message to include in a batch before client library sends to topic. If batch size is msobj.messages.length batch will go to server after all are published. if batch size is 1 batching is effectively off. 
             maxMilliseconds: 10000
-        }                                                                       // max number of millisecs to wait for MAX_MESSAGES_PER_BATCH before client lib sends all messages to the topic 
+        },
+        flowControl: {
+            maxMessages: 100,                                                   // max messages to process at the same time (to allow in memory) before pausing the message stream. allowExcessMessages should be set to false 
+            allowExcessMessages: false                                          // this tells the client to manage and lock any excess messages 
+        },
+        ackDeadline: 10                                                                       // max number of millisecs to wait for MAX_MESSAGES_PER_BATCH before client lib sends all messages to the topic 
     },
     KAFKAJS: {                                                                  // kafkajs client configuration options
         consumer: {
@@ -80,7 +85,7 @@ const _SHARED = {
         }
     },
     API: {
-        host: 'api.dev.sundaya.monitored.equipment',
+        host: 'api.dev.sundaya.monitored.equipment',                            // dev is the default for _SHARED.API, each environment will override this in _API
         scheme: 'https',
         versions: {
             supported: '0.2 0.3',
@@ -88,7 +93,7 @@ const _SHARED = {
         }
     },
     STACKDRIVER: {
-        logging: { logName: 'monitoring_prod', resourceType: 'gce_instance' },  // cloud run resourceType is "cloud_run_revision", for GCE VM Instance it is ''gce_instance' logName appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]". 
+        logging: { logName: 'monitoring_prod', resourceType: 'gce_instance' },  // use 'generic_task' (not tested) for microservices. cloud run resourceType is "cloud_run_revision", for GCE VM Instance it is ''gce_instance' logName appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]". 
         errors: { reportMode: 'always', logLevel: 5 },                          // 'production' (default), 'always', or 'never' - 'production' (default), 'always', 'never' - production will not log unless NODE-ENV=production. Specifies when errors are reported to the Error Reporting Console. // 2 (warnings). 0 (no logs) 5 (all logs)      
         trace: {
             samplingRate: 500, enabled: true, flushDelaySeconds: 1,             // enabled=false to turn OFF tracing. samplingRate 500 means sample 1 trace every half-second, 5 means at most 1 every 200 ms. flushDelaySeconds = seconds to buffer traces before publishing to Stackdriver, keep short to allow cloud run to async trace immedatily after sync run

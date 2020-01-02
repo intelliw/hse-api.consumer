@@ -37,7 +37,8 @@ class Statement {
             const metadata = {                                                          // the metadata associated with a log entry
                 resource: {
                     type: this.resourceType,
-                    labels: { instance_id: this.serviceId }                             // label has to be instance_id  - there is no logging lable called service_id 
+                    labels: { 
+                        instance_id: this.serviceId }                                     // label name should be 'instance_id' if resourceType is 'gce_instance'
                 },
                 severity: severity                                                      // LogSeverity      https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity    
             };

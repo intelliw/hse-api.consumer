@@ -30,7 +30,7 @@ class ExceptionStatement extends Statement {
             .serviceContext = {
                 service: env.active.api.host,
                 version: env.active.api.versions.current,
-                resourceType: env.active.stackdriver.logging.resourceType                      // e.g. gce_instance
+                resourceType: env.active.stackdriver.logging.resourceType                      // e.g. generic_task or gce_instance
             }
 
         this._writeConsoleInfo(label, errMessage, errEvent);

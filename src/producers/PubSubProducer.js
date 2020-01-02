@@ -53,6 +53,7 @@ class PubSubProducer extends Producer {
         BATCH_OPTIONS.maxMessages = msgObj.messages.length;                                                     // number of message to include in a batch before client library sends to topic. If batch size is msobj.messages.length batch will go to server after all are published 
 
         const batchPub = this.producerObj.topic(this.writeTopic, { batching: BATCH_OPTIONS });
+        let messageIds = [];
 
         // send each message to the topic - pubsub will batch and send to server after all are published
         for (let i = 0; i < msgObj.messages.length; i++) {
@@ -63,10 +64,22 @@ class PubSubProducer extends Producer {
                     key: msgObj.messages[i].key                                                                                 
                 };
 
-                await batchPub.publish(dataBuffer, dataAttributes);
+                await batchPub.publish(dataBuffer, dataAttributes, (e, messageId) => {
+                    // log errors
+                    if (e) {
+                        log.error(`${this.apiPathIdentifier} ${log.enums.methods.mbSendToTopic} Error [${this.writeTopic}]`, e);
 
-            })().then(messageId => log.messaging(this.writeTopic, messageId, msgObj.messages, msgObj.itemCount, LOG_SENDER))    // info = (topic, id, msgqty, itemqty, sender) {;
-                .catch(e => log.error(`${this.apiPathIdentifier} ${log.enums.methods.mbSendToTopic} Error [${this.writeTopic}]`, e));
+                    // log messaging once only, after all messages in this loop have been published 
+                    } else {
+                        messageIds.push(messageId);
+                        if (i == (msgObj.messages.length - 1)) {
+                            log.messaging(this.writeTopic, messageId, msgObj.messages, msgObj.itemCount, LOG_SENDER)    // info = (topic, id, msgqty, itemqty, sender) 
+                        };
+                    };
+
+                });
+
+            })().catch(e => log.error(`${this.apiPathIdentifier} ${log.enums.methods.mbSendToTopic} Error (async) [${this.writeTopic}]`, e));
         }
 
 

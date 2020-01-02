@@ -36,10 +36,8 @@ class PubSubConsumer extends Consumer {
         // setup pull client 
         const pubsub = new PubSub();
         this.consumerObj = pubsub.subscription(subscriptionId, {           // consumerObj is a subscription
-            flowControl: {
-                maxMessages: FLOWCONTROL_MAX_MESSAGES,                     // max messages to process at the same time (to allow in memory) before pausing the message stream. allowExcessMessages should be set to false 
-                allowExcessMessages: false                                 // this tells the client to manage and lock any excess messages 
-            }
+            flowControl: env.active.pubsub.flowControl,
+            ackDeadline: env.active.pubsub.ackDeadline
         });
 
         // listen for messages
@@ -59,14 +57,12 @@ class PubSubConsumer extends Consumer {
         this.consumerObj.on(`error`, e => { log.error(`${MESSAGE_PREFIX} _retrieveMessages() Error [${this.readTopic}]`, e) });
         this.consumerObj.on('message', message => {
 
-            // write to bq and write topic
+            // write to bq and writetopic
             const normalisedMessage = { key: message.attributes.key, value: message.data }                                          // normalise the message - pubsub messages are sent in the data attribute but the standard format is based on kafka which stores message data in the .value property
             let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(normalisedMessage) : normalisedMessage;    // transform dataItems  e.g. results: { itemCount: 9, messages: [. . .] } .. transformMonitoringDataset is implemented by super, it calls transformDataItem in subtype 
             this.produce(results);                                                                                                  // produce is implemented by subtype        
-            // console.log(`results: ${results.messages[0].value}`);
-
-            // acknowledge receipt of the message
-            message.ack();
+                // console.log(`results: ${results.messages[0].value}`);
+            message.ack();                                                                                                          // acknowledge receipt of the message    
         });
 
     }
