@@ -46,7 +46,7 @@ class KafkaProducer extends Producer {
     async sendToTopic(msgObj) {
 
         // [start trace] -------------------------------
-        const sp = log.TRACE.createChildSpan({ name: `${log.enums.methods.mbSendToTopic}` });
+        const sp = log.SPAN.createChildSpan({ name: `${log.enums.methods.mbSendToTopic}` });
 
 
         // send the message to the topic

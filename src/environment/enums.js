@@ -11,8 +11,8 @@ module.exports.energyData = {
     storein: 'store.in',
     storeout: 'store.out',
     yield: 'yield',                                 // enjoy  
-    buyin: 'buy.in',                                // grid.in        
-    buyout: 'buy.out'                               // grid.out    
+    gridin: 'sell',                                 // grid.in = sell
+    gridout: 'buy'                                  // grid.out = buy   
 }
 
 // api paths enumerations 
@@ -33,8 +33,8 @@ module.exports.params = {
         hsy: 'hsy',
         harvest: 'harvest',
         store: 'store',
-        yield: 'yield',                            // enjoy                 
-        buy: 'buy'                                 // grid 
+        yield: 'yield',                             // enjoy                 
+        buy: 'buy'                                  // grid 
     },
     period: {
         instant: 'instant',
@@ -84,8 +84,8 @@ module.exports.features = {
     release: { none: "none" },
     operational: {
         none: "none",
-        logging: 'logging',                             // logging reconfiguration feature
-        validation: 'validation'                        // whether or not to to perform in-depth input validation for post requests
+        logging: "logging",                             // logging reconfiguration feature
+        validation: "validation"                        // whether or not to to perform in-depth input validation for post requests
     },
     experiment: { none: "none" },
     permission: { none: "none" }

@@ -8,7 +8,7 @@ const env = require('../environment');
 const consts = require('../host/constants');
 
 const { ErrorReporting } = require('@google-cloud/error-reporting');
-const { Logging } = require('@google-cloud/logging');               // google cloud logging client library
+const { Logging } = require('@google-cloud/logging');                               // google cloud logging client library
 const traceAgent = require('@google-cloud/trace-agent');
 
 const MessagingStatement = require('./MessagingStatement');
@@ -35,10 +35,10 @@ class Logger {
         // create a Stackdriver log writer 
         LOG_WRITER = new Logging({
             projectId: project,
-        }).log(logname);                                                        // select the log to write to        
+        }).log(logname);                                                            // select the log to write to        
 
         // create a Stackdriver error reporter        
-        this.ERR = new ErrorReporting({                                         // all configuration options are optional.
+        this.ERR = new ErrorReporting({                                             // all configuration options are optional.
             ...env.active.stackdriver.errors,
             projectId: project,
             serviceContext: {
@@ -48,23 +48,23 @@ class Logger {
         });
 
         // start the Stackdriver tracing agent 
-        this.TRACE = traceAgent.start({                                         // use log.TRACE for creating custom spans
+        this.SPAN = traceAgent.start({                                             // use log.SPAN for creating custom spans
             ...env.active.stackdriver.trace,
             projectId: env.active.gcp.project,
             serviceContext: {
                 service: env.active.api.host,
                 version: env.active.api.versions.current,
-                resourceType: env.active.stackdriver.logging.resourceType                      // e.g. gce_instance
+                resourceType: env.active.stackdriver.logging.resourceType           // e.g. gce_instance
             }
         });
 
-        // initialise configurations                                            // this gets called by api/logger as well
+        // initialise configurations                                                // this gets called by api/logger as well
         this.initialise();
 
     }
 
     // toggle logging based on current configs
-    initialise() {                                                              // called by constructor and by api/logging at runtim  
+    initialise() {                                                                  // called by constructor and by api/logging at runtim  
 
         const serviceId = consts.system.SERVICE_ID
 
@@ -83,10 +83,10 @@ class Logger {
         this.data = function (dataset, table, id, rowArray) {
             STMT_DATA.write(dataset, table, id, rowArray);
         }
-        this.exception = function (label, errMessage, errEvent) {                    // errEvent is a ErrorEvent object created with log.ERR.event()
+        this.exception = function (label, errMessage, errEvent) {                   // errEvent is a ErrorEvent object created with log.ERR.event()
             STMT_EXCEPTION.write(label, errMessage, errEvent);
         }
-        this.error = function (label, errObject) {                                   // errObject is a Error object created with 'new Error(message)'
+        this.error = function (label, errObject) {                                  // errObject is a Error object created with 'new Error(message)'
             STMT_ERROR.write(label, errObject);
         }
         this.trace = function (label, value, payload) {
@@ -100,12 +100,12 @@ class Logger {
                 requestStatus: 'Request',
                 responseStatus: 'Response',
                 configChange: 'Configs',
-                watchVar: 'Variable',                                                // use for watch variables - this can be combined with an release or experiment feature, to watch a variable in a new feature
-                watchEnv: 'Environment',                                             // use to inspect environment configurations
+                watchVar: 'Variable',                                               // use for watch variables - this can be combined with an release or experiment feature, to watch a variable in a new feature
+                watchEnv: 'Environment',                                            // use to inspect environment configurations
                 unexpected: 'Unexpected'
             },
-            methods: {                                                               // methods used in trace agent child spans, and trace statements
-                mbSendToTopic: 'messageBroker: sendToTopic',                         // message broker can be kafka or pubsub   
+            methods: {                                                              // methods used in trace agent child spans, and trace statements
+                mbSendToTopic: 'mb: sendToTopic',                                   // message broker can be kafka or pubsub   
                 bqInsertRows: 'bq: insertRows',
                 energyExecuteGet: 'energy: executeGet',
             }

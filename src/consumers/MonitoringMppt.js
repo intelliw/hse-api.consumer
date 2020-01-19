@@ -20,7 +20,7 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitorin
 
 /**
  * instance attributes
- * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
 class MonitoringMppt extends ActiveMsgConsumer {
@@ -29,7 +29,7 @@ class MonitoringMppt extends ActiveMsgConsumer {
     */
     constructor() {
 
-        const kafkaWriteTopic = env.active.messagebroker.topics.dataset.mppt;
+        const writeTopic = env.active.messagebroker.topics.dataset.mppt;
         const bqDataset = env.active.datawarehouse.datasets.monitoring;
         const bqTable = env.active.datawarehouse.tables.mppt;
 
@@ -40,7 +40,7 @@ class MonitoringMppt extends ActiveMsgConsumer {
         );
 
         // instance attributes
-        this.producer = new DatasetProducer(kafkaWriteTopic, bqDataset, bqTable)
+        this.producer = new DatasetProducer(writeTopic, bqDataset, bqTable)
 
     }
 
@@ -105,8 +105,8 @@ class MonitoringMppt extends ActiveMsgConsumer {
         amps = dataItem.battery.amps;
         watts = (volts * amps).toFixed(PRECISION);
 
-        dataObj.battery = {                                                                        //   "battery": {
-            volts: volts, amps: amps, watts: parseFloat(watts)                                     //      "volts": 55.1, "amps": 0.0, "watts": 0 },
+        dataObj.battery = {                                                                         //   "battery": {
+            volts: volts, amps: amps, watts: parseFloat(watts)                                      //      "volts": 55.1, "amps": 0.0, "watts": 0 },
         }
 
         // load
@@ -121,18 +121,18 @@ class MonitoringMppt extends ActiveMsgConsumer {
         dataObj.load = attrArray;                                                                   // "load": [ {"volts": 48, "amps": 6, "watts": 288 },
 
         // status
-        let statusBits = utils.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);                             // get a reversed array of bits (bit 0 is least significant bit)
+        let statusBits = utils.hex2bitArray(dataItem.status, consts.equStatus.BIT_LENGTH);                              // get a reversed array of bits (bit 0 is least significant bit)
 
         dataObj.status = {
-            bus_connect: utils.tristateBoolean(statusBits[0], false, true),                                            // bit 0    "status": { "bus_connect": true }, 
-            input: consts.equStatus.mppt.input[consts.equStatus.ENUM_PREFIX + statusBits[1] + statusBits[2]],            // bit 1,2              "input": "normal"
+            bus_connect: utils.tristateBoolean(statusBits[0], false, true),                                             // bit 0    "status": { "bus_connect": true }, 
+            input: consts.equStatus.mppt.input[consts.equStatus.ENUM_PREFIX + statusBits[1] + statusBits[2]],           // bit 1,2              "input": "normal"
             chgfet: utils.tristateBoolean(statusBits[3], "ok", "short"),                                                              // bit 3                "chgfet": true, 
             chgfet_antirev: utils.tristateBoolean(statusBits[4], "ok", "short"),                                                      // bit 4                "chgfet_antirev": true, 
             fet_antirev: utils.tristateBoolean(statusBits[5], "ok", "short"),                                                         // bit 5                "fet_antirev": true,   
             input_current: utils.tristateBoolean(statusBits[6], "ok", "overcurrent"),                                                       // bit 6                "input_current": true, 
-            load: consts.equStatus.mppt.load[consts.equStatus.ENUM_PREFIX + statusBits[7] + statusBits[8]],              // bit 7,8              "load": "ok", 
+            load: consts.equStatus.mppt.load[consts.equStatus.ENUM_PREFIX + statusBits[7] + statusBits[8]],             // bit 7,8              "load": "ok", 
             pv_input: utils.tristateBoolean(statusBits[9], "ok", "short"),                                                            // bit 9                "pv_input": true, 
-            charging: consts.equStatus.mppt.charging[consts.equStatus.ENUM_PREFIX + statusBits[10] + statusBits[11]],    // bit 10,11            "charging": "not-charging", 
+            charging: consts.equStatus.mppt.charging[consts.equStatus.ENUM_PREFIX + statusBits[10] + statusBits[11]],   // bit 10,11            "charging": "not-charging", 
             system: utils.tristateBoolean(statusBits[12], "ok", "fault"),                                                             // bit 12               "system": true,  
             standby: utils.tristateBoolean(statusBits[13], "standby", "running")                                                             // bit 13               "standby": true } 
         }

@@ -45,7 +45,7 @@ class PubSubProducer extends Producer {
         let dataBuffer, dataAttributes;
 
         // [start trace] -------------------------------    
-        const sp = log.TRACE.createChildSpan({ name: `${log.enums.methods.mbSendToTopic}` });                   // 2do  - consumer tracing does not have a root span ..
+        const sp = log.SPAN.createChildSpan({ name: `${log.enums.methods.mbSendToTopic}` });                   // 2do  - consumer tracing does not have a root span ..
 
 
         // create microbatching publisher                                                                       //note:  miocrobatch settings apply only for large msgObj.messages[] where you call batchPub.publish multiple times. The microbatch prevents client libs from sending messages to pubsub.             

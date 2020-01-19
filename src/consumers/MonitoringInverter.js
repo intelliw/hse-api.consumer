@@ -19,7 +19,7 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitorin
 
 /**
  * instance attributes
- * producer                                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
+ * producer                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
 class MonitoringInverter extends ActiveMsgConsumer {
@@ -29,7 +29,7 @@ class MonitoringInverter extends ActiveMsgConsumer {
     */
     constructor() {
 
-        const kafkaWriteTopic = env.active.messagebroker.topics.dataset.inverter;
+        const writeTopic = env.active.messagebroker.topics.dataset.inverter;
         const bqDataset = env.active.datawarehouse.datasets.monitoring;
         const bqTable = env.active.datawarehouse.tables.inverter;
 
@@ -40,7 +40,7 @@ class MonitoringInverter extends ActiveMsgConsumer {
         );
 
         // instance attributes
-        this.producer = new DatasetProducer(kafkaWriteTopic, bqDataset, bqTable)
+        this.producer = new DatasetProducer(writeTopic, bqDataset, bqTable)
 
     }
 

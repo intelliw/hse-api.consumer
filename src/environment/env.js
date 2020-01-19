@@ -93,11 +93,11 @@ const _SHARED = {
         }
     },
     STACKDRIVER: {
-        logging: { logName: 'monitoring_prod', resourceType: 'gce_instance' },  // use 'generic_task' (not tested) for microservices. cloud run resourceType is "cloud_run_revision", for GCE VM Instance it is ''gce_instance' logName appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]". 
-        errors: { reportMode: 'always', logLevel: 5 },                          // 'production' (default), 'always', or 'never' - 'production' (default), 'always', 'never' - production will not log unless NODE-ENV=production. Specifies when errors are reported to the Error Reporting Console. // 2 (warnings). 0 (no logs) 5 (all logs)      
+        logging: { logName: "monitoring_prod", resourceType: "gce_instance" },  // use 'generic_task' (not tested) for microservices. cloud run resourceType is "cloud_run_revision", for GCE VM Instance it is ''gce_instance' logName appears in logs as jsonPayload.logName: "projects/sundaya/logs/monitoring"  the format is "projects/[PROJECT_ID]/logs/[LOG_ID]". 
+        errors: { reportMode: "always", logLevel: 5 },                          // 'production' (default), 'always', or 'never' - production will not log unless NODE-ENV=production. `logLevel' specifies when errors are reported to the Error Reporting Console. // 2 (warnings). 0 (no logs) 5 (all logs) 
         trace: {
             samplingRate: 500, enabled: true, flushDelaySeconds: 1,             // enabled=false to turn OFF tracing. samplingRate 500 means sample 1 trace every half-second, 5 means at most 1 every 200 ms. flushDelaySeconds = seconds to buffer traces before publishing to Stackdriver, keep short to allow cloud run to async trace immedatily after sync run
-            ignoreUrls: [/^\/static/], ignoreMethods: ['OPTIONS', 'PUT']        // ignore /static path, ignore requests with OPTIONS & PUT methods (case-insensitive)
+            ignoreUrls: [/^\/static/], ignoreMethods: ["OPTIONS", "PUT"]        // ignoreUrls is configured to ignore /static path, ignoreMethods is configured to ignore requests with OPTIONS & PUT methods (case-insensitive)
         }
     }
 }
@@ -105,7 +105,7 @@ const _SHARED = {
 
 // API host and versions for dev, prod, and test            version = major.minor[.build[.revision]]   ..Odd-numbers for development even for stable
 const _API = {
-    LOCAL: { ..._SHARED.API, host: '192.168.1.108:8081', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.14.22' } },
+    LOCAL: { ..._SHARED.API, host: '192.168.1.113:8081', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.14.22' } },
     DEV: { ..._SHARED.API, host: 'api.dev.sundaya.monitored.equipment', versions: { supported: '0.2 0.3', current: '0.3.14.22' } },
     STAGE: { ..._SHARED.API, host: 'api.stage.sundaya.monitored.equipment' },
     TEST: { ..._SHARED.API, host: 'api.test.sundaya.monitored.equipment' },
@@ -162,7 +162,7 @@ const _LOGGING = {
 
 
 const _KAFKA = {
-    LOCAL: { brokers: ['192.168.1.108:9092'] },
+    LOCAL: { brokers: ['192.168.1.113:9092'] },
     SINGLE: { brokers: ['kafka-1-vm:9092'] },
     HA: { brokers: ['kafka-c-1-w-0:9092', 'kafka-c-1-w-1:9092'] }               // array of kafka message brokers                       // kafka-1-vm  | 10.140.0.11
 }
