@@ -72,9 +72,55 @@ class MonitoringMppt extends ActiveMsgConsumer {
     }
 
 
-    /* transforms and returns a data item specific to this dataset
-     dataSet        - e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
-     dataItem       - e.g. "data": [ { "time_local": "2
+    /* 
+    e.g. ----monitoring.mppt message broker------------------------------------------------------------------
+    {
+        "mppt": { "id": "IT6415AD-01-002"  },
+        "data": [
+            { "pv": { "volts": [48, 48 ], "amps": [6, 6 ] },
+            "battery": { "volts": 55.1, "amps": 0 },
+            "load": { "volts": [ 48, 48 ], "amps": [ 1.2, 1.2 ] },
+            "status": "0801",
+            "sys": { "source": "S000" },
+            "time_event": "2019-10-22 07:00:07.0320",
+            "time_zone": "+07:00",
+            "time_processing": "2019-11-12 08:01:54.3020"
+            },
+            { "pv": { "volts": [48, 48 ], "amps": [ 6, 6 ] },
+            "battery": { "volts": 55.1, "amps": 0 },
+            "load": { "volts": [ 48, 48 ], "amps": [ 1.2, 1.2 ] },
+            "status": "0801",
+            "sys": { "source": "S000" },
+            "time_event": "2019-10-22 07:00:17.0220",
+            "time_zone": "+07:00",
+            "time_processing": "2019-11-12 08:01:54.3030"
+            }
+        ]
+    }
+
+    is transformed into ----monitoring.mppt.dataset message broker topic--------------------------------------
+
+    {
+        "mppt_id": "IT6415AD-01-002",
+        "pv": [
+            {"volts": 48, "amps": 6, "watts": 288 },
+            {"volts": 48, "amps": 6, "watts": 288 } ],
+        "battery": {"volts": 55.1, "amps": 0.0, "watts": 0 },
+        "load": [ 
+            { "volts": 48, "amps": 1.2, "watts": 57.6 },
+            { "volts": 48, "amps": 1.2, "watts": 57.6 } ],
+        "status": { "bus_connect": true, "input": "normal", 
+        "chgfet": "ok", "chgfet_antirev": "ok", "fet_antirev": "ok", 
+        "input_current": "ok", "load": "ok", "pv_input": "ok", "charging": "float", 
+        "system": "ok", "standby": "standby" },
+        "sys": {"source": "S000" },
+        "time_event": "2019-02-09 08:00:07.0320",
+        "time_zone": "+07:00",
+        "time_processing": "2019-09-10 04:13:08.8780"
+    },
+        
+    transforms and returns a data item specific to this dataset
+    see example above:
     */
     transformDataItem(key, dataSet, dataItem) {
 

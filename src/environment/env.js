@@ -105,8 +105,8 @@ const _SHARED = {
 
 // API host and versions for dev, prod, and test            version = major.minor[.build[.revision]]   ..Odd-numbers for development even for stable
 const _API = {
-    LOCAL: { ..._SHARED.API, host: '192.168.1.113:8081', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.14.22' } },
-    DEV: { ..._SHARED.API, host: 'api.dev.sundaya.monitored.equipment', versions: { supported: '0.2 0.3', current: '0.3.14.22' } },
+    LOCAL: { ..._SHARED.API, host: '192.168.1.113:8081', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.14.23' } },
+    DEV: { ..._SHARED.API, host: 'api.dev.sundaya.monitored.equipment', versions: { supported: '0.2 0.3', current: '0.3.14.23' } },
     STAGE: { ..._SHARED.API, host: 'api.stage.sundaya.monitored.equipment' },
     TEST: { ..._SHARED.API, host: 'api.test.sundaya.monitored.equipment' },
     PROD: { ..._SHARED.API, host: 'api.sundaya.monitored.equipment' }
@@ -197,25 +197,25 @@ module.exports.CONFIGS = {
         features: _FEATURES.DEV, logging: _LOGGING.DEV, stackdriver: _STACKDRIVER.DEV
     },
     devcloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
-        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.kafka },
+        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.pubsub },
         kafka: _KAFKA.SINGLE, pubsub: _SHARED.PUBSUB, kafkajs: _SHARED.KAFKAJS, datawarehouse: _SHARED.DATAWAREHOUSE,
         api: _API.DEV, gcp: _GCP.DEV,
         features: _FEATURES.DEV, logging: _LOGGING.DEV, stackdriver: _STACKDRIVER.DEV
     },
     stagecloud: {                                                               // single node kafka, or Kafka Std - 1 master, N workers
-        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.kafka },
+        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.pubsub },
         kafka: _KAFKA.SINGLE, pubsub: _SHARED.PUBSUB, kafkajs: _SHARED.KAFKAJS, datawarehouse: _SHARED.DATAWAREHOUSE,
         api: _API.STAGE, gcp: _GCP.STAGE,
         features: _FEATURES.DEV, logging: _LOGGING.DEV, stackdriver: _STACKDRIVER.DEV
     },
     testcloud: {                                                                // single node kafka, or Kafka Std - 1 master, N workers
-        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.kafka },
+        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.pubsub },
         kafka: _KAFKA.SINGLE, pubsub: _SHARED.PUBSUB, kafkajs: _SHARED.KAFKAJS, datawarehouse: _SHARED.DATAWAREHOUSE,
         api: _API.TEST, gcp: _GCP.TEST,
         features: _FEATURES.TEST, logging: _LOGGING.TEST, stackdriver: _STACKDRIVER.TEST
     },
     prodcloud: {                                                                // single node kafka, or Kafka Std - 1 master, N workers
-        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.kafka },
+        messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.pubsub },
         kafka: _KAFKA.HA, pubsub: _SHARED.PUBSUB, kafkajs: _SHARED.KAFKAJS, datawarehouse: _SHARED.DATAWAREHOUSE,
         api: _API.PROD, gcp: _GCP.PROD,
         features: _FEATURES.PROD, logging: _LOGGING.PROD, stackdriver: _STACKDRIVER.PROD
@@ -223,4 +223,4 @@ module.exports.CONFIGS = {
 }
 
 // env.active returns the active environment 
-module.exports.active = this.CONFIGS.local;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
+module.exports.active = this.CONFIGS.devcloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               

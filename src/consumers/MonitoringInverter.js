@@ -72,9 +72,60 @@ class MonitoringInverter extends ActiveMsgConsumer {
     }
 
 
-    /* transforms and returns a data item specific to this dataset
-     dataSet        - e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
-     dataItem       - e.g. "data": [ { "time_local": "2
+    /* 
+    e.g. ----monitoring.inverter message broker------------------------------------------------------------------
+
+    {
+        "inverter": { "id": "SPI-B2-01-002" },
+        "data": [
+            { "pv": { "volts": [ 48, 48 ], "amps": [ 6, 6 ] },
+            "battery": { "volts": 55.1, "amps": 0 },
+            "load": { "volts": [ 48, 48 ], "amps": [ 1.2, 1.2 ] },
+            "grid": { "volts": [ 48, 48, 48 ], "amps": [1.2, 1.2, 1.2 ],
+            "pf": [ 0.92, 0.92, 0.92 ] },
+            "status": "0001",
+            "sys": { "source": "S000" },
+            "time_event": "2019-09-09 07:00:06.0320",
+            "time_zone": "+07:00",
+            "time_processing": "2019-11-12 10:04:10.1770"
+            },
+            { "pv": { "volts": [ 48, 48 ], "amps": [ 6, 6 ] },
+            "battery": { "volts": 55.1, "amps": 0 },
+            "load": { "volts": [ 48, 48 ], "amps": [ 1.2, 1.2 ] },
+            "grid": { "volts": [ 48, 48, 48 ], "amps": [ 1.2, 1.2, 1.2 ], "pf": [ 0.92, 0.92, 0.92 ] },
+            "status": "0001",
+            "sys": { "source": "S000" },
+            "time_event": "2019-09-09 07:00:16.0220",
+            "time_zone": "+07:00",
+            "time_processing": "2019-11-12 10:04:10.1770"
+            }
+        ]
+    }
+
+    is transformed into ----monitoring.inverter.dataset message broker topic--------------------------------------
+
+    {
+        "inverter_id": "SPI-B2-01-002",
+        "pv": [
+            {"volts": 48, "amps": 6, "watts": 288 },
+            {"volts": 48, "amps": 6, "watts": 288 } ],
+        "battery": {"volts": 55.1, "amps": 0.0, "watts": 0 },
+        "load": [
+            { "volts": 48, "amps": 1.2, "watts": 57.6 },
+            { "volts": 48, "amps": 1.2, "watts": 57.6 } ],
+        "grid": [
+            {"volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 },
+            {"volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 },
+            {"volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 } ],
+        "status": { "bus_connect": true },    
+        "sys": {"source": "S000" },
+        "time_event":"2019-02-09 08:00:17.0220",
+        "time_zone":"+07:00",
+        "time_processing":"2019-09-10 04:11:09.2930"
+    },
+
+    transforms and returns a data item specific to this dataset
+    see example above:
     */
     transformDataItem(key, dataSet, dataItem) {
 
