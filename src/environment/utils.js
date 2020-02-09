@@ -11,6 +11,13 @@ const moment = require('moment');
 
 const NONE = global.undefined;
 
+// converts an array to a string with each array element delimited by the specified delimiter  
+module.exports.arrayToString = (array, delimiter) => {
+ 
+    return array.toString().replace(/,/g, delimiter);               // use a regex as js will only replace the first occurrence if replacing with a string argument
+}
+
+
 // capitalise first letter of first word or all words 
 module.exports.capitalise = (str, allWords) => {                   // str = e.g. 'the priest of the palace...'    
 
@@ -35,9 +42,17 @@ module.exports.capitalise = (str, allWords) => {                   // str = e.g.
 };
 
 // clones a json object - including arrays to any nesting depth
-module.exports.clone = (jsonObj) => {                                   // e.g. { .. }    
+module.exports.deepClone = (jsonObj) => {                           // e.g. { .. }    
 
     let clone = JSON.parse(JSON.stringify(jsonObj));
+
+    return clone;
+};
+
+// performs a 1 level shallow clone excluding prototype, using spread operator - 
+module.exports.shallowClone = (jsonObj) => {                        // e.g. { .. }    
+    
+    let clone = { ...jsonObj };                                   
 
     return clone;
 };
@@ -170,15 +185,14 @@ module.exports.datetimeZoneOffset = (instant) => {
  * searches through the findInObjectArray and finds the first item with a property equal to the findValue 
  * if findAll is true the function will return all the items which match the findvalue, otherwise only the first 
  */
-module.exports.findByPropertyValue = (findInObjectArray, findProperty, findValue, findAll) => {
+module.exports.findByPropertyValue = (findInObjectArray, findProperty, findValue, findAll = false) => {
 
     const EXITFOR = findInObjectArray.length;
 
     let n;
     let foundItems = [];
     let item;
-    let all = findAll ? findAll : false;
-
+    
     for (n = 0; n < findInObjectArray.length; n++) {
 
         item = findInObjectArray[n];
@@ -186,7 +200,7 @@ module.exports.findByPropertyValue = (findInObjectArray, findProperty, findValue
         if (item[findProperty] === findValue) {
             foundItems.push(item);
             // quit after the first if all were not requested
-            if (!all) {
+            if (!findAll) {
                 n = EXITFOR;
             }
 
@@ -436,6 +450,6 @@ module.exports.valueExistsInObject = (obj, value) => {
 }
 
 
-
 // test... node src/environment/utils
-//console.log(this.is200response(201));
+// console.log(this.is200response(201));
+// console.log(this.arrayToString(['Jan', 'Feb', 'Mar'], '-'))

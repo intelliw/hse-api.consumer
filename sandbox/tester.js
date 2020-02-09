@@ -18,5 +18,5 @@ function hex2bitArray(hexValue, minLength){
 
 // test... 
 // node sandbox/tester
-console.log(hex2bitArray("1A79", 16)[0] == 1);
+c@onsole.log(hex2bitArray("1A79", 16)[0] == 1);
 

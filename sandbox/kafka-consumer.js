@@ -26,7 +26,7 @@ const retrieve = async () => {
   await consumer.subscribe({ topic: topicName, fromBeginning: KAFKA_CONSUME_FROM_BEGINNING })
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      console.log(`${topic} | P:${partition} | O:${message.offset} | TS:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
+      c@onsole.log(`${topic} | P:${partition} | O:${message.offset} | TS:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
     },
 
   })
@@ -41,7 +41,7 @@ const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 errorTypes.map(type => {
   process.on(type, async e => {
     try {
-      console.log(`errorTypes: process.on ${type}`)
+      c@onsole.log(`errorTypes: process.on ${type}`)
       console.error(e)
       await consumer.disconnect()
       process.exit(0)
@@ -54,7 +54,7 @@ errorTypes.map(type => {
 signalTraps.map(type => {
   process.once(type, async () => {
     try {
-      console.log(`signalTraps: process.once ${type}`)        
+      c@onsole.log(`signalTraps: process.once ${type}`)        
       await consumer.disconnect()
     } finally {
       process.kill(process.pid, type)

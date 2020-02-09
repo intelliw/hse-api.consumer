@@ -122,7 +122,9 @@ module.exports.linkRelations = {
     collection: 'collection',
     up: 'up',
     next: 'next',
-    prev: 'prev'
+    prev: 'prev',
+    down: 'down',
+    meta: 'service-meta'                                // RFC8631 - https://tools.ietf.org/html/rfc8631#page-8
 }
 
 // hypermedia link rendering values

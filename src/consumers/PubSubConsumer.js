@@ -61,7 +61,7 @@ class PubSubConsumer extends Consumer {
             const normalisedMessage = { key: message.attributes.key, value: message.data }                                          // normalise the message - pubsub messages are sent in the data attribute but the standard format is based on kafka which stores message data in the .value property
             let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(normalisedMessage) : normalisedMessage;    // transform dataItems  e.g. results: { itemCount: 9, messages: [. . .] } .. transformMonitoringDataset is implemented by super, it calls transformDataItem in subtype 
             this.produce(results);                                                                                                  // produce is implemented by subtype        
-                // console.log(`results: ${results.messages[0].value}`);
+                
             message.ack();                                                                                                          // acknowledge receipt of the message    
         });
 

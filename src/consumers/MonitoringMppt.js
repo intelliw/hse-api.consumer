@@ -190,7 +190,7 @@ class MonitoringMppt extends ActiveMsgConsumer {
         dataObj.time_processing = dataItem.time_processing
 
         // @DEBUG   console.log(`equ status: ${Array.from(statusBits).reverse().join('')}`);         // put bits back in order to debug and compare with documentation in the portal 
-        // @DEBUG   console.log(`dataObj: ${JSON.stringify(dataObj)}`)       // @@@@@@
+        // @DEBUG   console.log(`dataObj: ${JSON.stringify(dataObj)}`)       // 
 
         return dataObj;
     }

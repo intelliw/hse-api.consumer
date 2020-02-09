@@ -45,7 +45,7 @@ const retrieve = async () => {
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       insertRows(message)
-      // console.log(`${topic} | P:${partition} | O:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
+      // c@onsole.log(`${topic} | P:${partition} | O:${message.offset} | Ts:${message.timestamp} | Key:${message.key} | Value: >>>> ${message.value} <<<<<`);
     }
   })
 }
@@ -58,7 +58,7 @@ async function insertRows(message) {
     .dataset('monitoring')
     .table('pms')
     .insert(rows);
-  console.log(`Inserted ${rows.length} rows`);
+  c@onsole.log(`Inserted ${rows.length} rows`);
 }
 
 retrieve().catch(e => console.error(`[${consumerClientId}] ${e.message}`, e))
@@ -71,7 +71,7 @@ const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 errorTypes.map(type => {
   process.on(type, async e => {
     try {
-      console.log(`errorTypes: process.on ${type}`)
+      c@onsole.log(`errorTypes: process.on ${type}`)
       console.error(e)
       await consumer.disconnect()
       process.exit(0)
@@ -84,7 +84,7 @@ errorTypes.map(type => {
 signalTraps.map(type => {
   process.once(type, async () => {
     try {
-      console.log(`signalTraps: process.once ${type}`)
+      c@onsole.log(`signalTraps: process.once ${type}`)
       await consumer.disconnect()
     } finally {
       process.kill(process.pid, type)

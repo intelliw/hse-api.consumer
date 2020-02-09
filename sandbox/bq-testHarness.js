@@ -44,7 +44,7 @@ module.exports.insert = async (bqClient) => {
         .dataset(bq.dataset)
         .table(bq[bqParamSet].table)
         .insert(bq[bqParamSet].rows);
-    console.log(`Inserted ${bq[bqParamSet].rows.length} rows`);
+    c@onsole.log(`Inserted ${bq[bqParamSet].rows.length} rows`);
 
 }
 
@@ -61,8 +61,8 @@ module.exports.query = async (bqClient) => {
     // Run the query
     const [rows] = await bqClient.query(options);
 
-    console.log('Rows:');
-    rows.forEach(row => console.log(row));
+    c@onsole.log('Rows:');
+    rows.forEach(row => c@onsole.log(row));
 }
 
 
