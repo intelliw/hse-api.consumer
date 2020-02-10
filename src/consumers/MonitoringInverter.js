@@ -49,84 +49,51 @@ class MonitoringInverter extends ActiveMsgConsumer {
      * the transformResults object contains an array of kafka messages with modified data items
      *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
     */
-    produce(transformResults) {
+    produce(transformedMsgObj) {
         let rowArray;
-        let sharedId;
+        let id;
 
         // produce 
-        transformResults.messages.forEach(message => {
+        transformedMsgObj.messages.forEach(message => {
 
             // parse message
             rowArray = JSON.parse(message.value);                       // rowArray = [{"pms_id":"PMS-01-002","pack_id":"0248","pack":{"volts":51.262,"amps":-0.625,"watts":-32.039,"vcl":3.654,"vch":3.676,"dock":4,"temp_top":35,"temp_mid":33,"temp_bottom":34},"cell":[{"volts":3.661,"dvcl":7,"open":false},{"volts":3.666,"dvcl":12,"open":false},{"volts":3.654,"dvcl":0,"open":false},{"volts":3.676,"dvcl":22,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.662,"dvcl":8,"open":false},{"volts":3.66,"dvcl":6,"open":false},{"volts":3.659,"dvcl":5,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.657,"dvcl":3,"open":false},{"volts":3.656,"dvcl":2,"open":false},{"volts":3.665,"dvcl":11,"open":true},{"volts":3.669,"dvcl":15,"open":false},{"volts":3.661,"dvcl":7,"open":false}],"fet_in":{"open":true,"temp":34.1},"fet_out":{"open":false,"temp":32.2},"status":{"bus_connect":true},"sys":{"source":"S000"},"time_event":"2019-02-09 08:00:17.0200","time_zone":"+07:00","time_processing":"2019-09-08 05:00:48.9830"}]
-            sharedId = rowArray[0].inverter_id;                         // each element in the message value array will have the same id
+            id = rowArray.inverter_id;                         // each element in the message value array will have the same id
 
             // bq
-            this.producer.bqClient.insertRows(sharedId, rowArray);      // message.value: [{"pms_id":"TEST-01","pack_id":"0241","pms":{"temp":48.1},"pack":{"volts":54.87,"amps":     
+            this.producer.bqClient.insertRows(id, rowArray);      // message.value: [{"pms_id":"TEST-01","pack_id":"0241","pms":{"temp":48.1},"pack":{"volts":54.87,"amps":     
 
         });
 
         // write to secondary messagebroker topic                       // remove comment if this is needed
-        this.producer.sendToTopic(transformResults);
+        this.producer.sendToTopic(transformedMsgObj);
 
 
     }
 
 
-    /* 
-    e.g. ----monitoring.inverter message broker------------------------------------------------------------------
-
-    {
-        "inverter": { "id": "SPI-B2-01-002" },
-        "data": [
-            { "pv": { "volts": [ 48, 48 ], "amps": [ 6, 6 ] },
-            "battery": { "volts": 55.1, "amps": 0 },
-            "load": { "volts": [ 48, 48 ], "amps": [ 1.2, 1.2 ] },
-            "grid": { "volts": [ 48, 48, 48 ], "amps": [1.2, 1.2, 1.2 ],
-            "pf": [ 0.92, 0.92, 0.92 ] },
-            "status": "0001",
-            "sys": { "source": "S000" },
-            "time_event": "2019-09-09 07:00:06.0320",
-            "time_zone": "+07:00",
-            "time_processing": "2019-11-12 10:04:10.1770"
-            },
-            { "pv": { "volts": [ 48, 48 ], "amps": [ 6, 6 ] },
-            "battery": { "volts": 55.1, "amps": 0 },
-            "load": { "volts": [ 48, 48 ], "amps": [ 1.2, 1.2 ] },
-            "grid": { "volts": [ 48, 48, 48 ], "amps": [ 1.2, 1.2, 1.2 ], "pf": [ 0.92, 0.92, 0.92 ] },
-            "status": "0001",
-            "sys": { "source": "S000" },
-            "time_event": "2019-09-09 07:00:16.0220",
-            "time_zone": "+07:00",
-            "time_processing": "2019-11-12 10:04:10.1770"
-            }
-        ]
-    }
-
-    is transformed into ----monitoring.inverter.dataset message broker topic--------------------------------------
-
-    {
-        "inverter_id": "SPI-B2-01-002",
-        "pv": [
-            {"volts": 48, "amps": 6, "watts": 288 },
-            {"volts": 48, "amps": 6, "watts": 288 } ],
-        "battery": {"volts": 55.1, "amps": 0.0, "watts": 0 },
-        "load": [
-            { "volts": 48, "amps": 1.2, "watts": 57.6 },
-            { "volts": 48, "amps": 1.2, "watts": 57.6 } ],
-        "grid": [
-            {"volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 },
-            {"volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 },
-            {"volts": 48, "amps": 1.2, "pf": 0.92, "watts": 91.785 } ],
-        "status": { "bus_connect": true },    
-        "sys": {"source": "S000" },
-        "time_event":"2019-02-09 08:00:17.0220",
-        "time_zone":"+07:00",
-        "time_processing":"2019-09-10 04:11:09.2930"
-    },
-
-    transforms and returns a data item specific to this dataset
-    see example above:
+    /**
     */
+    transform(consumedMsgObj) {
+
+        let msgKey, msgValue, transformedMsg;
+
+        const ITEMS_PER_MESSAGE = 1;
+        let transformedMsgObj = { itemCount: ITEMS_PER_MESSAGE, messages: [] }
+
+        // transform msg if required 
+        msgValue = JSON.parse(consumedMsgObj.value);                //  ..no transform required
+        msgKey = consumedMsgObj.key.toString();
+
+        // add message to transformed results
+        transformedMsgObj.messages.push(
+            this.producer.createMessage(msgKey, msgValue));
+
+        return transformedMsgObj;
+
+    }
+
+    
     transformDataItem(key, dataSet, dataItem) {
 
 

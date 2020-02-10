@@ -57,24 +57,18 @@ class PubSubConsumer extends Consumer {
         this.consumerObj.on(`error`, e => { log.error(`${MESSAGE_PREFIX} _retrieveMessages() Error [${this.readTopic}]`, e) });
         this.consumerObj.on('message', message => {
 
+            // transform message if required                                                                
+            const consumedMsgObj = { key: message.attributes.key, value: message.data }                  // normalise the message - pubsub messages are sent in the data attribute but the standard format is based on kafka which stores message data in the .value property
+            let transformedMsgObj = this.transform(consumedMsgObj);                                       // transform dataItems - implemented by subtype 
+            
             // write to bq and writetopic
-            const normalisedMessage = { key: message.attributes.key, value: message.data }                                          // normalise the message - pubsub messages are sent in the data attribute but the standard format is based on kafka which stores message data in the .value property
-            let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(normalisedMessage) : normalisedMessage;    // transform dataItems  e.g. results: { itemCount: 9, messages: [. . .] } .. transformMonitoringDataset is implemented by super, it calls transformDataItem in subtype 
-            this.produce(results);                                                                                                  // produce is implemented by subtype        
+            this.produce(transformedMsgObj);                                                                 // produce is implemented by subtype 
                 
-            message.ack();                                                                                                          // acknowledge receipt of the message    
+            message.ack();                                                                                  // acknowledge receipt of the message    
         });
 
     }
 
-    // this is for debug use only
-    async _listSubscriptions(pubsub) {
-
-        // Lists all subscriptions in the current project
-        const [subscriptions] = await pubsub.getSubscriptions();
-        subscriptions.forEach(subscription => log.trace(log.enums.labels.watchEnv, 'Subscription', subscription.name));
-        
-    }
 
     // initialise error and signal traps
     async _initialiseTraps() {

@@ -29,34 +29,6 @@ class Consumer {
 
     }
 
-    /**
-    */
-    transformMonitoringDataset(consumedMessage) {
-        
-        let key, dataItem, newDataItem;
-        
-        const ITEMS_PER_MESSAGE = 1;
-
-        let results = { itemCount: 0, messages: [] };
-
-        // get message attributes
-        dataItem = JSON.parse(consumedMessage.value);                                    // e.g. { "pms": { "id": "PMS-01-001", "temp": 48.3 },     
-        key = consumedMessage.key.toString();
-
-        // transform message
-        newDataItem = this.transformDataItem(key, dataItem);               // subtype implements this. makes a new dataitem with dataset-specific attributes
-
-        // create and return message containing transformed dataitem 
-        results.itemCount = ITEMS_PER_MESSAGE;
-        results.messages.push(this.producer.createMessage(key, newDataItem));
-        
-        return results;
-
-    }
-
-
-    // returns whether this instance (readtopic) produces for a monitoring dataset 
-    isMonitoringDataset() { return utils.valueExistsInObject(env.active.messagebroker.topics.monitoring, this.readTopic); }
 }
 
 

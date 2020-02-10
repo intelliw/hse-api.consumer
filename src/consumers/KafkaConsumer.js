@@ -57,13 +57,13 @@ class KafkaConsumer extends Consumer{
         await this.consumerObj.connect()
             .then(this.consumerObj.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning }))
             .then(this.consumerObj.run({
-                eachMessage: async ({ topic, partition, message }) => {
+                eachMessage: async ({ topic, partition, message: consumedMsgObj }) => {
 
-                    // transform dataItems if required                                                                  // transformMonitoringDataset implemented by this super, it calls transformDataItem in subtype 
-                    let results = super.isMonitoringDataset() ? super.transformMonitoringDataset(message) : message;    // e.g. results: { itemCount: 9, messages: [. . .] }
+                    // transform message if required                                                                  
+                    let transformedMsgObj = this.transform(consumedMsgObj);                 
 
                     // write to bq and kafka topic
-                    this.produce(results);                                                                              // produce is implemented by subtype        
+                    this.produce(transformedMsgObj);                                                                   // produce is implemented by subtype        
 
                 }
             }))
