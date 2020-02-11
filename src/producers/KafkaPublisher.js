@@ -15,14 +15,14 @@ const log = require('../logger').log;
 const moment = require('moment');
 
 
-class KafkaProducer extends Producer {
+class KafkaPublisher extends Producer {
     /**
      * superclass - 
      * clients of subtypes must first call extractData(), then sendToTopic()
      *  subtypes implement extractData by calling this superclass's addMessage() for each dataitem 
      * 
     instance attributes:  
-     producerObj": kafka.producer()
+     publisherObj": kafka.producer()
      writeTopic:  env.active.messagebroker.topics.dataset                                         // this is the topic to which the subclassed producer writes, in sendTopic()  
     */
     constructor(writeTopic) {
@@ -34,8 +34,8 @@ class KafkaProducer extends Producer {
             brokers: env.active.kafka.brokers                                       //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
         });
 
-        // setup instance variables specific to KafkaProducer 
-        this.producerObj = kafka.producer(env.active.kafkajs.producer);
+        // setup instance variables specific to KafkaPublisher 
+        this.publisherObj = kafka.producer(env.active.kafkajs.publisher);
 
     }
 
@@ -50,15 +50,15 @@ class KafkaProducer extends Producer {
 
 
         // send the message to the topic
-        await this.producerObj.connect()
-            .then(() => this.producerObj.send({
+        await this.publisherObj.connect()
+            .then(() => this.publisherObj.send({
                 topic: this.writeTopic,
                 messages: msgObj.messages,
                 acks: enums.messageBroker.ack.all,                                  // default is 'all'
                 timeout: env.active.kafkajs.send.timeout                            // milliseconds    
             }))
-            .then(r => log.messaging(this.writeTopic, r[0].baseOffset, msgObj.messages, msgObj.itemCount, env.active.kafkajs.consumer.clientId))         // info = (topic, offset, msgqty, itemqty, sender) {
-            .then(this.producerObj.disconnect())
+            .then(r => log.messaging(this.writeTopic, r[0].baseOffset, msgObj.messages, msgObj.itemCount, env.active.kafkajs.subscriber.clientId))         // info = (topic, offset, msgqty, itemqty, sender) {
+            .then(this.publisherObj.disconnect())
             .catch(e => log.error(`${log.enums.methods.mbSendToTopic} Error [${this.writeTopic}]`, e));
 
         // [end trace] -------------------------------
@@ -68,4 +68,4 @@ class KafkaProducer extends Producer {
 
 }
 
-module.exports = KafkaProducer;
+module.exports = KafkaPublisher;

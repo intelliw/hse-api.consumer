@@ -49,8 +49,8 @@ const _SHARED = {
         ackDeadline: 10                                                                       // max number of millisecs to wait for MAX_MESSAGES_PER_BATCH before client lib sends all messages to the topic 
     },
     KAFKAJS: {                                                                  // kafkajs client configuration options
-        consumer: {
-            clientId: `consumer.${utils.randomIntegerString(1, 9999)}`,         // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
+        subscriber: {
+            clientId: `subscriber.${utils.randomIntegerString(1, 9999)}`,         // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
             consumeFromBeginning: true,
             sessionTimeout: 30000,
             heartbeatInterval: 3000,
@@ -64,8 +64,8 @@ const _SHARED = {
             retry: 10,
             readUncommitted: false
         },
-        producer: {
-            clientId: `producer.${utils.randomIntegerString(1, 9999)}`,         // generate a unique client id for this container instance - if this consumer is clustered each instance will have a unique id                               // producer client id prefix - preferred convention = <api path>.<api path> 
+        publisher: {
+            clientId: `publisher.${utils.randomIntegerString(1, 9999)}`,         // generate a unique client id for this container instance - if this subscriber is clustered each instance will have a unique id                               // publisher client id prefix - preferred convention = <api path>.<api path> 
             connectionTimeout: 3000,                                            // milliseconds to wait for a successful connection (3000)  
             requestTimeout: 25000,                                              // milliseconds to wait for a successful request. (25000)   
             retry: {                                                            // retry options  https://kafka.js.org/docs/configuration
@@ -78,7 +78,7 @@ const _SHARED = {
             },
             metadataMaxAge: 300000,                                             // milliseconds after which we force refresh of partition leadership changes to proactively discover new brokers or partitions
             allowAutoTopicCreation: true,
-            transactionTimeout: 25000                                           // maximum ms that transaction coordinator will wait for a status update from producer before aborting
+            transactionTimeout: 25000                                           // maximum ms that transaction coordinator will wait for a status update from publisher before aborting
         },
         send: {
             timeout: 30000                                                      // time to await a response in ms

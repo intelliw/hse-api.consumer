@@ -11,7 +11,7 @@ const env = require('../environment/env');
 const utils = require('../environment/utils');
 
 const DatasetProducer = require('../producers/DatasetProducer');
-const ActiveMsgConsumer = require('../consumers').ActiveMsgConsumer;
+const ActiveMsgSubscriber = require('../consumers').ActiveMsgSubscriber;
 
 // instance parameters
 const MESSAGEBROKER_READ_TOPIC = env.active.messagebroker.topics.monitoring.pms;
@@ -22,7 +22,7 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitorin
  * producer                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringPms extends ActiveMsgConsumer {
+class MonitoringPms extends ActiveMsgSubscriber {
 
     /**
     instance attributes, constructor arguments  - see super

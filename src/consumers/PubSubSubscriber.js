@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/PubSubConsumer.js
+ * ./consumers/PubSubSubscriber.js
  */
 const { PubSub } = require('@google-cloud/pubsub');
 const Consumer = require('./Consumer');
@@ -16,12 +16,12 @@ const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
 const FLOWCONTROL_MAX_MESSAGES = 100;                                       // allows processing this numbe of messages at the same time (default is 100) 
 
-class PubSubConsumer extends Consumer {
+class PubSubSubscriber extends Consumer {
     /**
      * superclass - 
      * 
     instance attributes:  
-        this.kafkaConsumer
+        this.KafkaSubscriber
         this.readTopic = readTopic;
 
      constructor arguments 
@@ -35,7 +35,7 @@ class PubSubConsumer extends Consumer {
 
         // setup pull client 
         const pubsub = new PubSub();
-        this.consumerObj = pubsub.subscription(subscriptionId, {           // consumerObj is a subscription
+        this.subscriberObj = pubsub.subscription(subscriptionId, {           // subscriberObj is a subscription
             flowControl: env.active.pubsub.flowControl,
             ackDeadline: env.active.pubsub.ackDeadline
         });
@@ -54,8 +54,8 @@ class PubSubConsumer extends Consumer {
         const MESSAGE_PREFIX = 'PUBSUB CONSUMER';
 
         // start subscription listener
-        this.consumerObj.on(`error`, e => { log.error(`${MESSAGE_PREFIX} _retrieveMessages() Error [${this.readTopic}]`, e) });
-        this.consumerObj.on('message', message => {
+        this.subscriberObj.on(`error`, e => { log.error(`${MESSAGE_PREFIX} _retrieveMessages() Error [${this.readTopic}]`, e) });
+        this.subscriberObj.on('message', message => {
 
             // transform message if required                                                                
             const consumedMsgObj = { key: message.attributes.key, value: message.data }                  // normalise the message - pubsub messages are sent in the data attribute but the standard format is based on kafka which stores message data in the .value property
@@ -78,7 +78,7 @@ class PubSubConsumer extends Consumer {
                 try {
                     console.log(`errorTypes: process.on ${type}`)
                     log.error(`errorTypes: process.on ${type}`, e)
-                    await this.consumerObj.close().then(process.exit(0));
+                    await this.subscriberObj.close().then(process.exit(0));
                 } catch (_) {
                     process.exit(1)
                 }
@@ -90,7 +90,7 @@ class PubSubConsumer extends Consumer {
             process.once(type, async () => {
                 try {
                     console.log(`signalTraps: process.once ${type}`)
-                    await this.consumerObj.removeListener('message', this._retrieveMessages)
+                    await this.subscriberObj.removeListener('message', this._retrieveMessages)
                 } finally {
                     process.kill(process.pid, type)
                 }
@@ -101,4 +101,4 @@ class PubSubConsumer extends Consumer {
 }
 
 
-module.exports = PubSubConsumer;
+module.exports = PubSubSubscriber;

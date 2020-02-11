@@ -14,7 +14,7 @@ class Consumer {
      * superclass - 
      * 
     instance attributes:  
-        this.kafkaConsumer
+        this.KafkaSubscriber
         this.readTopic = readTopic;
 
      constructor arguments 

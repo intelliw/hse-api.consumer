@@ -20,7 +20,7 @@ class PubSubProducer extends Producer {
      *  subtypes implement extractData by calling this superclass's addMessage() for each dataitem 
      * 
     instance attributes:  
-     producerObj": kafka.producer()
+     publisherObj": kafka.producer()
      writeTopic:  env.active.messagebroker.topics.dataset                                                       // this is the topic to which the subclassed producer writes, in sendTopic()  
     */
     constructor(writeTopic) {
@@ -31,7 +31,7 @@ class PubSubProducer extends Producer {
         const pubsub = new PubSub();
 
         // setup instance variables specific to PubSubProducer 
-        this.producerObj = pubsub;
+        this.publisherObj = pubsub;
 
     }
 
@@ -52,7 +52,7 @@ class PubSubProducer extends Producer {
         const BATCH_OPTIONS = env.active.pubsub.batching;
         BATCH_OPTIONS.maxMessages = msgObj.messages.length;                                                     // number of message to include in a batch before client library sends to topic. If batch size is msobj.messages.length batch will go to server after all are published 
 
-        const batchPub = this.producerObj.topic(this.writeTopic, { batching: BATCH_OPTIONS });
+        const batchPub = this.publisherObj.topic(this.writeTopic, { batching: BATCH_OPTIONS });
         let messageIds = [];
 
         // send each message to the topic - pubsub will batch and send to server after all are published

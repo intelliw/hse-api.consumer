@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/KafkaConsumer.js
+ * ./consumers/KafkaSubscriber.js
  *  base type for Kafka message consumers  
  *  the Consumer supertype calls its subtype to transform messages (retrieveMessages() eachMessage:
  *      the subtype contains a Consumer object and implements methods to transform and produce output 
@@ -20,12 +20,12 @@ const log = require('../logger').log;
 const errorTypes = ['unhandledRejection', 'uncaughtException']
 const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-class KafkaConsumer extends Consumer{
+class KafkaSubscriber extends Consumer{
     /**9
      * superclass - 
      * 
     instance attributes:  
-        this.kafkaConsumer
+        this.KafkaSubscriber
         this.readTopic = readTopic;
 
      constructor arguments 
@@ -41,11 +41,11 @@ class KafkaConsumer extends Consumer{
         const kafka = new Kafka({
             brokers: env.active.kafka.brokers               //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
         });
-        this.consumerObj = kafka.consumer({ ...env.active.kafkajs.consumer, groupId: subscriptionId });
+        this.subscriberObj = kafka.consumer({ ...env.active.kafkajs.subscriber, groupId: subscriptionId });
 
         // start the consumer    
         this._initialiseTraps();
-        this._retrieveMessages().catch(e => log.error(`[${env.active.kafkajs.consumer.clientId}] Kafka consumer retrieve Error`, e))
+        this._retrieveMessages().catch(e => log.error(`[${env.active.kafkajs.subscriber.clientId}] Kafka consumer retrieve Error`, e))
 
     }
 
@@ -54,9 +54,9 @@ class KafkaConsumer extends Consumer{
 
         const MESSAGE_PREFIX = 'KAFKA CONSUMER';
 
-        await this.consumerObj.connect()
-            .then(this.consumerObj.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.consumer.consumeFromBeginning }))
-            .then(this.consumerObj.run({
+        await this.subscriberObj.connect()
+            .then(this.subscriberObj.subscribe({ topic: this.readTopic, fromBeginning: env.active.kafkajs.subscriber.consumeFromBeginning }))
+            .then(this.subscriberObj.run({
                 eachMessage: async ({ topic, partition, message: consumedMsgObj }) => {
 
                     // transform message if required                                                                  
@@ -80,7 +80,7 @@ class KafkaConsumer extends Consumer{
                 try {
                     console.log(`errorTypes: process.on ${type}`)
                     log.error(`errorTypes: process.on ${type}`, e)
-                    await this.consumerObj.disconnect()
+                    await this.subscriberObj.disconnect()
                     process.exit(0)
                 } catch (_) {
                     process.exit(1)
@@ -93,7 +93,7 @@ class KafkaConsumer extends Consumer{
             process.once(type, async () => {
                 try {
                     console.log(`signalTraps: process.once ${type}`)
-                    await this.consumerObj.disconnect()
+                    await this.subscriberObj.disconnect()
                 } finally {
                     process.kill(process.pid, type)
                 }
@@ -104,4 +104,4 @@ class KafkaConsumer extends Consumer{
 }
 
 
-module.exports = KafkaConsumer;
+module.exports = KafkaSubscriber;
