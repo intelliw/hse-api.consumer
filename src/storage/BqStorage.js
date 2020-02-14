@@ -43,7 +43,7 @@ class BqStorage extends Storage {
 
         // log out data before trying insert                                // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
         log.data(this.dataset, this.table, sharedId, rowArray);
-
+        
         // [start trace] -------------------------------
         const sp = log.SPAN.createChildSpan({ name: `${log.enums.methods.bqInsertRows}` });
 

@@ -21,15 +21,6 @@ const enums = require('./enums');
 
 // these configurations are shared across all environments
 const _SHARED = {
-    API: {
-        host: 'api.dev.sundaya.monitored.equipment',                            // dev is the default for _SHARED.API, each environment will override this in _API
-        scheme: 'https',
-        versions: {
-            supported: '0.2 0.3',
-            current: '0.3.12.22'
-        },
-        instanceId: `${utils.randomIntegerString(1, 9999)}`                     // random ID for each instance
-    },
     MESSAGEBROKER: {
         topics: {                                                           // kafka / pubsub topics for all environments 
             monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
@@ -100,14 +91,23 @@ const _SHARED = {
             samplingRate: 500, enabled: true, flushDelaySeconds: 1,             // enabled=false to turn OFF tracing. samplingRate 500 means sample 1 trace every half-second, 5 means at most 1 every 200 ms. flushDelaySeconds = seconds to buffer traces before publishing to Stackdriver, keep short to allow cloud run to async trace immedatily after sync run
             ignoreUrls: [/^\/static/], ignoreMethods: ["OPTIONS", "PUT"]        // ignoreUrls is configured to ignore /static path, ignoreMethods is configured to ignore requests with OPTIONS & PUT methods (case-insensitive)
         }
+    },
+    API: {
+        host: 'api.dev.sundaya.monitored.equipment',                            // dev is the default for _SHARED.API, each environment will override this in _API
+        scheme: 'https',
+        versions: {
+            supported: '0.3.14',
+            current: '0.5.0.01'
+        },
+        instanceId: `${utils.randomIntegerString(1, 9999)}`                     // random ID for each instance
     }
 }
 
 
 // API host and versions for dev, prod, and test            version = major.minor[.build[.revision]]   ..Odd-numbers for development even for stable
 const _API = {
-    LOCAL: { ..._SHARED.API, host: '192.168.1.113:8081', scheme: 'http', versions: { supported: '0.2 0.3', current: '0.3.14.24' } },
-    DEV: { ..._SHARED.API, host: 'api.dev.sundaya.monitored.equipment', versions: { supported: '0.2 0.3', current: '0.3.14.24' } },
+    LOCAL: { ..._SHARED.API, host: '192.168.1.113:8081', scheme: 'http', versions: { supported: '0.5.0.01', current: '0.5.0.01' } },
+    DEV: { ..._SHARED.API, host: 'api.dev.sundaya.monitored.equipment' },
     STAGE: { ..._SHARED.API, host: 'api.stage.sundaya.monitored.equipment' },
     TEST: { ..._SHARED.API, host: 'api.test.sundaya.monitored.equipment' },
     PROD: { ..._SHARED.API, host: 'api.sundaya.monitored.equipment' }
@@ -224,4 +224,4 @@ module.exports.CONFIGS = {
 }
 
 // env.active returns the active environment 
-module.exports.active = this.CONFIGS.local;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
+module.exports.active = this.CONFIGS.devcloud;      // change enums.environments to 'local' to develop locally or to 'devcloud' to develop online                               
