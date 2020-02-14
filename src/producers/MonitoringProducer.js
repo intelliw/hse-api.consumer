@@ -10,10 +10,6 @@ const log = require('../logger').log;
 const Producer = require('./Producer');
 const BqStorage = require('../storage/BqStorage');
 
-const KAFKA_WRITE_TOPIC = env.active.messagebroker.topics.dataset.inverter;
-const BQ_DATASET = env.active.datawarehouse.datasets.monitoring;
-const BQ_TABLE = env.active.datawarehouse.tables.inverter;
-
 const pub = require('../publishers').pub;
 
 /**
@@ -60,7 +56,7 @@ class MonitoringProducer extends Producer {
     }
 
     /** sends messages to the broker  
-     * !!! NOTE: this method assumes that the JSON dataitem id (e.g. pms_id) is prefixed with the table name (e.g. [ms) 
+     * !!! NOTE: this method assumes that the JSON dataitem *id* attribute (e.g. pms_id:) is prefixed with the table name (e.g. pms) 
      * if the dataitem id format is changed this fucntion must be modified 
     * @param {*} transformedMsgObj                                  // e.g. msgObj = { itemCount: 0, messages: [] };
     */
