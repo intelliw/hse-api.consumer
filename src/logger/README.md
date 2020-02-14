@@ -1,1 +1,3 @@
-# this folder contains symlinks to shared files in C:\_frg\_proj\_shared
+# shared files
+this folder contains symlinks to shared files
+see `hsy-api.deployment` for scripts to recreate symlinks

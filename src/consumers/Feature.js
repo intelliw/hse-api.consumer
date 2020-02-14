@@ -7,17 +7,17 @@
  */
 
 const enums = require('../environment/enums');
-
+const consts = require('../host/constants');
 const env = require('../environment/env');
 const utils = require('../environment/utils');
 
 const log = require('../logger').log;
 
 const Producer = require('../producers');
-const ActiveMsgSubscriber = require('../consumers').ActiveMsgSubscriber;
+const Consumer = require('./Consumer');
 
 // instance parameters
-const MESSAGEBROKER_READ_TOPIC = env.active.messagebroker.topics.system.feature;
+const READ_TOPIC = env.active.messagebroker.topics.system.feature;
 const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.system.feature;
 
 /**
@@ -25,36 +25,31 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.system.fe
 * producer                                                                          //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class Feature extends ActiveMsgSubscriber {
+class Feature extends Consumer {
 
     /**
     instance attributes, constructor arguments  - see super
     */
     constructor() {
 
-        // start kafka consumer with a bq client
+        // start consumer
         super(
             SUBSCRIPTION_OR_GROUPID,
-            MESSAGEBROKER_READ_TOPIC
+            READ_TOPIC, 
+            consts.NONE
         );
 
-    }
-
-
-    // subtype implements specific transforms or calls super 
-    transform(consumedMessage) {
-        return consumedMessage;                                                     // no transforms required 
     }
 
     /* writes to bq and to the datasets kafka topic 
      * the transformResults object contains an array of kafka messages with modified data items
      *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
     */
-    produce(consumedMessage) {
+    consume(retrievedMsgObj) {
 
 
-        let feature = consumedMessage.key.toString();
-        let jsonValue = JSON.parse(consumedMessage.value);
+        let feature = retrievedMsgObj.key.toString();
+        let jsonValue = JSON.parse(retrievedMsgObj.value);
 
         // logging feature
         if (feature == enums.features.operational.logging) {
@@ -63,7 +58,7 @@ class Feature extends ActiveMsgSubscriber {
         }
         
         // log the feature configurations
-        log.trace(`${feature}`, MESSAGEBROKER_READ_TOPIC, jsonValue);
+        log.trace(`${feature}`, READ_TOPIC, jsonValue);
     }
 
 }

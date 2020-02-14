@@ -8,6 +8,7 @@ const env = require('../environment/env');
 const utils = require('../environment/utils');
 const log = require('../logger').log;
 
+const Subscriber = require('../subscribers');
 
 class Consumer {
     /**9
@@ -21,13 +22,31 @@ class Consumer {
     * @param {*} subscriptionId                             //  env.active.messagebroker.subscriptions.monitoring
     * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.monitoring
     */
-    constructor(subscriptionId, readTopic) {
+    constructor(subscriptionId, readTopic, producerObj) {
 
-        // store params
-        this.subscriptionId = subscriptionId;
-        this.readTopic = readTopic;
+        // create subscriber and pass this consumer to callback the consume() method
+        let subcriber = new Subscriber.Active(subscriptionId, readTopic);
+        subcriber.listen(this);                             // start the listener - it will callback the consume() method
+
+        // strore reference to producer
+        this.producer = producerObj;
 
     }
+
+    /* 
+    */
+    consume(retrievedMsgObj) {
+    }
+
+    /*
+    */
+    validate(retrievedMsgObj) {
+    }
+
+    /*
+    */
+    analyse(retrievedMsgObj) {
+}
 
 }
 

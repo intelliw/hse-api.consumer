@@ -21,6 +21,15 @@ const enums = require('./enums');
 
 // these configurations are shared across all environments
 const _SHARED = {
+    API: {
+        host: 'api.dev.sundaya.monitored.equipment',                            // dev is the default for _SHARED.API, each environment will override this in _API
+        scheme: 'https',
+        versions: {
+            supported: '0.2 0.3',
+            current: '0.3.12.22'
+        },
+        instanceId: `${utils.randomIntegerString(1, 9999)}`                     // random ID for each instance
+    },
     MESSAGEBROKER: {
         topics: {                                                           // kafka / pubsub topics for all environments 
             monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
@@ -50,7 +59,7 @@ const _SHARED = {
     },
     KAFKAJS: {                                                                  // kafkajs client configuration options
         subscriber: {
-            clientId: `subscriber.${utils.randomIntegerString(1, 9999)}`,         // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
+            clientId: `subscriber.${utils.randomIntegerString(1, 9999)}`,       // unique client id for this instance, created at startup - preferred convention = <api path>.<api path>
             consumeFromBeginning: true,
             sessionTimeout: 30000,
             heartbeatInterval: 3000,
@@ -65,7 +74,7 @@ const _SHARED = {
             readUncommitted: false
         },
         publisher: {
-            clientId: `publisher.${utils.randomIntegerString(1, 9999)}`,         // generate a unique client id for this container instance - if this subscriber is clustered each instance will have a unique id                               // publisher client id prefix - preferred convention = <api path>.<api path> 
+            clientId: `publisher.${utils.randomIntegerString(1, 9999)}`,        // generate a unique client id for this container instance - if this subscriber is clustered each instance will have a unique id                               // publisher client id prefix - preferred convention = <api path>.<api path> 
             connectionTimeout: 3000,                                            // milliseconds to wait for a successful connection (3000)  
             requestTimeout: 25000,                                              // milliseconds to wait for a successful request. (25000)   
             retry: {                                                            // retry options  https://kafka.js.org/docs/configuration
@@ -82,14 +91,6 @@ const _SHARED = {
         },
         send: {
             timeout: 30000                                                      // time to await a response in ms
-        }
-    },
-    API: {
-        host: 'api.dev.sundaya.monitored.equipment',                            // dev is the default for _SHARED.API, each environment will override this in _API
-        scheme: 'https',
-        versions: {
-            supported: '0.2 0.3',
-            current: '0.3.12.22'
         }
     },
     STACKDRIVER: {
