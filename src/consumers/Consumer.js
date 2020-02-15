@@ -11,14 +11,7 @@ const log = require('../logger').log;
 const Subscriber = require('../subscribers');
 
 class Consumer {
-    /**9
-     * superclass - 
-     * 
-    instance attributes:  
-        this.KafkaSubscriber
-        this.readTopic = readTopic;
-
-     constructor arguments 
+    /**
     * @param {*} subscriptionId                             //  env.active.messagebroker.subscriptions.monitoring
     * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.monitoring
     */

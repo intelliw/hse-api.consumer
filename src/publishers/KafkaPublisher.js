@@ -17,11 +17,10 @@ class KafkaPublisher extends Publisher {
      */
     constructor() {
 
-        // create a kafka producer
-        const kafka = new Kafka({
-            brokers: env.active.kafka.brokers                                       //  e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`]                                                       // https://kafka.js.org/docs/producing   
-        });
-        let publisherObj = kafka.producer(env.active.kafkajs.publisher);
+        // create a kafka producers                                                 // e.g. [`${this.KAFKA_HOST}:9092`, `${this.KAFKA_HOST}:9094`] https://kafka.js.org/docs/producing   
+        const publisherObj = new Kafka({
+            brokers: env.active.kafka.brokers                                       
+        }).producer(env.active.kafkajs.publisher);
          
         // setup instance variables specific to KafkaPublisher 
         super(publisherObj);

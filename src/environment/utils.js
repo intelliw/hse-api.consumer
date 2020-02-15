@@ -90,7 +90,35 @@ module.exports.createSequence = (startNum, howMany, delimiter, prefix, pad) => {
     return seqStr.trim();
 
 }
+/* converts a sequence of csv columns into a float array
+*  numColumns gives the number of 'columnName' columns to parse into the array
+*/
+module.exports.csvToFloatArray = (csvRow, columnName, numColumns) => {
+    let floatArray = [];
 
+    for (let col = 1; col <= numColumns; col++) {
+        let value = csvRow[`${columnName}.${col}`].trim();
+        floatArray.push(parseFloat(value));
+    }
+
+    return floatArray;
+}
+
+/* converts boolean true in csv columns into an array of column positions. 
+ * e.g. csv 0,0,0 returns an empty array [] as there are no true value; 
+ * csv 0,1,0 returns [2] as column 2 is true. 
+ * number of 'columnName' columns to parse into the array
+ */
+module.exports.csvBooleanToColumnPosArray = (csvRow, columnName, numColumns) => {
+    let columnPosArray = [];
+
+    for (let col = 1; col <= numColumns; col++) {
+        let value = parseInt(csvRow[`${columnName}.${col}`].trim());
+        if (value) columnPosArray.push(col);
+    }
+
+    return columnPosArray;
+}
 
 // returns an array of numbers
 module.exports.createNumberSequence = (startNum, howMany) => {

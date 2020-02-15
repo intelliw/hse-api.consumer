@@ -41,9 +41,7 @@ class Feature extends Consumer {
 
     }
 
-    /* writes to bq and to the datasets kafka topic 
-     * the transformResults object contains an array of kafka messages with modified data items
-     *      e.g. transformResults: { itemCount: 9, messages: [. . .] }
+    /* this method receives a callback from the subscriber listener 
     */
     consume(retrievedMsgObj) {
 
