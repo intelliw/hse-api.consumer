@@ -6,7 +6,7 @@
 const Consumer = require('./src/consumers'); 
 
 // create consuemrs for each topic, they all share the same client id
-const inverter = new Consumer.MonitoringInverter();      
+const inverter = new Consumer.InverterConsumer();      
 
 // feature toggle consumers
 const featureToggle = new Consumer.Feature();      

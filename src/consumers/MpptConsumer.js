@@ -1,7 +1,7 @@
 //@ts-check
 "use strict";
 /**
- * ./consumers/MonitoringMppt.js
+ * ./consumers/MpptConsumer.js
  *  
  */
 
@@ -23,7 +23,7 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitorin
  * producer                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringMppt extends Consumer {
+class MpptConsumer extends Consumer {
     /**
     instance attributes, constructor arguments  - see super
     */
@@ -56,4 +56,4 @@ class MonitoringMppt extends Consumer {
 }
 
 
-module.exports = MonitoringMppt;
+module.exports = MpptConsumer;

@@ -8,8 +8,8 @@
 
 module.exports = require('./Consumer');
 
-module.exports.MonitoringPms = require('./MonitoringPms');
-module.exports.MonitoringMppt = require('./MonitoringMppt');
-module.exports.MonitoringInverter = require('./MonitoringInverter');
+module.exports.PmsConsumer = require('./PmsConsumer');
+module.exports.MpptConsumer = require('./MpptConsumer');
+module.exports.InverterConsumer = require('./InverterConsumer');
 
 module.exports.Feature = require('./Feature');

@@ -1,7 +1,7 @@
 //@ts-check
 'use strict';
 /**
- * ./consumers/MonitoringPms.js
+ * ./consumers/PmsConsumer.js
  *  
  */
 
@@ -22,7 +22,7 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitorin
  * producer                                                             //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class MonitoringPms extends Consumer {
+class PmsConsumer extends Consumer {
 
     /**
     instance attributes, constructor arguments  - see super
@@ -56,4 +56,4 @@ class MonitoringPms extends Consumer {
 
 
 
-module.exports = MonitoringPms;
+module.exports = PmsConsumer;

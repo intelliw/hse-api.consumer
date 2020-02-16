@@ -6,7 +6,7 @@
 const Consumer = require('./src/consumers'); 
 
 // create consuemrs for each topic, they all share the same client id
-const mppt = new Consumer.MonitoringMppt();      
+const mppt = new Consumer.MpptConsumer();      
 
 // feature toggle consumers
 const featureToggle = new Consumer.Feature();      
