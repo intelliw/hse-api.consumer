@@ -26,7 +26,7 @@ class MonitoringProducer extends Producer {
     constructor(writeTopic, dataset, table) {
 
         // create the storage object
-        let storage = new BqStorage(dataset, table);             // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hsy-api-consumer\credentials\sundaya-d75625d5dda7.json"      
+        let storage = new BqStorage(dataset, table);                // $env:GOOGLE_APPLICATION_CREDENTIALS="C:\_frg\_proj\190905-hsy-api-consumer\credentials\sundaya-d75625d5dda7.json"      
 
         // construct super
         let sender = env.active.api.instanceId;
@@ -44,7 +44,7 @@ class MonitoringProducer extends Producer {
         let transformedMsgObj = { itemCount: ITEMS_PER_MESSAGE, messages: [] }
 
         // transform msg if required 
-        msgValue = JSON.parse(retrievedMsgObj.value);                //  ..no transform required
+        msgValue = JSON.parse(retrievedMsgObj.value);               //  ..no transform required
         msgKey = retrievedMsgObj.key.toString();
 
         // add message to transformed results
@@ -80,8 +80,14 @@ class MonitoringProducer extends Producer {
     
             });
     
-            // publish the transformed messages
-            pub.publish(transformedMsgObj, this.writeTopic, this.sender);
+            // publish 
+
+            /*  publish the transformed messages, to the 'monitoring.<xxx>.dataset' topic 
+             *  UNCOMMENT IF NEEDED - currently no subscribers for this topic, content is unchanged from source 'monitoring.<xxxx>' topic  
+             */ 
+
+            // pub.publish(transformedMsgObj, this.writeTopic, this.sender);           
+            
     
         } catch (e) {
             log.error(`${log.enums.methods.mbProduce}`, e);

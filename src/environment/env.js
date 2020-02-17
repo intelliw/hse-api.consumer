@@ -22,12 +22,12 @@ const enums = require('./enums');
 // these configurations are shared across all environments
 const _SHARED = {
     MESSAGEBROKER: {
-        topics: {                                                           // kafka / pubsub topics for all environments 
+        topics: {                                                               // kafka / pubsub topics for all environments 
             monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
             system: { feature: 'system.feature' },
             dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
         },
-        subscriptions: {                                                    // for kafka these are groupids 
+        subscriptions: {                                                        // for kafka these are groupids 
             monitoring: { pms: 'sub-monitoring.pms', mppt: 'sub-monitoring.mppt', inverter: 'sub-monitoring.inverter' },
             system: { feature: 'sub-system.feature' },
             dataset: { pms: 'sub-monitoring.pms.dataset', mppt: 'sub-monitoring.mppt.dataset', inverter: 'sub-monitoring.inverter.dataset' }
