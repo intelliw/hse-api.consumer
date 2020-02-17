@@ -27,9 +27,9 @@ class PubSubPublisher extends Publisher{
     /** implemented by subtype
     * @param {*} msgObj               
     * @param {*} writeTopic 
-    * @param {*} sender                                                                                     // is based on the api key and identifies the source of the data. this value is added to sys.source attribute 
+    * @param {*} senderId                                                                                     // is based on the api key and identifies the source of the data. this value is added to sys.source attribute 
     */
-    async publish(msgObj, writeTopic, sender) {
+    async publish(msgObj, writeTopic, senderId) {
 
 
         let dataBuffer, dataAttributes;
@@ -67,13 +67,13 @@ class PubSubPublisher extends Publisher{
                         } else {
                             messageIds.push(messageId);
                             if (i == (msgObj.messages.length - 1)) {
-                                log.messaging(writeTopic, messageIds, msgObj.messages, msgObj.itemCount, sender)     // info = (topic, id, msgqty, itemqty, sender) {;
+                                log.messaging(writeTopic, messageIds, msgObj.messages, msgObj.itemCount, senderId)     // info = (topic, id, msgqty, itemqty, sender) {;
                             };
                         };
 
                     });
 
-                })().catch(e => log.error(`${sender} ${log.enums.methods.mbProduce} Error (async) [${writeTopic}]`, e));
+                })().catch(e => log.error(`${senderId} ${log.enums.methods.mbProduce} Error (async) [${writeTopic}]`, e));
             }
 
         } catch (e) {

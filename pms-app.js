@@ -9,4 +9,4 @@ const Consumer = require('./src/consumers');
 const pms = new Consumer.PmsConsumer();
 
 // feature toggle consumers
-const featureToggle = new Consumer.Feature();      
+const feature = new Consumer.FeatureConsumer();      

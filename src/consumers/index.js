@@ -12,4 +12,4 @@ module.exports.PmsConsumer = require('./PmsConsumer');
 module.exports.MpptConsumer = require('./MpptConsumer');
 module.exports.InverterConsumer = require('./InverterConsumer');
 
-module.exports.Feature = require('./Feature');
+module.exports.FeatureConsumer = require('./FeatureConsumer');

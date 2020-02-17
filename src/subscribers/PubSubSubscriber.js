@@ -17,7 +17,7 @@ class PubSubSubscriber extends Subscriber {
     /**
      constructor arguments 
     * @param {*} subscriptionId                                             //  env.active.messagebroker.subscriptions.monitoring
-    * @param {*} readTopic                                                  //  the topic to read from env.active.messagebroker.topics.monitoring
+    * @param {*} readTopic                                                  //  this is not needed for pubsub
     */
     constructor(subscriptionId, readTopic) {
 

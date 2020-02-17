@@ -9,4 +9,4 @@ const Consumer = require('./src/consumers');
 const mppt = new Consumer.MpptConsumer();      
 
 // feature toggle consumers
-const featureToggle = new Consumer.Feature();      
+const feature = new Consumer.FeatureConsumer();      

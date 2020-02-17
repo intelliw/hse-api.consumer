@@ -14,4 +14,4 @@ const inverter = new Consumer.InverterConsumer();
 
 
 // feature toggle consumers
-const featureToggle = new Consumer.Feature();      
+const feature = new Consumer.FeatureConsumer();      

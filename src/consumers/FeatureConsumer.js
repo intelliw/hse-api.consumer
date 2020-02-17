@@ -13,7 +13,6 @@ const utils = require('../environment/utils');
 
 const log = require('../logger').log;
 
-const Producer = require('../producers');
 const Consumer = require('./Consumer');
 
 // instance parameters
@@ -25,7 +24,7 @@ const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.system.fe
 * producer                                                                          //  e.g. Dataset - producer object responsible for transforming a consumed message and if requested, sending it to a new topic  
  constructor arguments 
  */
-class Feature extends Consumer {
+class FeatureConsumer extends Consumer {
 
     /**
     instance attributes, constructor arguments  - see super
@@ -63,4 +62,4 @@ class Feature extends Consumer {
 
 
 
-module.exports = Feature;
+module.exports = FeatureConsumer;
