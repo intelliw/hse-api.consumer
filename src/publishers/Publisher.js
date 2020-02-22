@@ -17,7 +17,7 @@ class Publisher {
     /** implemented by subtype
     * @param {*} msgObj               
     * @param {*} writeTopic 
-    * @param {*} senderId                                                             // is based on the api key and identifies the source of the data. this value is added to sys.source attribute 
+    * @param {*} senderId                                                             // is based on the api key and identifies the source of the data. this value is added to 'sender' attribute 
     */
     async publish(msgObj, writeTopic, senderId) {
     }

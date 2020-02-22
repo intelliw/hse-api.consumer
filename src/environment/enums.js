@@ -40,6 +40,7 @@ module.exports.params = {
         instant: 'instant',
         second: 'second',
         minute: 'minute',
+        qtrhour: 'qtrhour',
         hour: 'hour',
         timeofday: 'timeofday',
         day: 'day',

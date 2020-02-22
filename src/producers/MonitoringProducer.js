@@ -62,8 +62,8 @@ class MonitoringProducer extends Producer {
     */
     async produce(transformedMsgObj) {
 
-        let rowArray;
-        let id;
+        let rowArray = [];
+        let sharedId;
 
         try {
     
@@ -71,17 +71,18 @@ class MonitoringProducer extends Producer {
             transformedMsgObj.messages.forEach(message => {
     
                 // write to bq
-                rowArray = JSON.parse(message.value);                                   // rowArray = {"pms_id":"PMS-01-002","pack_id":"0248","pack":{"volts":51.262,"amps":-0.625,"watts":-32.039,"vcl":3.654,"vch":3.676,"dock":4,"temp_top":35,"temp_mid":33,"temp_bottom":34},"cell":[{"volts":3.661,"dvcl":7,"open":false},{"volts":3.666,"dvcl":12,"open":false},{"volts":3.654,"dvcl":0,"open":false},{"volts":3.676,"dvcl":22,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.662,"dvcl":8,"open":false},{"volts":3.66,"dvcl":6,"open":false},{"volts":3.659,"dvcl":5,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.657,"dvcl":3,"open":false},{"volts":3.656,"dvcl":2,"open":false},{"volts":3.665,"dvcl":11,"open":true},{"volts":3.669,"dvcl":15,"open":false},{"volts":3.661,"dvcl":7,"open":false}],"fet_in":{"open":true,"temp":34.1},"fet_out":{"open":false,"temp":32.2},"status":{"bus_connect":true},"sys":{"source":"S000"},"time_event":"2019-02-09 08:00:17.0200","time_zone":"+07:00","time_processing":"2019-09-08 05:00:48.9830"}
-                id = rowArray[`${this.storage.table}_id`];                              // e.g. rowArray.pms_id. If the JSON element name is not based on the table name this line must be modified
+                rowArray.push(JSON.parse(message.value));                               // rowArray = [{"pms_id":"PMS-01-002","pack_id":"0248","pack":{"volts":51.262,"amps":-0.625,"watts":-32.039,"vcl":3.654,"vch":3.676,"dock":4,"temp_top":35,"temp_mid":33,"temp_bottom":34},"cell":[{"volts":3.661,"dvcl":7,"open":false},{"volts":3.666,"dvcl":12,"open":false},{"volts":3.654,"dvcl":0,"open":false},{"volts":3.676,"dvcl":22,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.662,"dvcl":8,"open":false},{"volts":3.66,"dvcl":6,"open":false},{"volts":3.659,"dvcl":5,"open":false},{"volts":3.658,"dvcl":4,"open":false},{"volts":3.657,"dvcl":3,"open":false},{"volts":3.656,"dvcl":2,"open":false},{"volts":3.665,"dvcl":11,"open":true},{"volts":3.669,"dvcl":15,"open":false},{"volts":3.661,"dvcl":7,"open":false}],"fet_in":{"open":true,"temp":34.1},"fet_out":{"open":false,"temp":32.2},"status":{"bus_connect":true},"sys":{"source":"S000"},"time_event":"2019-02-09 08:00:17.0200","time_zone":"+07:00","time_processing":"2019-09-08 05:00:48.9830"}]
 
-                this.storage.write(id, rowArray);                                       // message.value: [{"pms_id":"TEST-01","pack_id":"0241","pms":{"temp":48.1},"pack":{"volts":54.87,"amps":     
-    
             });
+            sharedId = rowArray[0][`${this.storage.table}_id`];                         // if is common to all rows and is used only for logging. e.g. rowArray.pms_id. If the JSON element name is not based on the table name this line must be modified
+            this.storage.write(sharedId, rowArray);                                     // message.value: [{"pms_id":"TEST-01","pack_id":"0241","pack":{"volts":54.87,"amps"... 
+
     
             // publish 
 
             /*  publish the transformed messages, to the 'monitoring.<xxx>.dataset' topic 
-             *  UNCOMMENT IF NEEDED - currently no subscribers for this topic, content is unchanged from source 'monitoring.<xxxx>' topic  
+             *  UNCOMMENT FOLLOWING LINE IF NEEDED **************************************************************************************
+             *  currently there are no subscribers for the 'monitoring.<xxx>.dataset' write topic, content is unchanged from source 'monitoring.<xxxx>' topic
              */ 
 
             // pub.publish(transformedMsgObj, this.writeTopic, this.sender);           
