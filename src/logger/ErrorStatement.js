@@ -31,6 +31,8 @@ class ErrorStatement extends Statement {
 
     }
 
+    // Console --------------------------
+
     // calls to super - these are annulled by initialise function based on configs  
     _writeConsoleInfo(label, errObject) {
         let payload = `[${label}] ${errObject.message}`;
@@ -42,6 +44,8 @@ class ErrorStatement extends Statement {
         }
         super._writeConsole(this.statementName, Statement.Severity.ERROR, enums.logging.verbosity.debug, payload);
     }
+
+    // Stackdriver ----------------------
 
     // errors write the same content once only for info or debug, not both.
     _writeStackdriverInfo(label, errObject) {

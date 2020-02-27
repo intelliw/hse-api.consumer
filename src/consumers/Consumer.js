@@ -12,8 +12,8 @@ const Subscriber = require('../subscribers');
 
 class Consumer {
     /**
-    * @param {*} subscriptionId                             //  env.active.messagebroker.subscriptions.monitoring
-    * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.monitoring
+    * @param {*} subscriptionId                             //  env.active.messagebroker.subscriptions.timeseries
+    * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.timeseries
     */
     constructor(subscriptionId, readTopic, producerObj) {
 

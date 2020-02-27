@@ -41,7 +41,7 @@ class MessagingStatement extends Statement {
     *      } ],
     *    msgsqty: 1,
     *    itemqty: 1,
-    *    topic: 'monitoring.pms',
+    *    topic: 'timeseries.pms',
     *    id: '886302092013959',
     *    sender: 'STAGE001' }
     */

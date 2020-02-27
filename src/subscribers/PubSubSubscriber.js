@@ -16,7 +16,7 @@ const FLOWCONTROL_MAX_MESSAGES = 100;                                       // a
 class PubSubSubscriber extends Subscriber {
     /**
      constructor arguments 
-    * @param {*} subscriptionId                                             //  env.active.messagebroker.subscriptions.monitoring
+    * @param {*} subscriptionId                                             //  env.active.messagebroker.subscriptions.timeseries
     * @param {*} readTopic                                                  //  this is not needed for pubsub
     */
     constructor(subscriptionId, readTopic) {

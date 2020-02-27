@@ -39,6 +39,8 @@ class ExceptionStatement extends Statement {
         this._writeStackdriverDebug(label, errMessage, errEvent);
 
     }
+    
+    // Console --------------------------
 
     // calls to super - these are annulled by initialise function based on configs  
     _writeConsoleInfo(label, errMessage, errEvent) {
@@ -52,6 +54,8 @@ class ExceptionStatement extends Statement {
         super._writeConsole(this.statementName, Statement.Severity.WARNING, enums.logging.verbosity.debug, payload);
     }
 
+    // Stackdriver ----------------------
+    
     // exceptions write the same content once only for info or debug, not both.
     _writeStackdriverInfo(label, errMessage, errEvent) {
         let payload = {

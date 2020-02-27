@@ -34,6 +34,8 @@ class TraceStatement extends Statement {
 
     }
 
+    // Console --------------------------
+
     // calls to super - these are annulled by initialise function based on configs  
     _writeConsoleInfo(label, value, payload) {
         let payloadObj = `[${moment.utc().format(TIMESTAMP_FORMAT)}] ${label} ${value}`;
@@ -46,6 +48,8 @@ class TraceStatement extends Statement {
         super._writeConsole(this.statementName, Statement.Severity.DEBUG, enums.logging.verbosity.debug, payloadObj);
     }
 
+    // Stackdriver ----------------------
+    
     // traces write the same content once only for info or debug, not both.
     _writeStackdriverInfo(label, value, payload) {
         let payloadObj = {
