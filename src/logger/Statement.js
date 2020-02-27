@@ -26,6 +26,8 @@ class Statement {
         this.resourceType = env.active.stackdriver.logging.resourceType;
         this.serviceId = serviceId;
     }
+    
+    // Stackdriver ----------------------
 
     // Stackdriver write operatation
     async _writeStackdriver(statement, severity, payload) {
@@ -54,6 +56,8 @@ class Statement {
         }
 
     }
+    
+    // Console --------------------------
 
     // Console write operatation
     async _writeConsole(statement, severity, verbosity, payload) {

@@ -30,6 +30,8 @@ class DataStatement extends Statement {
 
     }
 
+    // Console --------------------------
+    
     // calls to super - these are annulled by initialise function based on configs  
     _writeConsoleInfo(dataset, table, id, rowArray) {
         let payload = `[${dataset}.${table}}] id: ${id}, ${rowArray.length} rows`;
@@ -42,6 +44,9 @@ class DataStatement extends Statement {
         }
         super._writeConsole(this.statementName, Statement.Severity.DEBUG, enums.logging.verbosity.debug, payload);
     }
+
+    // Stackdriver ----------------------
+
     _writeStackdriverInfo(dataset, table, id, rowArray) {
         let payload = {
             rowqty: rowArray.length, dataset: dataset, table: table, 

@@ -27,6 +27,8 @@ class MessagingStatement extends Statement {
         this._writeStackdriverDebug(topic, id, msgsArray, itemQty, sender);
 
     }
+    
+    // Console --------------------------
 
     // calls to super - these are annulled into no-ops by initialise function based on configs  
     _writeConsoleInfo(topic, id, msgsArray, itemQty, sender) {
@@ -53,6 +55,9 @@ class MessagingStatement extends Statement {
         }
         super._writeConsole(this.statementName, Statement.Severity.DEBUG, enums.logging.verbosity.debug, payload);
     }
+
+    // Stackdriver ----------------------
+    
     _writeStackdriverInfo(topic, id, msgsArray, itemQty, sender) {
         let payload = {
             msgsqty: msgsArray.length, itemqty: itemQty,
