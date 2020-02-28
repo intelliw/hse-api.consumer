@@ -17,7 +17,7 @@ const Storage = require('./Storage');
 class BqStorage extends Storage {
     /**
      constructor arguments 
-    * @param {*} dataset                                                    //  env.active.datawarehouse.datasets   - e.g. timeseries
+    * @param {*} dataset                                                    //  env.active.datawarehouse.datasets   - e.g. monitoring
     * @param {*} table                                                      //  env.active.datawarehouse.tables   - e.g. pms
     */
     constructor(dataset, table) {
@@ -30,7 +30,7 @@ class BqStorage extends Storage {
         // setup instance variables specific to PubSubPublisher 
         super(storageObj);
 
-        this.dataset = dataset;                                             // e.g. timeseries
+        this.dataset = dataset;                                             // e.g. monitoring
         this.table = table;                                                 // e.g. mppt
 
     }
@@ -41,7 +41,7 @@ class BqStorage extends Storage {
      */
     async write(sharedId, rowArray) {
 
-        // log out data before trying insert                                // e.g. [timeseries.dev_pms] id: TEST-09, 1 rows
+        // log out data before trying insert                                // e.g. [monitoring.dev_pms] id: TEST-09, 1 rows
         log.data(this.dataset, this.table, sharedId, rowArray);
         
         // [start trace] -------------------------------

@@ -14,7 +14,7 @@ const pub = require('../publishers').pub;
 
 /**
  */
-class TimeseriesProducer extends Producer {
+class MonitoringProducer extends Producer {
     /**
     instance attributes:  
 
@@ -80,9 +80,9 @@ class TimeseriesProducer extends Producer {
     
             // publish 
 
-            /*  publish the transformed messages, to the 'timeseries.<xxx>.dataset' topic 
+            /*  publish the transformed messages, to the 'monitoring.<xxx>.dataset' topic 
              *  UNCOMMENT FOLLOWING LINE IF NEEDED **************************************************************************************
-             *  currently there are no subscribers for the 'timeseries.<xxx>.dataset' write topic, content is unchanged from source 'timeseries.<xxxx>' topic
+             *  currently there are no subscribers for the 'monitoring.<xxx>.dataset' write topic, content is unchanged from source 'monitoring.<xxxx>' topic
              */ 
 
             // pub.publish(transformedMsgObj, this.writeTopic, this.sender);           
@@ -97,4 +97,4 @@ class TimeseriesProducer extends Producer {
 
 
 
-module.exports = TimeseriesProducer;
+module.exports = MonitoringProducer;

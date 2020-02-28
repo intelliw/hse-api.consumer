@@ -8,8 +8,8 @@ const { Kafka } = require('kafkajs');
 // const kafkaBrokerHost = '10.140.0.6';             // 10.140.0.6 / 35.201.177.2     192.168.1.106 
 const KAFKA_CONSUME_FROM_BEGINNING = true;
 
-const topicName = env.active.messagebroker.topics.timeseries.pms;
-const consumerGroupId = env.active.messagebroker.subscriptions.timeseries.pms;      // group name convention = <target system>.<target dataset>.<target table>
+const topicName = env.active.messagebroker.topics.monitoring.pms;
+const consumerGroupId = env.active.messagebroker.subscriptions.monitoring.pms;      // group name convention = <target system>.<target dataset>.<target table>
 
 const consumerClientId = `${consumerGroupId}.001`;      // 
 

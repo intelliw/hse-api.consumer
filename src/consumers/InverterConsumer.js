@@ -10,12 +10,12 @@ const consts = require('../host/constants');
 const utils = require('../environment/utils');
 const env = require('../environment/env');
 
-const TimeseriesProducer = require('../producers/TimeseriesProducer');
+const MonitoringProducer = require('../producers/MonitoringProducer');
 const Consumer = require('./Consumer');
 
 // instance parameters
-const READ_TOPIC = env.active.messagebroker.topics.timeseries.inverter;
-const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.timeseries.inverter;
+const READ_TOPIC = env.active.messagebroker.topics.monitoring.inverter;
+const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.inverter;
 
 /**
  * instance attributes
@@ -30,14 +30,14 @@ class InverterConsumer extends Consumer {
     constructor() {
 
         const writeTopic = env.active.messagebroker.topics.dataset.inverter;
-        const bqDataset = env.active.datawarehouse.datasets.timeseries;
+        const bqDataset = env.active.datawarehouse.datasets.monitoring;
         const bqTable = env.active.datawarehouse.tables.inverter;
 
         // construct consumer and its producer
         super(
             SUBSCRIPTION_OR_GROUPID,
             READ_TOPIC,
-            new TimeseriesProducer(writeTopic, bqDataset, bqTable)
+            new MonitoringProducer(writeTopic, bqDataset, bqTable)
         );
 
     }

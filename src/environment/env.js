@@ -23,18 +23,18 @@ const enums = require('./enums');
 const _SHARED = {
     MESSAGEBROKER: {
         topics: {                                                               // kafka / pubsub topics for all environments 
-            timeseries: { pms: 'timeseries.pms', mppt: 'timeseries.mppt', inverter: 'timeseries.inverter' },
+            monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
             system: { feature: 'system.feature' },
-            dataset: { pms: 'timeseries.pms.dataset', mppt: 'timeseries.mppt.dataset', inverter: 'timeseries.inverter.dataset' }
+            dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
         },
         subscriptions: {                                                        // for kafka these are groupids 
-            timeseries: { pms: 'sub-timeseries.pms', mppt: 'sub-timeseries.mppt', inverter: 'sub-timeseries.inverter' },
+            monitoring: { pms: 'sub-monitoring.pms', mppt: 'sub-monitoring.mppt', inverter: 'sub-monitoring.inverter' },
             system: { feature: 'sub-system.feature' },
-            dataset: { pms: 'sub-timeseries.pms.dataset', mppt: 'sub-timeseries.mppt.dataset', inverter: 'sub-timeseries.inverter.dataset' }
+            dataset: { pms: 'sub-monitoring.pms.dataset', mppt: 'sub-monitoring.mppt.dataset', inverter: 'sub-monitoring.inverter.dataset' }
         }
     },
     DATAWAREHOUSE: {                                                            // bq datasets for all environments 
-        datasets: { timeseries: 'timeseries' },
+        datasets: { monitoring: 'monitoring' },
         tables: { pms: 'pms', mppt: 'mppt', inverter: 'inverter' }
     },
     PUBSUB: {

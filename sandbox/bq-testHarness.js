@@ -1,14 +1,14 @@
 'use strict';
 
 const bq = {
-    dataset: 'timeseries',
+    dataset: 'monitoring',
     location: 'asia-east1',                                             // Location must match that of the dataset(s) referenced in the query.
     TEST: {
         table: 'TEST',
         rows: [{ id: 'PMS-55-002', time_local: '2019-09-09 02:00:17.0200' }],
         //{ id: 'PMS-55-002', time_local: '2019-09-09 02:00:17.0201' }];
         sql: `SELECT id 
-        FROM \`sundaya.timeseries.TEST\`
+        FROM \`sundaya.monitoring.TEST\`
         WHERE time_local >= @start_time
         ORDER BY id DESC`
     },
@@ -17,7 +17,7 @@ const bq = {
         rows: [{"pms_id":"PMS-01-002","pack":{"id":"0248","dock":4,"volts":51.262,"amps":-0.625,"watts":-32.039,"temp":[35,33,34]},"cell":{"open":[1,6],"volts":[3.661,3.666,3.654,3.676,3.658,3.662,3.66,3.659,3.658,3.657,3.656,3.665,3.669,3.661],"vcl":3.654,"vch":3.676,"dvcl":[7,12,0,22,4,8,6,5,4,3,2,11,15,7]},"fet":{"open":[1,2],"temp":[34.1,32.2,33.5]},"sys":{"source":"S000"},"time_utc":"2019-08-12 08:00:17.0200","time_local":"2019-08-12 15:00:17.0200","time_processing":"2019-09-08 05:19:26.1940"},{"pms_id":"PMS-01-002","pack":{"id":"0248","dock":4,"volts":51.262,"amps":-0.625,"watts":-32.039,"temp":[35,33,34]},"cell":{"open":[1,6],"volts":[3.661,3.666,3.654,3.676,3.658,3.662,3.66,3.659,3.658,3.657,3.656,3.665,3.669,3.661],"vcl":3.654,"vch":3.676,"dvcl":[7,12,0,22,4,8,6,5,4,3,2,11,15,7]},"fet":{"open":[1,2],"temp":[34.1,32.2,33.5]},"sys":{"source":"S000"},"time_utc":"2019-08-12 08:00:17.0200","time_local":"2019-08-12 15:00:17.0200","time_processing":"2019-09-08 05:19:26.1940"}],
         // {"pms_id":"PMS-01-002","pack":{"id":"0248","dock":4,"volts":51.262,"amps":-0.625,"watts":-32.039,"temp":[35,33,34]},"cell":{"open":[1,6],"volts":[3.661,3.666,3.654,3.676,3.658,3.662,3.66,3.659,3.658,3.657,3.656,3.665,3.669,3.661],"vcl":3.654,"vch":3.676,"dvcl":[7,12,0,22,4,8,6,5,4,3,2,11,15,7]},"fet":{"open":[1,2],"temp":[34.1,32.2,33.5]},"sys":{"source":"S000"},"time_utc":"2019-02-09 08:00:17.0200","time_local":"2019-02-09 15:00:17.0200","time_processing":"2019-09-08 05:19:26.1940"}
         sql: `SELECT COUNT(pms_id) Count
-        FROM \`sundaya.timeseries.pms\`
+        FROM \`sundaya.monitoring.pms\`
         WHERE time_local BETWEEN '2019-08-09' AND '2019-09-12'  
         AND pms_id IN ('PMS-01-001', 'PMS-01-002')`
     }

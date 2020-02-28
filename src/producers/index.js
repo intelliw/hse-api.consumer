@@ -7,4 +7,4 @@
  */
 
 module.exports.Producer = require('./Producer');
-module.exports.TimeseriesProducer = require('./TimeseriesProducer');
+module.exports.MonitoringProducer = require('./MonitoringProducer');
