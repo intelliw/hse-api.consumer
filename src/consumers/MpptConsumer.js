@@ -30,14 +30,15 @@ class MpptConsumer extends Consumer {
     constructor() {
 
         const writeTopic = env.active.messagebroker.topics.dataset.mppt;
-        const bqDataset = env.active.datawarehouse.datasets.monitoring;
-        const bqTable = env.active.datawarehouse.tables.mppt;
+        const datasetParam = enums.params.datasets.mppt;
+        const bqDataset = env.active.datawarehouse.datasets.analytics;
+        const bqTable = env.active.datawarehouse.tables.analytics.mppt;
 
         // construct consumer and its producer
         super(
             SUBSCRIPTION_OR_GROUPID,
             READ_TOPIC, 
-            new MonitoringProducer(writeTopic, bqDataset, bqTable)
+            new MonitoringProducer(writeTopic, datasetParam, bqDataset, bqTable)
         );
 
 

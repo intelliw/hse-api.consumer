@@ -30,14 +30,15 @@ class InverterConsumer extends Consumer {
     constructor() {
 
         const writeTopic = env.active.messagebroker.topics.dataset.inverter;
-        const bqDataset = env.active.datawarehouse.datasets.monitoring;
-        const bqTable = env.active.datawarehouse.tables.inverter;
+        const datasetParam = enums.params.datasets.inverter;
+        const bqDataset = env.active.datawarehouse.datasets.analytics;
+        const bqTable = env.active.datawarehouse.tables.analytics.inverter;
 
         // construct consumer and its producer
         super(
             SUBSCRIPTION_OR_GROUPID,
             READ_TOPIC,
-            new MonitoringProducer(writeTopic, bqDataset, bqTable)
+            new MonitoringProducer(writeTopic, datasetParam, bqDataset, bqTable)
         );
 
     }

@@ -30,14 +30,15 @@ class PmsConsumer extends Consumer {
     constructor() {
 
         const writeTopic = env.active.messagebroker.topics.dataset.pms;
-        const bqDataset = env.active.datawarehouse.datasets.monitoring;
-        const bqTable = env.active.datawarehouse.tables.pms;
+        const datasetParam = enums.params.datasets.pms;
+        const bqDataset = env.active.datawarehouse.datasets.analytics;
+        const bqTable = env.active.datawarehouse.tables.analytics.pms;
 
         // construct consumer and its producer
         super(
             SUBSCRIPTION_OR_GROUPID,
             READ_TOPIC,
-            new MonitoringProducer(writeTopic, bqDataset, bqTable)
+            new MonitoringProducer(writeTopic, datasetParam, bqDataset, bqTable)
         );
 
     }

@@ -33,9 +33,9 @@ const _SHARED = {
             dataset: { pms: 'sub-monitoring.pms.dataset', mppt: 'sub-monitoring.mppt.dataset', inverter: 'sub-monitoring.inverter.dataset' }
         }
     },
-    DATAWAREHOUSE: {                                                            // bq datasets for all environments 
-        datasets: { monitoring: 'monitoring' },
-        tables: { pms: 'pms', mppt: 'mppt', inverter: 'inverter' }
+    DATAWAREHOUSE: {
+        datasets: { analytics: 'analytics' },                                    // bq datasets are shared by all environments  
+        tables: { analytics: {pms: 'pms_monitoring', mppt: 'mppt_monitoring', inverter: 'inverter_monitoring'} }
     },
     PUBSUB: {
         batching: {
