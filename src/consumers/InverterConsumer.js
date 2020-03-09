@@ -15,7 +15,7 @@ const Consumer = require('./Consumer');
 
 // instance parameters
 const READ_TOPIC = env.active.messagebroker.topics.monitoring.inverter;
-const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.inverter;
+const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.analytics.inverter;
 
 /**
  * instance attributes
@@ -29,7 +29,7 @@ class InverterConsumer extends Consumer {
     */
     constructor() {
 
-        const writeTopic = env.active.messagebroker.topics.dataset.inverter;
+        const writeTopic = consts.NONE;                                 
         const datasetParam = enums.params.datasets.inverter;
         const bqDataset = env.active.datawarehouse.datasets.analytics;
         const bqTable = env.active.datawarehouse.tables.analytics.inverter;

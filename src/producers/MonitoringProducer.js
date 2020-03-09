@@ -19,8 +19,8 @@ class MonitoringProducer extends Producer {
     instance attributes:  
 
      constructor arguments  
-    * @param {*} writeTopic                                             //  kafka producer topic to write to
-    * @param {*} datasetParam                                                //  generic dataset identifier as in params.dataset.pms
+    * @param {*} writeTopic                                             //  broker producer topic to write to
+    * @param {*} datasetParam                                           //  generic dataset identifier as in params.dataset.pms
     * @param {*} bqDataset                                              //  bq dataset name
     * @param {*} bqTable                                                //  bq dataset table name
     */
@@ -85,11 +85,10 @@ class MonitoringProducer extends Producer {
             // publish 
 
             /*  publish the transformed messages, to the 'monitoring.<xxx>.dataset' topic 
-             *  UNCOMMENT FOLLOWING LINE IF NEEDED **************************************************************************************
+             *  SET CONSUMER's WriteTopic IF MESSAGE REPUBLISHING IS NEEDED **************************************************************************************
              *  currently there are no subscribers for the 'monitoring.<xxx>.dataset' write topic, content is unchanged from source 'monitoring.<xxxx>' topic
              */ 
-
-            // pub.publish(transformedMsgObj, this.writeTopic, this.sender);           
+            if (this.writeTopic) pub.publish(transformedMsgObj, this.writeTopic, this.sender);
             
     
         } catch (e) {

@@ -13,7 +13,7 @@ const { BigQuery } = require('@google-cloud/bigquery');
 const KAFKA_CONSUME_FROM_BEGINNING = true;
 
 const topicName = env.active.messagebroker.topics.monitoring.pms;
-const consumerGroupId = env.active.messagebroker.subscriptions.monitoring.pms;      // group name convention = <target system>.<target dataset>.<target table>
+const consumerGroupId = env.active.messagebroker.subscriptions.monitoring.analytics.pms;      // group name convention = <target system>.<target dataset>.<target table>
 
 const consumerClientId = `${consumerGroupId}.001`;      // 
 

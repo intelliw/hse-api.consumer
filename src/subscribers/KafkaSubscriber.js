@@ -19,7 +19,7 @@ const log = require('../logger').log;
 class KafkaSubscriber extends Subscriber {
     /**
      constructor arguments 
-    * @param {*} subscriptionId                             //  env.active.messagebroker.subscriptions.monitoring
+    * @param {*} subscriptionId                             //  env.active.messagebroker.subscriptions.monitoring.analytics
     * @param {*} readTopic                                  //  the topic to read from env.active.messagebroker.topics.monitoring
     */
     constructor(subscriptionId, readTopic) {

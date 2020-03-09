@@ -15,7 +15,7 @@ const Consumer = require('./Consumer');
 
 // instance parameters
 const READ_TOPIC = env.active.messagebroker.topics.monitoring.mppt;
-const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.mppt;
+const SUBSCRIPTION_OR_GROUPID = env.active.messagebroker.subscriptions.monitoring.analytics.mppt;
 
 
 /**
@@ -29,7 +29,7 @@ class MpptConsumer extends Consumer {
     */
     constructor() {
 
-        const writeTopic = env.active.messagebroker.topics.dataset.mppt;
+        const writeTopic = consts.NONE;
         const datasetParam = enums.params.datasets.mppt;
         const bqDataset = env.active.datawarehouse.datasets.analytics;
         const bqTable = env.active.datawarehouse.tables.analytics.mppt;

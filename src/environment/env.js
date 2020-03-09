@@ -23,14 +23,16 @@ const enums = require('./enums');
 const _SHARED = {
     MESSAGEBROKER: {
         topics: {                                                               // kafka / pubsub topics for all environments 
-            monitoring: { pms: 'monitoring.pms', mppt: 'monitoring.mppt', inverter: 'monitoring.inverter' },
-            system: { feature: 'system.feature' },
-            dataset: { pms: 'monitoring.pms.dataset', mppt: 'monitoring.mppt.dataset', inverter: 'monitoring.inverter.dataset' }
+            monitoring: { pms: 'pub-monitoring.pms', mppt: 'pub-monitoring.mppt', inverter: 'pub-monitoring.inverter' },
+            system: { feature: 'pub-system.feature' }
         },
-        subscriptions: {                                                        // for kafka these are groupids 
-            monitoring: { pms: 'sub-monitoring.pms', mppt: 'sub-monitoring.mppt', inverter: 'sub-monitoring.inverter' },
-            system: { feature: 'sub-system.feature' },
-            dataset: { pms: 'sub-monitoring.pms.dataset', mppt: 'sub-monitoring.mppt.dataset', inverter: 'sub-monitoring.inverter.dataset' }
+        subscriptions: {                                                         // for kafka these are groupids 
+            monitoring: { 
+                analytics: {
+                    pms: 'sub-analytics.pms_monitoring', mppt: 'sub-analytics.mppt_monitoring', inverter: 'sub-analytics.inverter_monitoring' 
+                }
+            },
+            system: { feature: 'sub-env.active.features' },
         }
     },
     DATAWAREHOUSE: {
