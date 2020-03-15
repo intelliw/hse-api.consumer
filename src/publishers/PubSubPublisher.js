@@ -31,7 +31,6 @@ class PubSubPublisher extends Publisher{
     */
     async publish(msgObj, writeTopic, senderId) {
 
-
         let dataBuffer, dataAttributes;
 
         // [start trace] -------------------------------    

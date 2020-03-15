@@ -21,10 +21,13 @@ class MessagingStatement extends Statement {
     // entrypoint for clients to call
     write(topic, id, msgsArray, itemQty, sender) {
 
-        this._writeConsoleInfo(topic, id, msgsArray, itemQty, sender);
-        this._writeConsoleDebug(topic, id, msgsArray, itemQty, sender);
-        this._writeStackdriverInfo(topic, id, msgsArray, itemQty, sender);
-        this._writeStackdriverDebug(topic, id, msgsArray, itemQty, sender);
+        // fully qualified topic name includes provider name prefix 
+        let fqTopic = `[${env.active.messagebroker.provider}]${topic}`           // e.g. [pubsub]pub.tel_pms or kafka.pub.tel_pms
+
+        this._writeConsoleInfo(fqTopic, id, msgsArray, itemQty, sender);
+        this._writeConsoleDebug(fqTopic, id, msgsArray, itemQty, sender);
+        this._writeStackdriverInfo(fqTopic, id, msgsArray, itemQty, sender);
+        this._writeStackdriverDebug(fqTopic, id, msgsArray, itemQty, sender);
 
     }
     
