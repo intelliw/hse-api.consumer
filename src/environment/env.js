@@ -109,7 +109,7 @@ const _SHARED = {
 
 // API host and versions for dev, prod, and test            version = major.minor[.build[.revision]]   ..Odd-numbers for development even for stable
 const _API = {
-    LOCAL: { ..._SHARED.API, host: '192.168.1.113:8081', scheme: 'http', versions: { supported: '0.5.0.01', current: '0.5.0.01' } },
+    LOCAL: { ..._SHARED.API, host: '192.168.1.113:8081', scheme: 'http', versions: { supported: '0.5', current: '0.5.0.02' } },
     DEV: { ..._SHARED.API, host: 'api.dev.sundaya.monitored.equipment' },
     STAGE: { ..._SHARED.API, host: 'api.stage.sundaya.monitored.equipment' },
     TEST: { ..._SHARED.API, host: 'api.test.sundaya.monitored.equipment' },

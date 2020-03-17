@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/bigquery": "^4.1.8",
+    "@google-cloud/debug-agent": "^4.2.2",
     "@google-cloud/error-reporting": "^1.1.2",
     "@google-cloud/logging": "^5.5.3",
     "@google-cloud/pubsub": "^1.2.0",
