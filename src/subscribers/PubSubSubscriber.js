@@ -22,7 +22,10 @@ class PubSubSubscriber extends Subscriber {
     constructor(subscriptionId, readTopic) {
 
         // setup pull client 
-        const pubsub = new PubSub();
+        const pubsub = new PubSub({
+            projectId: env.active.gcp.project
+        });
+
         let subscriberObj = pubsub.subscription(subscriptionId, {           // subscriberObj is a subscription
             flowControl: env.active.pubsub.flowControl,
             ackDeadline: env.active.pubsub.ackDeadline

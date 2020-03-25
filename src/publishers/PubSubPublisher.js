@@ -12,13 +12,15 @@ const log = require('../logger').log;
 
 const Publisher = require('./Publisher');
 
-class PubSubPublisher extends Publisher{
+class PubSubPublisher extends Publisher {
     /**
      */
     constructor() {
 
         // create a pubsub producer
-        const publisherObj = new PubSub();
+        const publisherObj = new PubSub({
+            projectId: env.active.gcp.project
+        });
 
         // setup instance variables specific to PubSubPublisher 
         super(publisherObj);
@@ -38,7 +40,7 @@ class PubSubPublisher extends Publisher{
 
         // send the message to the topics
         try {
-            
+
             // create microbatching publisher                                                               //note:  miocrobatch settings apply only for large msgObj.messages[] where you call batchPub.publish multiple times. The microbatch prevents client libs from sending messages to pubsub.             
             const BATCH_OPTIONS = env.active.pubsub.batching;
             BATCH_OPTIONS.maxMessages = msgObj.messages.length;                                             // number of message to include in a batch before client library sends to topic. If batch size is msobj.messages.length batch will go to server after all are published 
@@ -62,7 +64,7 @@ class PubSubPublisher extends Publisher{
                         if (e) {
                             log.error(`${writeTopic} ${log.enums.methods.mbProduce} Error [${writeTopic}]`, e);
 
-                        // log messaging once only, after all messages in this batch/loop have been published 
+                            // log messaging once only, after all messages in this batch/loop have been published 
                         } else {
                             messageIds.push(messageId);
                             if (i == (msgObj.messages.length - 1)) {

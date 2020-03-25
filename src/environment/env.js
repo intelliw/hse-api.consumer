@@ -100,7 +100,7 @@ const _SHARED = {
         scheme: 'https',
         versions: {
             supported: '0.3.14',
-            current: '0.5.0.01'
+            current: '0.5.0.02'
         },
         instanceId: `${utils.randomIntegerString(1, 9999)}`                     // random ID for each instance
     }
@@ -201,7 +201,7 @@ module.exports.CONFIGS = {
         api: _API.LOCAL, gcp: _GCP.DEV,
         features: _FEATURES.DEV, logging: _LOGGING.DEV, stackdriver: _STACKDRIVER.DEV
     },
-    devcloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
+    local: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
         messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.pubsub },
         kafka: _KAFKA.SINGLE, pubsub: _SHARED.PUBSUB, kafkajs: _SHARED.KAFKAJS, datawarehouse: _SHARED.DATAWAREHOUSE,
         api: _API.DEV, gcp: _GCP.DEV,
