@@ -49,7 +49,7 @@ const _SHARED = {
             maxMessages: 100,                                                   // max messages to process at the same time (to allow in memory) before pausing the message stream. allowExcessMessages should be set to false 
             allowExcessMessages: false                                          // this tells the client to manage and lock any excess messages 
         },
-        ackDeadline: 10                                                                       // max number of millisecs to wait for MAX_MESSAGES_PER_BATCH before client lib sends all messages to the topic 
+        ackDeadline: 10                                                         // max number of millisecs to wait for MAX_MESSAGES_PER_BATCH before client lib sends all messages to the topic 
     },
     KAFKAJS: {                                                                  // kafkajs client configuration options
         subscriber: {
@@ -201,7 +201,7 @@ module.exports.CONFIGS = {
         api: _API.LOCAL, gcp: _GCP.DEV,
         features: _FEATURES.DEV, logging: _LOGGING.DEV, stackdriver: _STACKDRIVER.DEV
     },
-    local: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
+    devcloud: {                                                                 // single node kafka, or Kafka Std - 1 master, N workers
         messagebroker: { ..._SHARED.MESSAGEBROKER, provider: enums.messageBroker.providers.pubsub },
         kafka: _KAFKA.SINGLE, pubsub: _SHARED.PUBSUB, kafkajs: _SHARED.KAFKAJS, datawarehouse: _SHARED.DATAWAREHOUSE,
         api: _API.DEV, gcp: _GCP.DEV,
