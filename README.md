@@ -1,7 +1,4 @@
-# Energy Management API Host
-
-# GIT
-https://github.com/intelliw/hsy-api.host
+# Energy Management API consumers 
 
 
 ## Cloud Build 
@@ -10,7 +7,7 @@ gcloud builds submit `
     --project=sundaya-dev `
     --tag asia.gcr.io/sundaya-dev/consumers-image . `    
 
-# Shared Symlnks
+# Shared 
 
 these folders are mastered in `hsy-api-host` and shared with `hsy-api-consumer` through symlinks
 (see hsy-api.deployment for scripts to create symlinks)
