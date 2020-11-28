@@ -3,7 +3,7 @@
 /**
  * ./common/environments.js
  * shared constants for environment configuration 
- * these configs are shared between host anmd consumer 
+ * these configs are shared between host and consumer 
  */
 
 const utils = require('./utils');

@@ -3,8 +3,6 @@
 # GIT
 https://github.com/intelliw/hsy-api.host
 
-git add . ; git commit -m "ok" ; git push origin master ; git push origin --tags
-
 
 ## Cloud Build 
 
@@ -14,7 +12,7 @@ gcloud builds submit `
 
 # Shared Symlnks
 
-`hsy-api-consumer` shares the following folders mastered in `hsy-api-host` through symlinks
+these folders are mastered in `hsy-api-host` and shared with `hsy-api-consumer` through symlinks
 (see hsy-api.deployment for scripts to create symlinks)
 
     src\environment 
